@@ -54,8 +54,8 @@ Two solutions:
 
 ####Install from bundle
 
- - download and install the package
- - Tell MyMovieDB where your MySQL server is.
+ - download and unzip the package where you want it
+ - Tell MyMovieDB where your MySQL server is by editing the MyMovieDB-x.x.x.bat file.
 
 ####Install from sources
  use maven:
@@ -66,9 +66,9 @@ Two solutions:
 
 (I have no tests, I just use it)
 
-Install it by hand.
+Install it by hand where you want it.
 
-You can create a shortcut to the script.
+You can create a shortcut to the .bat script.
 
 
 Getting Started
