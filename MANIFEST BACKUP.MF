@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Built-By: gandji
+Start-Class: org.gandji.mymoviedb.MyMovieDBGUI
+Spring-Boot-Version: 1.2.5.RELEASE
+Created-By: Apache Maven
+Build-Jdk: 1.8.0_102
+Main-Class: org.springframework.boot.loader.JarLauncher
+SplashScreen-Image: splash.gif

@@ -1,0 +1,65 @@
+[
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": ".*x264.*"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "HDTV"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "BluRay"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "720p"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": ".*1080p.*"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "MULT[Ii]"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "AC3"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "[xX][vV][iI][dD]"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "\\[\\w+\\]"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "([Bb][dD]|[Bb][Rr]|[Dd][Vv][Dd])[Rr][Ii][Pp]"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "AYMO"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "PROPER"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "F[rR][eE][nN][cC][hH]"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "TRUEFRENCH"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "AAC"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "PopHD"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "YIFY"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "\\s"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "\\([^)]+"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "[^)]+\\)$"
+    },
+    { "_class": "org.gandji.mymoviedb.data.KeywordExcludeRegexp",
+        "regexpString": "^$"
+    }    
+]
