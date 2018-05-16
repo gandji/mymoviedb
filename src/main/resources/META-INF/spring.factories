@@ -1,2 +1,4 @@
 org.springframework.beans.BeanInfoFactory=org.springframework.beans.ExtendedBeanInfoFactory
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.gandji.mymoviedb.MyMovieDBConfiguration
+org.springframework.boot.diagnostics.FailureAnalyzer=\
+  org.gandji.mymoviedb.tools.MyMovieDBStartupFailureAnalyzer
