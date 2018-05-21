@@ -7,5 +7,6 @@ import org.gandji.mymoviedb.data.Movie;
  */
 public interface MovieHolder {
     void setData(Movie movie);
-    void close();
+    Movie getMovie();
+    // REMOVE void close();
 }

@@ -16,13 +16,6 @@
  */
 package org.gandji.mymoviedb.data;
 
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.gandji.mymoviedb.data.repositories.MovieRepository;
 import org.gandji.mymoviedb.services.MovieFileServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +27,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -126,6 +125,25 @@ public abstract class HibernateMovieDao {
         return movieRepository.findOne(id);
     }
 
+    @Transactional
+    public Movie newGenres(Movie movie, Set<Genre> genres) {
+        Movie updateMovie = findOne(movie.getId());
+        updateMovie.clearGenres();
+        for (Genre genre : genres) {
+            updateMovie.addGenreByName(genre.getName());
+        }
+        return save(updateMovie);
+    }
+
+    @Transactional
+    public Movie newActors(Movie movie, Set<Actor> actors) {
+        Movie updateMovie = findOne(movie.getId());
+        updateMovie.clearActors();
+        for (Actor actor : actors) {
+            updateMovie.addActorByName(actor.getName());
+        }
+        return save(updateMovie);
+    }
     // TODO fix pagination in movie DAO
     // paginating, see:
     // https://www.petrikainulainen.net/programming/spring-framework/spring-data-jpa-tutorial-part-seven-pagination/
@@ -204,7 +222,7 @@ public abstract class HibernateMovieDao {
         for (Actor actor : actors) {
             movie.addActorByName(actor.getName());
         }
-        entityManager.merge(movie);
+        movieRepository.save(movie);
     }
 
     @Transactional
@@ -213,14 +231,14 @@ public abstract class HibernateMovieDao {
         for (Genre genre : genres) {
             movie.addGenreByName(genre.getName());
         }
-        entityManager.merge(movie);
+        movieRepository.save(movie);
     }
 
     @Transactional
     public void addPoster(Long movieId, byte[] poster) {
         Movie  movie = movieRepository.findOne(movieId);
         movie.setPosterBytes(poster);
-        entityManager.merge(movie);
+        movieRepository.save(movie);
     }
 
     public abstract List<Movie> findByDirectorKeywords(String kwds);
@@ -240,4 +258,6 @@ public abstract class HibernateMovieDao {
     public abstract Iterable<Movie> searchInternal(String titleKeywords, String directorKeywords,
                                                    String actorsKeywords, String genreKeyword,
                                                    String commentsKeywords, String qualiteVideoKeyword);
+
+
 }

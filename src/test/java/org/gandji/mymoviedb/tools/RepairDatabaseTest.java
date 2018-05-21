@@ -24,7 +24,7 @@ public class RepairDatabaseTest {
 
     @Test
     public void fixActors() {
-        repairDatabase.fixMissingActors();
+        repairDatabase.deleteOrphanActors();
     }
 
     @Test

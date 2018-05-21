@@ -40,7 +40,7 @@ import java.util.Set;
  */
 @Component
 @Scope("prototype")
-public class MovieDescriptionPanel extends JPanel {
+public class MovieDescriptionPanel extends JPanel implements MovieHolder {
 
     private static final Logger LOG = LoggerFactory.getLogger(MovieDescriptionPanel.class);
 
@@ -106,11 +106,11 @@ public class MovieDescriptionPanel extends JPanel {
     private JLabel createdLabel;
     private JTextField createdTextField;
 
-    private MovieHolder movieHolder;
+    //REMOVE private MovieHolder movieHolder;
 
-    public void setMovieHolder(MovieHolder movieHolder) {
+    /* REMOVE public void setMovieHolder(MovieHolder movieHolder) {
         this.movieHolder = movieHolder;
-    }
+    }*/
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("JPanel");
@@ -165,6 +165,7 @@ public class MovieDescriptionPanel extends JPanel {
                     for (VideoFile vf : vfs) {
                         LOG.debug("   removing file from DB: " + vf.getFileName());
                         hibernateVideoFileDao.deleteFile(vf);
+                        movie.removeVideoFile(vf);
                         if (deleteRealFiles) {
                             try {
                                 LOG.debug("   deleting file " + vf.getFileName());
@@ -216,44 +217,27 @@ public class MovieDescriptionPanel extends JPanel {
     }
 
     private void imbdUrlButtonActionPerformed(ActionEvent evt) {
-        //UserInputMovie userInputMovie = (UserInputMovie) applicationContext.getBean("userInputMovie",this.movieHolder);
 
-        int selectedRow = filesTable.convertRowIndexToModel(filesTable.getSelectedRow());
-        // get the selected file with the -1 trick
-        VideoFile file = (VideoFile) filesTable.getModel().getValueAt(selectedRow,-1);
-        Path filePath = null;
-
-        if (null==file) {
-            // no selected files, take first
-            //filePath = this.movie.getFiles().iterator().next().toPath();
-            if (this.fileDataModel.getRowCount() >0) {
-                VideoFile vf = fileDataModel.getFile(0);
-                if (null!=vf) {
-                    filePath = vf.toPath();
-                    userInputMovie.setFile(filePath);
-                }
-            }
-        } else {
-            userInputMovie.setFile(file.toPath());
-        }
-
-        if (null != filePath) {
-            userInputMovie.setText("Enter IMDB url found for file: "+filePath.getFileName().toString());
-        } else {
-            userInputMovie.setText("Enter IMDB url for new movie: ");
-        }
-        userInputMovie.setMovieHolder(movieHolder);
+        userInputMovie.setMovieHolder(this);
+        userInputMovie.setMovie(this.movie);
+        userInputMovie.setText("Enter IMDB or TMDB url: ");
         userInputMovie.setVisible(true);
     }
 
+    @Override
+    public Movie getMovie() { return movie;}
+
+    @Override
     public void setData(Movie data) {
         this.movie = data;
+
         if (null==data){
             titleTextField.setText("");
             alternateTitleTextField.setText("");
             directorTextField.setText("");
             summaryTextArea.setText("");
             commentTextArea.setText("");
+            createdTextField.setText("");
             yearTextField.setText("");
             durationTextField.setText("");
             ratingSpinner.setValue(0);
@@ -262,6 +246,8 @@ public class MovieDescriptionPanel extends JPanel {
             genresList.setListData(new String[]{});
             if (null != fileDataModel.getFiles()) {
                 fileDataModel.getFiles().clear();
+            } else {
+                fileDataModel.fireTableDataChanged();
             }
             fakePoster();
 
@@ -387,7 +373,7 @@ public class MovieDescriptionPanel extends JPanel {
                     LOG.info("Deleting file "+file.getFileName()+" from DB only");
                     hibernateVideoFileDao.deleteFile(file);
                     Movie reloaded = hibernateMovieDao.findOne(MovieDescriptionPanel.this.movie.getId());
-                    setData(movie);
+                    setData(reloaded);
                 } else if (reply == JOptionPane.NO_OPTION){
                     hibernateVideoFileDao.deleteFile(file);
                     LOG.info("Really deleting "+file.getFileName()+" from directory "+file.getDirectory());
@@ -401,7 +387,7 @@ public class MovieDescriptionPanel extends JPanel {
                         e1.printStackTrace();
                     }
                     Movie reloaded = hibernateMovieDao.findOne(MovieDescriptionPanel.this.movie.getId());
-                    setData(movie);
+                    setData(reloaded);
                 }
             }
         });

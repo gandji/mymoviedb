@@ -79,7 +79,7 @@ public class FileNameUtils {
     
     private static boolean dropKeyword(String kw) {
         for (KeywordExcludeRegexp dropk : dropRegexs){
-            if (null==dropk) { continue;}// TODO shit happens
+            if (null==dropk) { continue;}
             if (kw.matches(dropk.getRegexpString())){
                 return true;
             }

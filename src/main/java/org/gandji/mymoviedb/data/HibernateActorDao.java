@@ -24,6 +24,7 @@ import javax.persistence.PersistenceContext;
 import org.gandji.mymoviedb.data.repositories.ActorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -42,16 +43,21 @@ public class HibernateActorDao {
     private EntityManager entityManager;
 
     public void save(Actor actor) {
+        // use annotation @Transactional or this:
         EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
-        entityManager.persist(actor);
+        entityManager.merge(actor);
         transaction.commit();
     }
 
-    public List<Actor> list() {
-        throw new UnsupportedOperationException("Cannot list all actors yet");
+    @Transactional
+    public Iterable<Actor> list() {
+        return actorRepository.findAll();
     }
 
-    public long count() {return actorRepository.count();}
+    @Transactional
+    public long count() {
+        return actorRepository.count();
+    }
 
 }

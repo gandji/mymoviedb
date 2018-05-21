@@ -19,6 +19,8 @@ package org.gandji.mymoviedb.scrapy;
 import java.io.IOException;
 import java.lang.reflect.MalformedParametersException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,10 +35,15 @@ import com.omertron.themoviedbapi.model.media.MediaBasic;
 import com.omertron.themoviedbapi.model.media.MediaCreditList;
 import com.omertron.themoviedbapi.model.movie.MovieBasic;
 import com.omertron.themoviedbapi.model.movie.MovieInfo;
+import com.omertron.themoviedbapi.model.person.PersonBasic;
 import com.omertron.themoviedbapi.model.tv.TVBasic;
 import com.omertron.themoviedbapi.model.tv.TVInfo;
 import com.omertron.themoviedbapi.results.ResultList;
+import org.gandji.mymoviedb.data.Genre;
+import org.gandji.mymoviedb.data.HibernateMovieDao;
 import org.gandji.mymoviedb.data.Movie;
+import org.gandji.mymoviedb.data.repositories.GenreRepository;
+import org.gandji.mymoviedb.data.repositories.MovieRepository;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -44,6 +51,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -62,6 +70,10 @@ public class MovieInfoSearchService {
 
     // TODO configuration option for max movies returned?
     private final Integer maxMoviesReturned = 5;
+
+    @Autowired
+    private GenreRepository genreRepository;
+    private HibernateMovieDao movieDao;
 
     public enum UrlType {
         IMDB("IMDB"),
@@ -322,16 +334,10 @@ public class MovieInfoSearchService {
         } else {
             tvInfo = tmdb.getTVInfo(tvBasic.getId(),"fr");
         }
-        MediaCreditList credits = tvInfo.getCredits();
-        List<MediaCreditCrew> crew = credits.getCrew();
-        for (MediaCreditCrew crewMember : crew) {
-            LOG.debug("Crew job : "+crewMember.getJob()+"    name : "+crewMember.getName());
-            if (crewMember.getJob().equals("Director")) {
-                movie.setDirector(crewMember.getName());
-                break;
-            }
-        }
+        List<PersonBasic> createdBy = tvInfo.getCreatedBy();
+        movie.setDirector(createdBy.get(0).getName());
 
+        MediaCreditList credits = tmdb.getTVCredits(tvInfo.getId(), "fr");
         List<MediaCreditCast> cast = credits.getCast();
         for (MediaCreditCast castMember : cast) {
             if (castMember.getOrder()>=0 && castMember.getOrder()<=3) {
@@ -361,6 +367,7 @@ public class MovieInfoSearchService {
         List<com.omertron.themoviedbapi.model.Genre> genres = englishTVInfo.getGenres();
         for (com.omertron.themoviedbapi.model.Genre genre : genres) {
             LOG.debug("GENRE : "+genre.getName()+"  "+genre);
+            Genre myMovieDBGenre = genreRepository.findByName(genre.getName());
             movie.addGenreByName(genre.getName());
         }
 
@@ -422,22 +429,33 @@ public class MovieInfoSearchService {
 
         Movie movie = null;
 
-        if (!type.equals("movie")) {
-            LOG.warn("Not implemented tmdb data type <" + type+">");
+        if (type.equals("tv")) {
+            try {
+                TheMovieDbApi tmdb = new TheMovieDbApi(tmdbApiKey);
+                TVInfo movieInfo = tmdb.getTVInfo( movieId, "fr");
+                movie = buildMovieFromTmdbTVBasic(movieInfo, tmdb);
+                movie.setInfoUrlAsString(href);
+            } catch (MovieDbException e) {
+                e.printStackTrace();
+                LOG.info("Error while asking TMDB: "+e.getMessage());
+            }
+        } else if (type.equals("movie")) {
+
+            // TODO cache the configuration
+            try {
+                TheMovieDbApi tmdb = new TheMovieDbApi(tmdbApiKey);
+                MovieInfo movieInfo = tmdb.getMovieInfo(movieId, "fr");
+
+                movie = buildMovieFromTmdbMovieBasic(movieInfo, tmdb);
+                movie.setInfoUrlAsString(href);
+
+            } catch (MovieDbException e) {
+                e.printStackTrace();
+                LOG.info("Error while asking TMDB: " + e.getMessage());
+            }
+        } else {
+            LOG.warn("Uknown type for tmdb URL: <"+type+">");
             return null;
-        }
-
-        // TODO cache configuration
-        try {
-            TheMovieDbApi tmdb = new TheMovieDbApi(tmdbApiKey);
-            MovieInfo movieInfo = tmdb.getMovieInfo(movieId,"fr");
-
-            movie = buildMovieFromTmdbMovieBasic(movieInfo, tmdb);
-            movie.setInfoUrlAsString(href);
-
-        } catch (MovieDbException e) {
-            e.printStackTrace();
-            LOG.info("Error while asking TMDB: "+e.getMessage());
         }
 
         return movie;

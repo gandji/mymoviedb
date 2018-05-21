@@ -22,17 +22,18 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import org.gandji.mymoviedb.data.Movie;
+import org.gandji.mymoviedb.data.VideoFile;
 import org.gandji.mymoviedb.gui.widgets.NewLayout;
 import org.gandji.mymoviedb.gui.widgets.ResultChooserDialog;
 import org.gandji.mymoviedb.gui.widgets.UserInputMovie;
 import org.gandji.mymoviedb.scrapy.MovieInfoSearchService;
 import org.gandji.mymoviedb.scrapy.MovieFoundCallback;
+import org.gandji.mymoviedb.services.MovieFileServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -42,13 +43,17 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Scope("prototype")
-public class InternetInfoSearchWorker extends SwingWorker<Integer, Movie> implements MovieFoundCallback, ApplicationContextAware {
+public class InternetInfoSearchWorker extends SwingWorker<Integer, Movie> implements MovieFoundCallback {
 
     private static final Logger LOG = LoggerFactory.getLogger(InternetInfoSearchWorker.class);
 
     @Autowired
     private MovieInfoSearchService movieInfoSearchService;
 
+    @Autowired
+    private MovieFileServices movieFileServices;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
     // arghh I need the mainframe for userinputdialog
@@ -90,7 +95,12 @@ public class InternetInfoSearchWorker extends SwingWorker<Integer, Movie> implem
                     @Override
                     public void run() {
                         UserInputMovie userInputMovie = (UserInputMovie) applicationContext.getBean("userInputMovie",mainFrame,true);
-                        userInputMovie.setFile(file);
+                        Movie movie = new Movie();
+                        VideoFile vf = new VideoFile();
+                        movieFileServices.updateVideoFile(vf,file);
+                        movie.addFile(vf);
+                        userInputMovie.setMovie(movie);
+                        userInputMovie.setMovieHolder(null);
                         userInputMovie.setText("No IMDB movie found for : "+kwds);
                         userInputMovie.setVisible(true);
                     }
@@ -116,11 +126,6 @@ public class InternetInfoSearchWorker extends SwingWorker<Integer, Movie> implem
         for (Movie movie : movies) {
             resultChooserDialog.addMovie(movie);
         }
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext ac) throws BeansException {
-        applicationContext = ac;
     }
 
 }

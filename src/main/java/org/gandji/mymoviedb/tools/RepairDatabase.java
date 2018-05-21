@@ -18,6 +18,7 @@
 package org.gandji.mymoviedb.tools;
 
 import org.gandji.mymoviedb.data.*;
+import org.gandji.mymoviedb.data.repositories.ActorRepository;
 import org.gandji.mymoviedb.data.repositories.VideoFileRepository;
 import org.gandji.mymoviedb.filefinder.FileUtils;
 import org.gandji.mymoviedb.scrapy.MovieInfoSearchService;
@@ -27,6 +28,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.List;
@@ -53,9 +57,16 @@ public class RepairDatabase {
     @Autowired
     private HibernateMovieDao hibernateMovieDao;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Autowired
+    private ActorRepository actorRepository;
+
     public void doRepair() {
        fixNullHashCodes();
        fixMissingActors();
+       deleteOrphanActors();
         fixMissingCreated();
     }
 
@@ -174,6 +185,21 @@ public class RepairDatabase {
                 LOG.info("          update file hash to "+videoFile.getHashCode());
                 videoFileDao.save(videoFile);
             }
+        }
+    }
+
+    public void deleteOrphanActors (){
+        Query orphanActorsQuery = entityManager.createNativeQuery(
+                "select actor.id,actor.name from actor" +
+                        "  left outer join movie_actors on movie_actors.actors_id=actor.id" +
+                        "  left outer join movie on movie_actors.movies_id=movie.id" +
+                        "  where  movies_id is null;",
+                Actor.class
+        );
+        List<Actor> orphanActors = orphanActorsQuery.getResultList();
+        for (Actor actor : orphanActors) {
+            LOG.info("Deleting actor <"+actor.getId()+"> : "+actor.getName());
+            actorRepository.delete(actor);
         }
     }
 }

@@ -14,7 +14,8 @@ import java.awt.*;
  */
 @Component
 @Scope("prototype")
-public class MovieDescriptionWindow extends JFrame implements MovieHolder {
+@Deprecated
+public class MovieDescriptionWindow extends JFrame {
 
     @Autowired
     private MovieDescriptionPanel movieDescriptionPanel;
@@ -24,20 +25,16 @@ public class MovieDescriptionWindow extends JFrame implements MovieHolder {
     }
     @PostConstruct
     public void postConstruct() {
-        movieDescriptionPanel.setMovieHolder(this);
         setContentPane(movieDescriptionPanel.getPanel());
         pack();
         setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
 
-    @Override
     public void setData(Movie movie) {
         movieDescriptionPanel.setData(movie);
     }
 
-    @Override
-    public void close() {
-        setVisible(false);
+    public Movie getMovie() {
+        return movieDescriptionPanel.getMovie();
     }
-
 }

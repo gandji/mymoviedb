@@ -17,7 +17,6 @@
  */
 package org.gandji.mymoviedb.data.repositories;
 
-import java.util.List;
 import org.gandji.mymoviedb.data.Genre;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -25,6 +24,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author gandji <gandji@free.fr>
  */
-public interface GenreRepository extends  JpaRepository<Genre,Long> {
-    List<Genre> findAll();
+public interface GenreRepository extends JpaRepository<Genre,Long> {
+    Genre findByName(String genreName);
 }

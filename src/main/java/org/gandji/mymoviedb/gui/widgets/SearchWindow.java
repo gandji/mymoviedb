@@ -235,7 +235,7 @@ public class SearchWindow extends javax.swing.JFrame {
     @PostConstruct
     public void postConstruct() {
         genreComboBox.addItem("Any");
-        List<Genre> genreList = hibernateGenreDao.findAll();
+        Iterable<Genre> genreList = hibernateGenreDao.findAll();
         for (Genre genre : genreList) {
             genreComboBox.addItem(genre.getName());
         }
@@ -288,7 +288,7 @@ public class SearchWindow extends javax.swing.JFrame {
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         genreComboBox.removeAllItems();
         genreComboBox.addItem("Any");
-        List<Genre> genreList = hibernateGenreDao.findAll();
+        Iterable<Genre> genreList = hibernateGenreDao.findAll();
         for (Genre genre : genreList) {
             genreComboBox.addItem(genre.getName());
         }

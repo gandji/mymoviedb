@@ -16,14 +16,10 @@
  */
 package org.gandji.mymoviedb.data;
 
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceContext;
-
 import org.gandji.mymoviedb.data.repositories.GenreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -32,17 +28,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class HibernateGenreDao {
 
-    public HibernateGenreDao() {
-    }
-
     @Autowired
     private GenreRepository genreRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    public Genre search(String genreName) { 
-        List<Genre> genreList = entityManager
+    public Genre search(String genreName) {
+        return genreRepository.findByName(genreName);
+        /* REMOVE pour mémoire List<Genre> genreList = entityManager
                 .createQuery("from Genre where name=" + Actor.normalize(genreName), Genre.class)
                 .getResultList();
         if (genreList.size() > 1) {
@@ -52,16 +43,15 @@ public class HibernateGenreDao {
             return null;
         }
         return genreList.get(0);
+        */
     }
 
+    @Transactional
     public void save(Genre genre) {
-        EntityTransaction transaction = entityManager.getTransaction();
-        transaction.begin();
-        entityManager.persist(genre);
-        transaction.commit();
+        genreRepository.save(genre);
     }
 
-    public List<Genre> findAll() {
+    public Iterable<Genre> findAll() {
         return genreRepository.findAll();
     }
 }

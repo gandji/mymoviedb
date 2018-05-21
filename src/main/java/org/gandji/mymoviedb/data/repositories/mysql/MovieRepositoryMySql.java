@@ -38,7 +38,6 @@ public interface MovieRepositoryMySql extends MovieRepository { //PagingAndSorti
       nativeQuery = true)
     List<Movie> findByTitleKeywords(@Param("kwds") String kwds);
 
-    // @todo merge this with the above call: search title and alternate title automatically!!
     @Query(value="select * from movie where MATCH alternate_title AGAINST (:#{#kwds} in natural language mode)",
             nativeQuery = true)
     List<Movie> findByAlternateTitleKeywords(@Param("kwds") String kwds);

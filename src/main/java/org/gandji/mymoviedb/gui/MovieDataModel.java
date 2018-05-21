@@ -54,7 +54,6 @@ public class MovieDataModel extends AbstractTableModel {
         this.displayedColumns = new ArrayList<>();
     }
 
-    // TODO fixme: need this to avoid JpaRepository
     public void setMovies(Iterable<Movie> movies) {
         List<Movie> movieList = new ArrayList<>();
         movies.forEach(movie -> movieList.add(movie));

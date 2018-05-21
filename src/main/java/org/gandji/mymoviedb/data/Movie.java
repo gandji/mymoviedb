@@ -17,10 +17,12 @@
 package org.gandji.mymoviedb.data;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import javax.persistence.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,11 +31,6 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
 
 /**
  *
@@ -63,7 +60,11 @@ public class Movie {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
-    @ManyToMany(cascade=CascadeType.MERGE)
+    @LastModifiedDate
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastModified;
+
+    @ManyToMany(cascade={CascadeType.MERGE,CascadeType.PERSIST},fetch=FetchType.EAGER)
     @JoinColumns({
         @JoinColumn(name="ACTORS_ID",referencedColumnName = "id"),
         @JoinColumn(name="ACTORS_NAME",referencedColumnName = "name")})
@@ -79,12 +80,12 @@ public class Movie {
     @Column(name="poster")
     private byte[] posterBytes;
 
-    @ManyToMany(cascade=CascadeType.MERGE)
+    @ManyToMany(cascade={CascadeType.MERGE, CascadeType.PERSIST},fetch=FetchType.EAGER)
     @JoinColumns({
         @JoinColumn(name="GENRES_NAME",referencedColumnName = "name")})
     private Set<Genre> genres=null;
     
-    @OneToMany(mappedBy="movie",cascade=CascadeType.MERGE)
+    @OneToMany(mappedBy="movie",cascade={CascadeType.MERGE,CascadeType.PERSIST}, fetch=FetchType.EAGER)
     private Set<VideoFile> files;
 
     @Column(name = "alternateTitle")
@@ -224,8 +225,17 @@ public class Movie {
 
     public void addGenreByName(String genreName) {
           Genre genre = new Genre(genreName);
-        genre.addMovie(this);
+          addGenre(genre);
+    }
+
+    public void addGenre(Genre genre) {
         this.genres.add(genre);
+        genre.getMovies().add(this);
+    }
+
+    public void removeGenre(Genre genre) {
+        this.genres.remove(genre);
+        genre.getMovies().remove(this);
     }
 
     @Override
@@ -245,10 +255,17 @@ public class Movie {
         return files;
     }
 
-    void clearGenres() {
-        this.genres.clear();
+    public void clearGenres() {
+        if (this.genres != null) {
+            this.genres.clear();
+        }
     }
 
+    public void clearActors() {
+        if (this.actors != null) {
+            this.actors.clear();
+        }
+    }
     public Long getId() {
         return this.id;
     }
@@ -288,7 +305,7 @@ public class Movie {
 
         Movie movie = (Movie) o;
 
-        if (id != null ? !id.equals(movie.id) : movie.id != null) return false;
+        if ( (id != null) ? (!id.equals(movie.id)) : (movie.id != null)) return false;
         if (!title.equals(movie.title)) return false;
         if (year != null ? !year.equals(movie.year) : movie.year != null) return false;
         if (infoUrl != null ? !infoUrl.equals(movie.infoUrl) : movie.infoUrl != null) return false;
@@ -316,5 +333,9 @@ public class Movie {
         result = 31 * result + (rating != null ? rating.hashCode() : 0);
         result = 31 * result + (lastSeen != null ? lastSeen.hashCode() : 0);
         return result;
+    }
+
+    public void removeVideoFile(VideoFile vf) {
+        this.files.remove(vf);
     }
 }

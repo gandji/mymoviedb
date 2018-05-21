@@ -14,7 +14,7 @@ import java.awt.*;
  */
 @Component
 @Scope("prototype")
-public class MovieDescriptionDialog extends JDialog implements MovieHolder {
+public class MovieDescriptionDialog extends JDialog {
 
     MovieDescriptionPanel movieDescriptionPanel;
 
@@ -27,18 +27,22 @@ public class MovieDescriptionDialog extends JDialog implements MovieHolder {
     }
     @PostConstruct
     public void postConstruct() {
-        movieDescriptionPanel.setMovieHolder(this);
         setContentPane(movieDescriptionPanel.getPanel());
         pack();
         setDefaultCloseOperation(HIDE_ON_CLOSE);
     }
 
-    @Override
+    // REMOVE @Override
     public void setData(Movie movie) {
         movieDescriptionPanel.setData(movie);
     }
 
-    @Override
-    public void close() {setVisible(false);}
+    // REMOVE @Override
+    public Movie getMovie() {
+        return movieDescriptionPanel.getMovie();
+    }
+
+    // REMOVE @Override
+    // REMOVE public void close() {setVisible(false);}
 
 }

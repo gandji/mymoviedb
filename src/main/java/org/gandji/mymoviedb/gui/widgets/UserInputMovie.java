@@ -18,7 +18,7 @@
 package org.gandji.mymoviedb.gui.widgets;
 
 import java.lang.reflect.MalformedParametersException;
-import java.nio.file.Path;
+
 import org.gandji.mymoviedb.data.HibernateMovieDao;
 import org.gandji.mymoviedb.data.Movie;
 import org.gandji.mymoviedb.data.VideoFile;
@@ -52,15 +52,20 @@ public class UserInputMovie extends javax.swing.JDialog {
     @Autowired
     private MovieGuiService movieGuiService;
 
-    private Path file;
     private MovieHolder movieHolder;
 
     @Autowired
     private MovieFileServices movieFileServices;
 
-    public void setFile(Path file) { this.file = file; }
+    private Movie movie;
 
-    public void setMovieHolder(MovieHolder movieHolder) { this.movieHolder = movieHolder; }
+    public void setMovie(Movie movie) {
+        this.movie = movie;
+    }
+
+    public void setMovieHolder(MovieHolder movieHolder) {
+        this.movieHolder = movieHolder;
+    }
 
     public void setText(String text) {
         this.firstLineLabel.setText(text);
@@ -161,9 +166,9 @@ public class UserInputMovie extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void playTheFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playTheFileButtonActionPerformed
-        if (null != this.file) {
-            movieGuiService.playTheFile(this.file);
-        }
+        assert (null != this.movie) : "Intenral error null movie";
+        assert (null != this.movie.getFiles()) : "Internal error: movie should have at least one file";
+        movieGuiService.playTheFile(this.movie.getFiles().iterator().next().toPath());
     }//GEN-LAST:event_playTheFileButtonActionPerformed
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
@@ -212,16 +217,28 @@ public class UserInputMovie extends javax.swing.JDialog {
                 }
             }
 
-            // update mdw if present, if not we are responsible for saving movie grrrr
+            // update the movie
+            assert (null != this.movie) : "Internal error: user input needs a movie";
+            if (this.movie.getId()!=null) {
+                movie.setId(this.movie.getId());
+            }
+            // TODO define user defined fields vs. internet defined fields for Movie
+            // keep files and comments and rating and last seen if there
+            for (VideoFile videoFile : this.movie.getFiles()) {
+                movie.addFile(videoFile);
+            }
+            movie.setComments(this.movie.getComments());
+            movie.setRating(this.movie.getRating());
+            movie.setLastSeen(this.movie.getLastSeen());
+
+            setMovie(movie);
+            movieHolder.setData(movie);
+
+            // signal the mdw if present
             if (null != movieHolder) {
-                if (file!=null) {
-                    VideoFile videoFile = new VideoFile();
-                    movieFileServices.updateVideoFile(videoFile,file);
-                    movie.addFile(videoFile);
-                }
-                movieHolder.setData(movie);
+                movieHolder.setData(this.movie);
             } else {
-                movie = hibernateMovieDao.updateOrCreateMovie(movie, this.file);
+                movie = hibernateMovieDao.save(movie);
             }
             this.setVisible(false);
         }

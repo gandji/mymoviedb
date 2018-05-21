@@ -17,26 +17,24 @@
  */
 package org.gandji.mymoviedb.data;
 
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.gandji.mymoviedb.data.repositories.VideoFileRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Component
 public class HibernateVideoFileDao {
-    @PersistenceContext
-    private EntityManager entityManager;
-    
+
     @Autowired
     private VideoFileRepository videoFileRepository;
 
     @Transactional
     public VideoFile save(VideoFile videoFile) {
-        return entityManager.merge(videoFile);
+        return videoFileRepository.save(videoFile);
     }
 
     public long count() {

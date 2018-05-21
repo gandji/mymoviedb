@@ -34,10 +34,7 @@ import javax.sql.DataSource;
 /**
  *
  * @author gandji <gandji@free.fr>
- * @todo for publication: do not show passwords, do not store?
- * @todo                  readme, configuration, what is demonstrated here
- * @todo                  About window
- * @todo                  Configuration procedure at install: configure mysql connection
+ * @todo modify the movie when "enter url" is pressed, do not create new one.
  * @todo check necessity of hibernate.cfg.xml
  * @todo when clicking prefs "keep file on update", it is not saved unless save button pushed is this really what we want?
  * @todo movie file device for usb: when loading/searching for a file to play or to display information:
@@ -48,11 +45,10 @@ import javax.sql.DataSource;
  * @todo enter actor and genres in movieDescriptionPanel
  * @todo update movie description window when ever a movie changes!!!
  * @todo in preferences: give browser to use? command line?
- * @todo find a versioning system!
  * @todo enter movie by hand:genres, actors, poster
  * @todo see iso problem in simplemagic
  * @todo user configurable regexps: implement friendly add/remove regexp
- * @todo search criteria: file quality, file version, file name
+ * @todo search criteria: file version, file name
  */
 @Import({H2Configuration.class,MySqlConfiguration.class})
 @EnableTransactionManagement
@@ -65,7 +61,7 @@ public class MyMovieDBConfiguration {
     private Environment env;
 
     @Value("${application.version}")
-    private String myMovieDBVersionString;
+    String myMovieDBVersionString;
 
     @Value("${spring.datasource.url}")
     String dataSourceUrl;

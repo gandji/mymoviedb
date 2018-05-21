@@ -1,10 +1,7 @@
 package org.gandji.mymoviedb.services;
 
 import org.gandji.mymoviedb.MyMovieDBPreferences;
-import org.gandji.mymoviedb.data.HibernateMovieDao;
-import org.gandji.mymoviedb.data.HibernateVideoFileDao;
-import org.gandji.mymoviedb.data.Movie;
-import org.gandji.mymoviedb.data.VideoFile;
+import org.gandji.mymoviedb.data.*;
 import org.gandji.mymoviedb.filefinder.FileNameUtils;
 import org.gandji.mymoviedb.filefinder.FileUtils;
 import org.gandji.mymoviedb.gui.InternetInfoSearchWorker;
@@ -232,7 +229,6 @@ public class MovieFileServices {
         LOG.info("Searching DB for kwds: " + kwdsConcat);
         List<Movie> tempList = null;
         try {
-            // @todo this is ugly! we have to remove duplicates!
             tempList = hibernateMovieDao.findByTitleKeywords(kwdsConcat);
             tempList.addAll(hibernateMovieDao.findByAlternateTitleKeywords(kwdsConcat));
             // remove duplicates
@@ -387,4 +383,35 @@ public class MovieFileServices {
         movieDescriptionDialog.setVisible(true);
 
     }
+
+    public void copyExceptFilesAndComments(Movie dest, Movie source) {
+        dest.setId(source.getId());
+        dest.setTitle(source.getTitle());
+        dest.setYear(source.getYear());
+        dest.setInfoUrl(source.getInfoUrl());
+        dest.setDirector(source.getDirector());
+        if (dest.getId()!=null) {
+            hibernateMovieDao.newActors(dest,source.getActors());
+        } else {
+            dest.clearActors();
+            for (Actor actor : source.getActors()) {
+                dest.addActorByName(actor.getName());
+            }
+        }
+        dest.setSummary(source.getSummary());
+        dest.setDuree(source.getDuree());
+        dest.setPosterBytes(source.getPosterBytes());
+        if (dest.getId()!=null) {
+            hibernateMovieDao.newGenres(dest,source.getGenres());
+        } else {
+            dest.clearGenres();
+            for (Genre genre : source.getGenres()) {
+                dest.addGenreByName(genre.getName());
+            }
+        }
+        dest.setAlternateTitle(source.getAlternateTitle());
+        dest.setRating(source.getRating());
+        dest.setLastSeen(source.getLastSeen());
+    }
+
 }
