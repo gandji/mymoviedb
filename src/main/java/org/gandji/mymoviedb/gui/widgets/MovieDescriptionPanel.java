@@ -105,6 +105,7 @@ public class MovieDescriptionPanel extends JPanel {
     private JScrollPane summaryScrollPane;
     private JLabel createdLabel;
     private JTextField createdTextField;
+    private JPanel summaryFilePanel;
 
     private MovieHolder movieHolder;
 
@@ -133,6 +134,7 @@ public class MovieDescriptionPanel extends JPanel {
 
     @PostConstruct
     public void postConstruct() {
+
         fakePoster();
         deleteButton.addActionListener(new ActionListener() {
             @Override
