@@ -1,5 +1,6 @@
 package org.gandji.mymoviedb.gui.widgets;
 
+import org.gandji.mymoviedb.data.Actor;
 import org.gandji.mymoviedb.data.repositories.ActorRepository;
 import org.gandji.mymoviedb.data.repositories.MovieRepository;
 import org.gandji.mymoviedb.data.repositories.VideoFileRepository;
@@ -11,8 +12,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by gandji on 02/04/2018.
@@ -70,6 +72,18 @@ public class StatisticsPanel extends JPanel {
     public void refresh() {
         movieCountWidget.setText(String.format("%d", movieRepository.count()));
         fileCountWidget.setText(String.format("%d", videoFileRepository.count()));
-        actorCountWidget.setText(String.format("%d", actorRepository.count()));
+        countActors();
+    }
+
+    /**
+     *  actors are duplicated, in fact one Actor in the actors table
+     *  has only one movie.... FIXME
+     *  so we count unique names to compute the true number of actors in the DB
+     */
+    private void countActors() {
+        Iterator<Actor> actors = actorRepository.findAll().iterator();
+        Set<String> names = new HashSet<>();
+        actorRepository.findAll().forEach(actor -> names.add(actor.getName()));
+        actorCountWidget.setText(String.format("%d",names.size()));
     }
 }
