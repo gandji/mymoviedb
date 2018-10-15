@@ -36,20 +36,6 @@ public class MyMovieDBPreferences {
     private static final String MAIN_WIDTH = "mainwidth";
     private static final String INTERNET_TARGET = "internetTarget";
 
-    //@Value("${spring.datasource.url}")
-    //String defaultDataSourceUrl;
-
-    // TODO REMOVE conection data from prefs @Value("${spring.datasource.username}")
-    //String defaultDataSourceUsername;
-
-    //@Value("${spring.datasource.password}")
-    //String defaultDataSourcePassword;
-
-    //@Value("${spring.datasource.driver-class-name}")
-    Class defautDataSourceDriver;
-
-   // @Value("${spring.datasource.driver-class-name}")
-    String defaultDataSourceDriverName;
     private final static String DEFAULT_DATE_FORMAT = "dd/mm/yyyy hh:mm::ss";
     private static final Integer DEFAULT_FONT_SIZE = 24;
     private static final Integer DEFAULT_RIGHT_COLUMN_WIDTH = 550;
@@ -64,39 +50,6 @@ public class MyMovieDBPreferences {
         resetPrefs();
     }
 
-    /*public String getDataSourceUrl() {
-        return dataSourceUrl;
-    }*/
-
-    /*public void setDataSourceUrl(final String dataSourceUrl) {
-        this.dataSourceUrl = dataSourceUrl;
-    }*/
-
-    /*public String getDataSourceUser() {
-        return dataSourceUser;
-    }*/
-
-    /*
-    public void setDataSourceUser(final String dataSourceUser) {
-        this.dataSourceUser = dataSourceUser;
-    }
-
-    public String getDataSourcePassword() {
-        return dataSourcePassword;
-    }
-
-    public void setDataSourcePassword(final String dataSourcePassword) {
-        this.dataSourcePassword = dataSourcePassword;
-    }
-
-    public String getDataSourceDriver() {
-        return dataSourceDriver;
-    }
-
-    public void setDataSourceDriver(String dataSourceDriver) {
-        this.dataSourceDriver = dataSourceDriver;
-    }
-    */
     public boolean isKeepDuplicateFilesOnScan() { return keepDuplicateFilesOnScan; }
 
     public void setKeepDuplicateFilesOnScan(boolean keepDuplicateFilesOnScan) { this.keepDuplicateFilesOnScan = keepDuplicateFilesOnScan; }
@@ -131,10 +84,6 @@ public class MyMovieDBPreferences {
 
     public void flushPrefs() {
        Preferences prefs = Preferences.userNodeForPackage(MyMovieDBConfiguration.class);
-       /*prefs.put(DATASOURCE_DRIVER_NAME,dataSourceDriver);
-       prefs.put(DATASOURCE_USERNAME,dataSourceUser);
-       prefs.put(DATASOURCE_URL,dataSourceUrl);
-       prefs.put(DATASOURCE_PASSWORD,dataSourcePassword);*/
        prefs.putInt(POSTER_HEIGHT,posterHeight);
        prefs.putInt(POSTER_WIDTH,posterWidth);
        prefs.putBoolean(KEEP_DUPLICATE_FILES_ON_SCAN,keepDuplicateFilesOnScan);
@@ -153,10 +102,6 @@ public class MyMovieDBPreferences {
 
    public void resetPrefs() {
        Preferences prefs = Preferences.userNodeForPackage(MyMovieDBConfiguration.class);
-       /*setDataSourcePassword(prefs.get(DATASOURCE_PASSWORD,defaultDataSourcePassword));
-       setDataSourceUrl(prefs.get(DATASOURCE_URL,defaultDataSourceUrl));
-       setDataSourceUser(prefs.get(DATASOURCE_USERNAME,defaultDataSourceUsername));
-       setDataSourceDriver(prefs.get(DATASOURCE_DRIVER_NAME,defaultDataSourceDriverName));*/
        setPosterHeight(prefs.getInt(POSTER_HEIGHT,268));
        setPosterWidth(prefs.getInt(POSTER_WIDTH,182));
        setKeepDuplicateFilesOnScan(prefs.getBoolean(KEEP_DUPLICATE_FILES_ON_SCAN,false));
