@@ -51,10 +51,6 @@ public class DbDisplayTable extends JTable implements ActionListener {
         this.movieDescriptionPanel = movieDescriptionPanel;
     }
 
-    public JPanel getMovieDescriptionPanel() {
-        return movieDescriptionPanel;
-    }
-
     @PostConstruct
     public void postInit() {
 

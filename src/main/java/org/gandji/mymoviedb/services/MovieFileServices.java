@@ -197,7 +197,7 @@ public class MovieFileServices {
             return 0;
         }
         // hash was not found, try file name, you never know....
-        LOG.info("File hash is not DB for file "+file.getFileName().toString()+", try file name, you never know....");
+        LOG.info("File hash is not in DB for file "+file.getFileName().toString()+", try file name, you never know....");
         List<VideoFile> mfl = videoFileDao.findByFileName(file.getFileName().toString());
         if (!mfl.isEmpty()) {
             // @todo file name is already in db, but different hash!
