@@ -17,7 +17,11 @@
  */
 package org.gandji.mymoviedb.data;
 
+import org.gandji.mymoviedb.data.repositories.KeywordExcludeRegexpRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  *
@@ -25,5 +29,22 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class HibernateKerDao {
+
+    @Autowired
+    KeywordExcludeRegexpRepository keywordExcludeRegexpRepository;
+
     public HibernateKerDao() {}
+
+
+    public List<KeywordExcludeRegexp> findByRegexpString(String dropk) {
+        return keywordExcludeRegexpRepository.findByRegexpString(dropk);
+    }
+
+    public KeywordExcludeRegexp save(KeywordExcludeRegexp ker) {
+        return  keywordExcludeRegexpRepository.save(ker);
+    }
+
+    public List<KeywordExcludeRegexp> findAll() {
+        return keywordExcludeRegexpRepository.findAll();
+    }
 }

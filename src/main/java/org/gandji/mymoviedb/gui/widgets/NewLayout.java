@@ -2,6 +2,8 @@ package org.gandji.mymoviedb.gui.widgets;
 
 import org.gandji.mymoviedb.MyMovieDBConfiguration;
 import org.gandji.mymoviedb.MyMovieDBPreferences;
+import org.gandji.mymoviedb.data.HibernateMovieDao;
+import org.gandji.mymoviedb.data.repositories.MovieRepository;
 import org.gandji.mymoviedb.filefinder.VideoFileWorker;
 import org.gandji.mymoviedb.gui.MovieDataModelPoster;
 import org.gandji.mymoviedb.gui.ScanADirectoryWorker;
@@ -10,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;

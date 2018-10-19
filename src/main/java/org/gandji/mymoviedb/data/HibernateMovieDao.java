@@ -19,10 +19,9 @@ package org.gandji.mymoviedb.data;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import org.gandji.mymoviedb.data.repositories.ActorRepository;
 import org.gandji.mymoviedb.data.repositories.MovieRepository;
 import org.gandji.mymoviedb.services.MovieFileServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,12 +49,28 @@ public abstract class HibernateMovieDao {
 
     protected MovieRepository movieRepository;
 
+    @Autowired
+    private ActorRepository actorRepository;
+
+    @Autowired
+    private HibernateActorDao hibernateActorDao;
+
     void setMovieRepository(MovieRepository movieRepository) {
         this.movieRepository = movieRepository;
     }
 
     @Transactional
     public Movie save(Movie movie) {
+        // TODO: configure unicity of actors, for now we enforce unicity of actors by hand, grrrr.....
+        for (Actor actor : movie.getActors()) {
+            if (actor.getId() != null) {continue;}
+
+            Iterable<Actor> actorsFromDB_ = hibernateActorDao.findByName(actor.getName());
+            Iterator<Actor> actorsFromDB = actorsFromDB_.iterator();
+            if (actorsFromDB.hasNext()) {
+                actor.setId(actorsFromDB.next().getId());
+            }
+        }
         return entityManager.merge(movie);
     }
 
@@ -199,12 +214,55 @@ public abstract class HibernateMovieDao {
     }
 
     @Transactional
+    // c'est cassé
+    @Deprecated
     public void addActorsToMovie(Long movieId, Set<Actor> actors) {
         Movie movie = movieRepository.findOne(movieId);
+        reallyAddActorsToMovie(movie,actors);
+    }
+
+    private void reallyAddActorsToMovie(Movie movie, Set<Actor> actors) {
         for (Actor actor : actors) {
-            movie.addActorByName(actor.getName());
+            if (actor.getId()==null) {
+                Iterable<Actor> actorsAlreadyInDB = actorRepository.findByName(actor.getName());
+                Iterator<Actor> actorsIterator = actorsAlreadyInDB.iterator();
+                if (actorsIterator.hasNext()) {
+                    Actor actorAlreadyInDB = actorsIterator.next();
+                    movie.addActor(actorAlreadyInDB);
+                } else {
+                    movie.addActor(actor);
+                }
+            } else {
+                movie.addActor(actor);
+            }
         }
         entityManager.merge(movie);
+    }
+
+    @Transactional
+    public Movie removeActor(Movie movie, Actor actor) {
+        Movie movieManaged = findOne(movie.getId());
+        Set<Actor> actors = movieManaged.getActors();
+        boolean removed = actors.remove(actor);
+        movieManaged = entityManager.merge(movieManaged);
+        /* no need to update actor since movie manages both sides of the relationship */
+        return movieManaged;
+    }
+
+    @Transactional
+    public Movie addActor(Movie movie, Actor actor) {
+        Movie movieManaged = findOne(movie.getId());
+        if (actor.getId() == null) {
+            movieManaged.addActor(actor);
+        } else {
+            Actor actorInDB = actorRepository.findOne(actor.getId());
+            //Actor actorInDB = new Actor(actor.getName());
+            actorInDB.setId(actor.getId());
+            movieManaged.addActor(actorInDB);
+        }
+        movieManaged = entityManager.merge(movieManaged);
+        /* no need to update actor since movie manages both sides of the relationship */
+        return movieManaged;
     }
 
     @Transactional
@@ -240,4 +298,5 @@ public abstract class HibernateMovieDao {
     public abstract Iterable<Movie> searchInternal(String titleKeywords, String directorKeywords,
                                                    String actorsKeywords, String genreKeyword,
                                                    String commentsKeywords, String qualiteVideoKeyword);
+
 }

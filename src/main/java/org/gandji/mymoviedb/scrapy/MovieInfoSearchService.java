@@ -463,36 +463,6 @@ public class MovieInfoSearchService {
         }
     }
 
-    private Movie getOnefilmFromTmdbParseHTML(String href) {
-        Movie movie = new Movie();
-        Document doc = null;
-        try {
-            Connection connection = Jsoup.connect(href+"?language=fr")
-                    .header("Accept", "application/json");
-            doc = connection.get();
-        } catch (IOException ex) {
-            LOG.error("cannot find url "+href, ex);
-        }
-        movie.setInfoUrlAsString(href);
-        if (null != doc) {
-            String title = doc.title();
-            title = title.replace(" — The Movie Database (TMDb)", "");
-            LOG.info("TITLE : " + title);
-            movie.setTitle(title);
-
-            Elements elts = doc.select("div[class=\"header_poster_wrapper\"]");
-            for (Element elt : elts) {
-                Elements releases = elts.select("span[class='release_date']");
-                for (Element release : releases) {
-                    LOG.info("Release date : " + release.text());
-                    movie.setYear(release.text());
-                }
-
-            }
-        }
-        return movie;
-    }
-
     private Movie getOneFilmFromImdb(String href) {
         Movie movie = new Movie();
         Document doc = null;

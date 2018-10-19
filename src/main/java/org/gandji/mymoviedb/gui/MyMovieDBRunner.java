@@ -20,11 +20,7 @@ package org.gandji.mymoviedb.gui;
 import java.util.Arrays;
 import java.util.List;
 
-import org.gandji.mymoviedb.data.HibernateMovieDao;
-import org.gandji.mymoviedb.data.KeywordExcludeRegexp;
-import org.gandji.mymoviedb.data.Movie;
-import org.gandji.mymoviedb.data.VideoFile;
-import org.gandji.mymoviedb.data.repositories.KeywordExcludeRegexpRepository;
+import org.gandji.mymoviedb.data.*;
 import org.gandji.mymoviedb.gui.widgets.NewLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +48,7 @@ public abstract class MyMovieDBRunner implements CommandLineRunner{
     private HibernateMovieDao hibernateMovieDao;
 
     @Autowired
-    private KeywordExcludeRegexpRepository keywordExcludeRegexpRepository;
+    private HibernateKerDao hibernateKerDao;
 
     @Override
     public void run(String... strings) throws Exception {
@@ -102,10 +98,10 @@ public abstract class MyMovieDBRunner implements CommandLineRunner{
                 );
         for (String dropk : dropRegexs) {
             try {
-                List<KeywordExcludeRegexp> kl = keywordExcludeRegexpRepository.findByRegexpString(dropk);
+                List<KeywordExcludeRegexp> kl = hibernateKerDao.findByRegexpString(dropk);
                 if (kl.isEmpty()) {
                     KeywordExcludeRegexp ker = new KeywordExcludeRegexp(dropk);
-                    keywordExcludeRegexpRepository.save(ker);
+                    hibernateKerDao.save(ker);
                 }
             } catch (DataIntegrityViolationException dv) {
                 // la table contient deja la regexp, cest pas grave

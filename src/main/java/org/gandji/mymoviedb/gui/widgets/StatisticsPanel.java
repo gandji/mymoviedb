@@ -1,12 +1,15 @@
 package org.gandji.mymoviedb.gui.widgets;
 
 import org.gandji.mymoviedb.data.Actor;
-import org.gandji.mymoviedb.data.repositories.ActorRepository;
+import org.gandji.mymoviedb.data.HibernateActorDao;
+import org.gandji.mymoviedb.data.HibernateMovieDao;
+import org.gandji.mymoviedb.data.HibernateVideoFileDao;
 import org.gandji.mymoviedb.data.repositories.MovieRepository;
 import org.gandji.mymoviedb.data.repositories.VideoFileRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -23,14 +26,20 @@ import java.util.Set;
 public class StatisticsPanel extends JPanel {
     Logger LOG = LoggerFactory.getLogger(StatisticsPanel.class);
 
+    /* need this one two trick spring into instantiating
+     * the movie repository early
+     */
     @Autowired
     MovieRepository movieRepository;
 
     @Autowired
-    ActorRepository actorRepository;
+    HibernateMovieDao hibernateMovieDao;
 
     @Autowired
-    VideoFileRepository videoFileRepository;
+    HibernateActorDao hibernateActorDao;
+
+    @Autowired
+    HibernateVideoFileDao hibernateVideoFileDao;
 
     public StatisticsPanel() throws HeadlessException {
     }
@@ -70,20 +79,27 @@ public class StatisticsPanel extends JPanel {
     }
 
     public void refresh() {
+        /* the hibernate movie dao is instantiated early enough,
+         * but without the movie repository!!!
+         * using the movie repository here is OK, though.
+         * I guess the HibernateMovieDao implementations have not called
+         * setMovieRepository yet...
+         */
         movieCountWidget.setText(String.format("%d", movieRepository.count()));
-        fileCountWidget.setText(String.format("%d", videoFileRepository.count()));
-        countActors();
+        fileCountWidget.setText(String.format("%d", hibernateVideoFileDao.count()));
+        actorCountWidget.setText(String.format("%d",hibernateActorDao.count()));
+        //countActors();
     }
 
     /**
-     *  actors are duplicated, in fact one Actor in the actors table
-     *  has only one movie.... FIXME
-     *  so we count unique names to compute the true number of actors in the DB
+     *  actors used to be duplicated, in fact one Actor in the actors table
+     *  had only one movie.... it is fixed, but this remains:
+     *  we counted unique names to compute the true number of actors in the DB
      */
-    private void countActors() {
-        Iterator<Actor> actors = actorRepository.findAll().iterator();
+    /* REMOVE private void countActors() {
+        Iterator<Actor> actors = hibernateActorDao.findAll().iterator();
         Set<String> names = new HashSet<>();
-        actorRepository.findAll().forEach(actor -> names.add(actor.getName()));
+        hibernateActorDao.findAll().forEach(actor -> names.add(actor.getName()));
         actorCountWidget.setText(String.format("%d",names.size()));
-    }
+    }*/
 }

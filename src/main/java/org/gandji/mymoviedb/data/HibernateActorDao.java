@@ -16,14 +16,19 @@
  */
 package org.gandji.mymoviedb.data;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 
 import org.gandji.mymoviedb.data.repositories.ActorRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -31,6 +36,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class HibernateActorDao {
+
+    Logger logger = LoggerFactory.getLogger(HibernateActorDao.class);
 
     @Autowired
     private ActorRepository actorRepository;
@@ -48,10 +55,62 @@ public class HibernateActorDao {
         transaction.commit();
     }
 
-    public List<Actor> list() {
-        throw new UnsupportedOperationException("Cannot list all actors yet");
+    public Iterable<Actor> findAll() {
+        return actorRepository.findAll();
+    }
+
+    public Iterable<Actor> findByName(String name) {
+        return actorRepository.findByName(name);
     }
 
     public long count() {return actorRepository.count();}
 
+    @Transactional
+    public List<Movie> findMoviesForActor(Actor actor) {
+        Actor actorAndMovie = actorRepository.findOne(actor.getId());
+        List<Movie> movl = new ArrayList<>();
+        for (Movie movie : actorAndMovie.getMovies()) {
+            movl.add(movie);
+        }
+        return movl;
+    }
+
+    public void delete(Actor actor) {
+        actorRepository.delete(actor);
+    }
+
+    @Transactional
+    public Actor removeMovie(Actor actor, Movie movie) {
+        Actor actorInDB = actorRepository.findOne(actor.getId());
+        boolean removed = actorInDB.getMovies().remove(movie);
+        if (removed) {
+            entityManager.merge(actorInDB);
+        }
+        return actorInDB;
+    }
+
+    @Transactional
+    public Actor addMovie(Actor actor, Movie movie) {
+        if (true || entityManager.contains(actor)) {
+            logger.info(" Actor "+actor.getName()+":"+actor.getId()+" is managed");
+            boolean added = actor.getMovies().add(movie);
+            if (added) {
+                actor = entityManager.merge(actor);
+            }
+            return actor;
+
+        } else {
+            logger.info(" Actor "+actor.getName()+":"+actor.getId()+" is NOT managed");
+            Actor actorInDB = actorRepository.findOne(actor.getId());
+            boolean added = actorInDB.getMovies().add(movie);
+            if (added) {
+                actorInDB = entityManager.merge(actorInDB);
+            }
+            return actorInDB;
+        }
+    }
+
+    public Actor findOne(Long id) {
+        return actorRepository.findOne(id);
+    }
 }
