@@ -27,7 +27,7 @@ public interface MovieFoundCallback {
 
     enum MovieFoundResult {
         CONTINUE,
-        STOP;
+        STOP
     }
 
     MovieFoundResult found(Movie movie);

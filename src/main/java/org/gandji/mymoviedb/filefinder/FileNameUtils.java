@@ -21,8 +21,9 @@ import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+
+import org.gandji.mymoviedb.data.HibernateKerDao;
 import org.gandji.mymoviedb.data.KeywordExcludeRegexp;
-import org.gandji.mymoviedb.data.repositories.KeywordExcludeRegexpRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +35,7 @@ import org.springframework.stereotype.Component;
 public class FileNameUtils {
 
     @Autowired
-    private KeywordExcludeRegexpRepository keywordExcludeRegexpRepository;
+    private HibernateKerDao hibernateKerDao;
     
     static private List<KeywordExcludeRegexp> dropRegexs = null;
     
@@ -72,7 +73,7 @@ public class FileNameUtils {
     // make non static, for dependency injection, grrrr
     public ArrayList<String> extractKeywords(File file) {
         if (null == dropRegexs){
-           dropRegexs = keywordExcludeRegexpRepository.findAll();
+           dropRegexs = hibernateKerDao.findAll();
         }
         return removeAccents(filterOut(splitName(file)));
     }

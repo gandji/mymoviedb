@@ -63,7 +63,7 @@ public class Movie {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
-    @ManyToMany(cascade=CascadeType.MERGE)
+    @ManyToMany(cascade={CascadeType.MERGE})
     @JoinColumns({
         @JoinColumn(name="ACTORS_ID",referencedColumnName = "id"),
         @JoinColumn(name="ACTORS_NAME",referencedColumnName = "name")})
@@ -182,13 +182,28 @@ public class Movie {
         return actors;
     }
 
+    private boolean alreadyHaveActor(Actor actor) {
+        boolean alreadyHaveActor = false;
+        for (Actor actorOfMovie : actors) {
+            if (actorOfMovie.getName().equals(actor.getName())) {
+                alreadyHaveActor = true;
+                break;
+            }
+        }
+        return alreadyHaveActor;
+    }
+
     public void addActorByName(String actorName) {
             Actor actor = new Actor(actorName);
-            actor.addMovie(this);
-        
-        this.actors.add(actor);
+            addActor(actor);
     }
-     
+
+    public void addActor(Actor actor) {
+        if (!alreadyHaveActor(actor)) {
+            actor.addMovie(this);
+            this.actors.add(actor);
+        }
+    }
    
     public String getSummary() {
         return summary;

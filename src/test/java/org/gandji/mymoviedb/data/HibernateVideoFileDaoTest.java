@@ -32,7 +32,7 @@ public class HibernateVideoFileDaoTest {
     public void importJson() throws Exception {
         System.out.println("Importing DB");
 
-        List<Movie> movies = (List<Movie>) readCollection("mymoviedb_movie",new Movie());
+        List<Movie> movies = readCollection("mymoviedb_movie",new Movie());
         //List<VideoFile> files = (List<VideoFile>) readCollection("mymoviedb_videofile",new VideoFile());
 
         for (Movie movie : movies) {

@@ -23,8 +23,8 @@ public class RepairDatabaseTest {
     RepairDatabase repairDatabase;
 
     @Test
-    public void fixActors() {
-        repairDatabase.fixMissingActors();
+    public void doRepair() {
+        repairDatabase.doRepair();
     }
 
     @Test

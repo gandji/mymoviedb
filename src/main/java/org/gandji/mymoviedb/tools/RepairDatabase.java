@@ -21,6 +21,8 @@ import org.gandji.mymoviedb.data.*;
 import org.gandji.mymoviedb.data.repositories.VideoFileRepository;
 import org.gandji.mymoviedb.filefinder.FileUtils;
 import org.gandji.mymoviedb.scrapy.MovieInfoSearchService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,8 +31,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.logging.Logger;
+import java.util.*;
 
 /**
  *
@@ -39,7 +40,7 @@ import java.util.logging.Logger;
 @Component
 public class RepairDatabase {
 
-    private static final Logger LOG = Logger.getLogger(RepairDatabase.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(RepairDatabase.class.getName());
 
     @Autowired
     private MovieInfoSearchService movieInfoSearchService;
@@ -48,15 +49,98 @@ public class RepairDatabase {
     private VideoFileRepository videoFileRepository;
 
     @Autowired
+    private HibernateActorDao hibernateActorDao;
+
+    @Autowired
     private HibernateVideoFileDao videoFileDao;
 
     @Autowired
     private HibernateMovieDao hibernateMovieDao;
 
     public void doRepair() {
-       fixNullHashCodes();
-       fixMissingActors();
-        fixMissingCreated();
+       //fixNullHashCodes();
+       //fixMissingActors();
+        //fixMissingCreated();
+        fixDoubleActors();
+    }
+
+    private void fixDoubleActors() {
+        Set<String> actorNames = new HashSet<>();
+        Map<String,Integer> actorCount = new HashMap<>();
+        int totalActors = 0;
+        //for (Actor actor : hibernateActorDao.findAll()) {
+        for (Actor actor : hibernateActorDao.findAll()) {
+            totalActors++;
+            String name = actor.getName();
+            if (actorNames.contains(name)) {
+                actorCount.put(name,actorCount.get(name) + 1);
+            } else  {
+                actorNames.add(name);
+                actorCount.put(name,1);
+            }
+        }
+
+        // log
+        logger.info("Found "+totalActors+" actor entries, and "+actorNames.size()+" names.");
+        actorCount.forEach((name, count) ->
+        {
+            if (count > 1) {
+                fixOneActorDoublon(name);
+            }
+        });
+
+    }
+
+    private void fixOneActorDoublon(String name) {
+        Iterator<Actor> actorIt = hibernateActorDao.findByName(name).iterator();
+        logger.info(" Fixing doublons for <"+name+">");
+        Actor target = null; // l'acteur qui va remplacer les doublons
+        List<Actor> actorsToRemove = new ArrayList<>();
+        while(actorIt.hasNext()) {
+            // pour chaque doublon....
+            Actor actor = actorIt.next();
+            logger.info("   -> "+actor.getId());
+            List<Movie> movies = hibernateActorDao.findMoviesForActor(actor);
+            Actor actorToRemove = null;
+            for (Movie movie : movies) {
+                logger.info("            "+movie.getTitle());
+                if (target != null) {
+                    // ...on a deja choisi l'acteur de remplacement parmi les doublons
+                    List<Actor> movieActors = hibernateMovieDao.findActorsForMovie(movie);
+                    ListIterator<Actor> movieActorIt = movieActors.listIterator();
+                    while(movieActorIt.hasNext()) {
+                        Actor movieActor = movieActorIt.next();
+                        if (movieActor.getName().equals(target.getName())) {
+                            // on enleve du film l'acteur avec ce nom
+                            movie = hibernateMovieDao.removeActor(movie, actor);
+                            actorsToRemove.add(actor);
+                            // on ajoute le premier doublon
+                            movie = hibernateMovieDao.addActor(movie, target);
+                            logger.info("     swapped actor "+movieActor.getId()+":"+movieActor.getName()
+                                    +" for "+target.getId()+":"+target.getName());
+                        }
+                    }
+                }
+            }
+            if (target==null) {
+                // premiere iteration de la liste des doublons,
+                // on choisit cet acteur pour remplacer les autres
+                target = actor;
+                logger.info("                  :target: "+actor.getId());
+            }
+
+        }
+        // remove orphan actors
+        for (Actor actor : actorsToRemove) {
+            List<Movie> movies = hibernateActorDao.findMoviesForActor(actor);
+            if (movies.isEmpty()) {
+                logger.info("Deleting orphan actor "+actor.getName()+":"+actor.getId());
+                hibernateActorDao.delete(actor);
+            } else {
+                logger.info("Not deleting actor "+actor.getName()+":"+actor.getId()
+                +" because has "+movies.size()+" movies");
+            }
+        }
     }
 
     private void fixMissingCreated() {
@@ -77,13 +161,17 @@ public class RepairDatabase {
         }
     }
 
+    /**
+     * This is broken and must be repaired: enforce manually unicity of actor names
+     */
+    @Deprecated
     public void fixMissingActors() {
 
         Pageable pageRequest = new PageRequest(0,50);
 
         Page<Movie> moviePage = hibernateMovieDao.findAll(pageRequest);
 
-        LOG.info("num of page in db "+moviePage.getTotalPages());
+        logger.info("num of page in db "+moviePage.getTotalPages());
 
         while (moviePage.hasContent()) {
             List<Movie> movies = moviePage.getContent();
@@ -92,59 +180,59 @@ public class RepairDatabase {
 
                 List<Actor> actors = hibernateMovieDao.findActorsForMovie(movie);
                 if (!actors.isEmpty()) {
-                    //LOG.info("Movie " + movie.getTitle() + " has actors!");
+                    //logger.info("Movie " + movie.getTitle() + " has actors!");
                 }
                 else if (actors.isEmpty()) {
-                    LOG.info("Movie " + movie.getTitle() + " has null actors.");
+                    logger.info("Movie " + movie.getTitle() + " has null actors.");
 
                     URL infoUrl = movie.getInfoUrl();
                     if (null!=infoUrl) {
                         Movie movieWithActors = movieInfoSearchService.getOneFilmFromUrl(infoUrl.toExternalForm());
 
-                        LOG.info("MOVIE: " + movie.getTitle());
+                        logger.info("MOVIE: " + movie.getTitle());
                         for (Actor actor : movieWithActors.getActors()) {
-                            LOG.info("    adding actor : " + actor.getName());
+                            logger.info("    adding actor : " + actor.getName());
                         }
-                        hibernateMovieDao.addActorsToMovie(movie.getId(), movieWithActors.getActors());
-                        LOG.info("MOVIE = " + movie.getTitle()+":  updated actors");
+                        // TODO fix fixMissingActors : hibernateMovieDao.addActorsToMovie(movie.getId(), movieWithActors.getActors());
+                        logger.info("MOVIE = " + movie.getTitle()+":  updated actors");
                     } else {
-                        LOG.info("MOVIE = "+movie.getTitle()+" has no internet info URL");
+                        logger.info("MOVIE = "+movie.getTitle()+" has no internet info URL");
                     }
                 }
 
                 List<Genre> genres = hibernateMovieDao.findGenresForMovie(movie);
                 if (!genres.isEmpty()){
-                    //LOG.info("Movie " + movie.getTitle() + " has genres!");
+                    //logger.info("Movie " + movie.getTitle() + " has genres!");
                 }
                 else if (genres.isEmpty()) {
-                    LOG.info("Movie " + movie.getTitle() + " has null genres.");
+                    logger.info("Movie " + movie.getTitle() + " has null genres.");
 
                     URL infoUrl = movie.getInfoUrl();
                     if (null!=infoUrl) {
                         Movie movieWithGenres = movieInfoSearchService.getOneFilmFromUrl(infoUrl.toExternalForm());
 
-                        LOG.info("MOVIE: " + movie.getTitle());
+                        logger.info("MOVIE: " + movie.getTitle());
                         for (Genre genre : genres) {
-                            LOG.info("    adding genre : " + genre.getName());
+                            logger.info("    adding genre : " + genre.getName());
                         }
                         hibernateMovieDao.addGenresToMovie(movie.getId(), movieWithGenres.getGenres());
-                        LOG.info("MOVIE = " + movie+": updated genres");
+                        logger.info("MOVIE = " + movie+": updated genres");
                     } else {
-                        LOG.info("MOVIE = "+movie.getTitle()+" has no internet info URL");
+                        logger.info("MOVIE = "+movie.getTitle()+" has no internet info URL");
                     }
                 }
 
                 if (movie.getPosterBytes()==null) {
                     URL infoUrl = movie.getInfoUrl();
                     if (null!=infoUrl) {
-                        LOG.info("Movie " + movie.getTitle() + " has no poster, fetching...");
+                        logger.info("Movie " + movie.getTitle() + " has no poster, fetching...");
                         Movie movieWithPoster = movieInfoSearchService.getOneFilmFromUrl(infoUrl.toExternalForm());
                         hibernateMovieDao.addPoster(movie.getId(), movieWithPoster.getPosterBytes());
                     } else {
-                        LOG.info("MOVIE = "+movie.getTitle()+" has nor poster, and has no internet info URL, cannot update poster");
+                        logger.info("MOVIE = "+movie.getTitle()+" has nor poster, and has no internet info URL, cannot update poster");
                     }
                 } else {
-                    //LOG.info("Movie has poster OK");
+                    //logger.info("Movie has poster OK");
                 }
 
             }
@@ -162,16 +250,16 @@ public class RepairDatabase {
         // find files with null hash and compute hash
         List<VideoFile> files = videoFileRepository.findNullHashCodes();
         if (files.isEmpty()) {
-            LOG.info("No file with null hash code found");
+            logger.info("No file with null hash code found");
         }else {
-            LOG.info("Found null hash Code files: ");
+            logger.info("Found null hash Code files: ");
             for (VideoFile videoFile : files) {
-                LOG.info("  -->  "+videoFile.getFileName());
-                LOG.info("       "+videoFile.getDirectory());
-                LOG.info("       "+videoFile.getId());
+                logger.info("  -->  "+videoFile.getFileName());
+                logger.info("       "+videoFile.getDirectory());
+                logger.info("       "+videoFile.getId());
                 videoFile.setHashCode(FileUtils.computeHash(Paths.get(videoFile.getDirectory(),
                         videoFile.getFileName())));
-                LOG.info("          update file hash to "+videoFile.getHashCode());
+                logger.info("          update file hash to "+videoFile.getHashCode());
                 videoFileDao.save(videoFile);
             }
         }

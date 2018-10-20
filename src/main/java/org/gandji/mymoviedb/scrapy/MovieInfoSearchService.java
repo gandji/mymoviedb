@@ -36,6 +36,7 @@ import com.omertron.themoviedbapi.model.movie.MovieInfo;
 import com.omertron.themoviedbapi.model.tv.TVBasic;
 import com.omertron.themoviedbapi.model.tv.TVInfo;
 import com.omertron.themoviedbapi.results.ResultList;
+import com.sun.istack.internal.NotNull;
 import org.gandji.mymoviedb.data.Movie;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -108,6 +109,7 @@ public class MovieInfoSearchService {
         return moviesImdb;
     }
 
+    @NotNull
     private List<Movie> searchTmdbForMovies(List<String> kwds, MovieFoundCallback callback) throws InterruptedException {
         String queryString = assembleQueryString(kwds);
         Integer nMoviesToReturn = maxMoviesReturned;
@@ -461,36 +463,6 @@ public class MovieInfoSearchService {
             int min = Math.floorMod(minutes,60);
             return ""+hours+"h "+min+"min";
         }
-    }
-
-    private Movie getOnefilmFromTmdbParseHTML(String href) {
-        Movie movie = new Movie();
-        Document doc = null;
-        try {
-            Connection connection = Jsoup.connect(href+"?language=fr")
-                    .header("Accept", "application/json");
-            doc = connection.get();
-        } catch (IOException ex) {
-            LOG.error("cannot find url "+href, ex);
-        }
-        movie.setInfoUrlAsString(href);
-        if (null != doc) {
-            String title = doc.title();
-            title = title.replace(" — The Movie Database (TMDb)", "");
-            LOG.info("TITLE : " + title);
-            movie.setTitle(title);
-
-            Elements elts = doc.select("div[class=\"header_poster_wrapper\"]");
-            for (Element elt : elts) {
-                Elements releases = elts.select("span[class='release_date']");
-                for (Element release : releases) {
-                    LOG.info("Release date : " + release.text());
-                    movie.setYear(release.text());
-                }
-
-            }
-        }
-        return movie;
     }
 
     private Movie getOneFilmFromImdb(String href) {

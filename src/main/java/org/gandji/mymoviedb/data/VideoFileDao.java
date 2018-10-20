@@ -24,9 +24,9 @@ import java.util.List;
  * @author gandji <gandji@free.fr>
  */
 public interface VideoFileDao {
-     public void save(VideoFile videoFile);
-     public Movie findMovieForFile(String hashCode);
-     public List<VideoFile> list();
-     public void deleteFile(VideoFile videoFile);
-     public List<VideoFile> findFileByFileName(String fileName);
+     void save(VideoFile videoFile);
+     Movie findMovieForFile(String hashCode);
+     List<VideoFile> list();
+     void deleteFile(VideoFile videoFile);
+     List<VideoFile> findFileByFileName(String fileName);
 }

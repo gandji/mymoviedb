@@ -70,8 +70,8 @@ public class MovieDescriptionPanel extends JPanel {
     private JTextField titleTextField;
     private JTextField alternateTitleTextField;
     private JTextField directorTextField;
-    private JList actorsList;
-    private JList genresList;
+    private JList<String> actorsList;
+    private JList<String> genresList;
     private JTextPane summaryTextArea;
     private JTextField yearTextField;
     private JTextField durationTextField;
@@ -105,6 +105,7 @@ public class MovieDescriptionPanel extends JPanel {
     private JScrollPane summaryScrollPane;
     private JLabel createdLabel;
     private JTextField createdTextField;
+    private JPanel summaryFilePanel;
 
     private MovieHolder movieHolder;
 
@@ -133,6 +134,7 @@ public class MovieDescriptionPanel extends JPanel {
 
     @PostConstruct
     public void postConstruct() {
+
         fakePoster();
         deleteButton.addActionListener(new ActionListener() {
             @Override
@@ -323,7 +325,7 @@ public class MovieDescriptionPanel extends JPanel {
         if (null == data.getRating()) {
             data.setRating(0);
         }
-        SpinnerNumberModel ratingModel = new SpinnerNumberModel((int) data.getRating(), (int) 0, 5, 1);
+        SpinnerNumberModel ratingModel = new SpinnerNumberModel((int) data.getRating(), 0, 5, 1);
         ratingSpinner.setModel(ratingModel);
         // hack for null last seen dates
         lastSeenFormattedTextField.setText(data.getLastSeen() == null ? "unset" : data.getLastSeen().toString());

@@ -74,13 +74,13 @@ public class FileDataModel extends AbstractTableModel {
 
     public void populateEditors(JTable table) {
         // version
-        JComboBox versionCombo = new JComboBox();
+        JComboBox<VideoFile.Version> versionCombo = new JComboBox<>();
         for (VideoFile.Version version : VideoFile.Version.values()) {
             versionCombo.addItem(version);
         }
         table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(versionCombo));
         // qualite video
-        JComboBox qualityCombo = new JComboBox();
+        JComboBox<VideoFile.QualiteVideo> qualityCombo = new JComboBox<>();
         for (VideoFile.QualiteVideo qualiteVideo : VideoFile.QualiteVideo.values()) {
             qualityCombo.addItem(qualiteVideo);
         }
@@ -91,7 +91,7 @@ public class FileDataModel extends AbstractTableModel {
 
     public enum Role {
         FILENAME, VERSION, QUALITE_VIDEO, DRIVE_LABEL,
-    };
+    }
 
     private class ColumnDescription {
 

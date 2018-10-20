@@ -45,7 +45,7 @@ public class Actor {
     
     private String name;
     
-    @ManyToMany(mappedBy="actors",cascade=CascadeType.MERGE)
+    @ManyToMany(mappedBy="actors",cascade={})
     private Set<Movie> movies = null;
 
     public Actor(String _name){
@@ -67,8 +67,26 @@ public class Actor {
         }
     }
 
+    public Long getId() {
+        return id;
+    }
+
     private boolean hasMovie(Movie movie) {
         return movies.contains(movie);
     }
-    
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object actor) {
+        if (!(actor instanceof Actor)) { return false; }
+        return name.equals(((Actor)actor).getName());
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

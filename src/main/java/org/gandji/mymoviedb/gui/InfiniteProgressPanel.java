@@ -167,8 +167,9 @@ public class InfiniteProgressPanel extends JComponent implements MouseListener
                 g2.fill(ticker[i]);
 
                 Rectangle2D bounds = ticker[i].getBounds2D();
-                if (bounds.getMaxY() > maxY)
+                if (bounds.getMaxY() > maxY) {
                     maxY = bounds.getMaxY();
+                }
             }
 
             if (text != null && text.length() > 0)
@@ -239,8 +240,9 @@ public class InfiniteProgressPanel extends JComponent implements MouseListener
             AffineTransform toCircle = AffineTransform.getRotateInstance(fixedIncrement, center.getX(), center.getY());
     
             long start = System.currentTimeMillis();
-            if (rampDelay == 0)
+            if (rampDelay == 0) {
                 alphaLevel = rampUp ? 255 : 0;
+            }
 
             started = true;
             boolean inRamp = rampUp;
@@ -249,8 +251,7 @@ public class InfiniteProgressPanel extends JComponent implements MouseListener
             {
                 if (!inRamp)
                 {
-                    for (int i = 0; i < ticker.length; i++)
-                        ticker[i].transform(toCircle);
+                    for (Area aTicker : ticker) aTicker.transform(toCircle);
                 }
 
                 repaint();
