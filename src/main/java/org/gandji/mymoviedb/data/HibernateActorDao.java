@@ -89,27 +89,6 @@ public class HibernateActorDao {
         return actorInDB;
     }
 
-    @Transactional
-    public Actor addMovie(Actor actor, Movie movie) {
-        if (true || entityManager.contains(actor)) {
-            logger.info(" Actor "+actor.getName()+":"+actor.getId()+" is managed");
-            boolean added = actor.getMovies().add(movie);
-            if (added) {
-                actor = entityManager.merge(actor);
-            }
-            return actor;
-
-        } else {
-            logger.info(" Actor "+actor.getName()+":"+actor.getId()+" is NOT managed");
-            Actor actorInDB = actorRepository.findOne(actor.getId());
-            boolean added = actorInDB.getMovies().add(movie);
-            if (added) {
-                actorInDB = entityManager.merge(actorInDB);
-            }
-            return actorInDB;
-        }
-    }
-
     public Actor findOne(Long id) {
         return actorRepository.findOne(id);
     }

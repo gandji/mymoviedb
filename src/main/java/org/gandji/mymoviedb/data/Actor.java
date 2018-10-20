@@ -45,7 +45,7 @@ public class Actor {
     
     private String name;
     
-    @ManyToMany(mappedBy="actors",cascade={CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToMany(mappedBy="actors",cascade={})
     private Set<Movie> movies = null;
 
     public Actor(String _name){

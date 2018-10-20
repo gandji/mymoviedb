@@ -62,14 +62,21 @@ public abstract class HibernateMovieDao {
     @Transactional
     public Movie save(Movie movie) {
         // TODO: configure unicity of actors, for now we enforce unicity of actors by hand, grrrr.....
-        for (Actor actor : movie.getActors()) {
-            if (actor.getId() != null) {continue;}
+        Set<Actor> actors;
+        if (movie.getId()==null) {
+            actors = movie.getActors();
+            for (Actor actor : actors) {
+                if (actor.getId() != null) {continue;}
 
-            Iterable<Actor> actorsFromDB_ = hibernateActorDao.findByName(actor.getName());
-            Iterator<Actor> actorsFromDB = actorsFromDB_.iterator();
-            if (actorsFromDB.hasNext()) {
-                actor.setId(actorsFromDB.next().getId());
+                Iterable<Actor> actorsFromDB_ = hibernateActorDao.findByName(actor.getName());
+                Iterator<Actor> actorsFromDB = actorsFromDB_.iterator();
+                if (actorsFromDB.hasNext()) {
+                    Actor actorFromDB = actorsFromDB.next();
+                    actor.setId(actorFromDB.getId());
+                }
             }
+        } else {
+            // if the movie is in DB, update of actors must be done through addActor below
         }
         return entityManager.merge(movie);
     }

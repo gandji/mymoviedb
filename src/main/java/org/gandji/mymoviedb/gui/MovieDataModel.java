@@ -74,7 +74,7 @@ public class MovieDataModel extends AbstractTableModel {
 
     public enum Role {
         POSTER, TITLE, YEAR, DIRECTOR,RATING,IMDBURL,DUREE, LAST_SEEN,SUMMARY
-    };
+    }
 
     static class ColumnDescription {
 
@@ -145,7 +145,7 @@ public class MovieDataModel extends AbstractTableModel {
         allColumns.put(Role.LAST_SEEN, new ColumnDescription(Role.LAST_SEEN, "Last seen",40));
         allColumns.put(Role.SUMMARY, new ColumnDescription(Role.SUMMARY, "Summary",250));
 
-    };
+    }
 
     public void addDisplayedColumn(Role role) {
         displayedColumns.add(allColumns.get(role));

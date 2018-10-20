@@ -63,7 +63,7 @@ public class Movie {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
-    @ManyToMany(cascade={})
+    @ManyToMany(cascade={CascadeType.MERGE})
     @JoinColumns({
         @JoinColumn(name="ACTORS_ID",referencedColumnName = "id"),
         @JoinColumn(name="ACTORS_NAME",referencedColumnName = "name")})

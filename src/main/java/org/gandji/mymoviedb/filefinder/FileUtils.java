@@ -63,7 +63,7 @@ public class FileUtils {
                 totalBytesToRead = totalBytesToRead - nread;
                 offset = offset + nread;
                 md.update(dataBytes, 0, nread);
-            };
+            }
             hashCode = md.digest();
         /*
             StringBuffer sb = new StringBuffer();
