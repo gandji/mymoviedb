@@ -211,8 +211,13 @@ public class MovieDescriptionPanel extends JPanel {
         this.movie.setRating((Integer) ratingSpinner.getValue());
         // @todo manage date of last seen: editor? formatter?
         // hack for unset last seen date!
-        this.movie.setLastSeen(lastSeenFormattedTextField.getText().equals("unset") ? null : Date.valueOf(lastSeenFormattedTextField.getText()));
-
+        try {
+            this.movie.setLastSeen(lastSeenFormattedTextField.getText().equals("unset") ? null : Date.valueOf(lastSeenFormattedTextField.getText()));
+        } catch (IllegalArgumentException e) {
+            LOG.info("Unknown date : "+lastSeenFormattedTextField.getText());
+            LOG.info("Accepted date format is yyy-mm-dd");
+            e.printStackTrace();
+        }
         this.movie = hibernateMovieDao.save(this.movie);
         LOG.info("Updated movie in DB: " + movie.getTitle());
     }

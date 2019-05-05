@@ -63,6 +63,8 @@ public class NewLayout extends JFrame {
     private DbDisplayTable dbDisplayTable;
     private JScrollPane jScrollPane1;
 
+    private JTabbedPane tabbedPane;
+
     // the main menu bar
     private javax.swing.JMenuItem AddDirectoryMenuItem;
     private javax.swing.JMenuItem AddFileMenuItem;
@@ -82,16 +84,6 @@ public class NewLayout extends JFrame {
 
 
     private void createComponents() {
-
-        /* REMOVE dbDisplayTable.setModel(new javax.swing.table.DefaultTableModel(
-                new Object[][]{
-
-                },
-                new String[]{
-
-                }
-        ));
-        */
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jScrollPane1.setPreferredSize(new Dimension(movieDataModelPoster.getPreferredWidth(0),5000));
@@ -215,6 +207,8 @@ public class NewLayout extends JFrame {
 
         setJMenuBar(MenuBar);
 
+        // the tabbed pane
+        tabbedPane = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT);
     }
 
     @PostConstruct
@@ -230,8 +224,7 @@ public class NewLayout extends JFrame {
                 jToggleButton1.setSelected(false);
             }
         });
-        MovieDescriptionPanel movieDescriptionPanel = (MovieDescriptionPanel) applicationContext.getBean("movieDescriptionPanel");
-        dbDisplayTable = (DbDisplayTable) applicationContext.getBean("dbDisplayTable", movieDescriptionPanel);
+        dbDisplayTable = (DbDisplayTable) applicationContext.getBean("dbDisplayTable", tabbedPane);
         jScrollPane1.setViewportView(dbDisplayTable);
 
         // put things in the main layout
@@ -242,7 +235,7 @@ public class NewLayout extends JFrame {
         borderLayout.addLayoutComponent(jScrollPane1, BorderLayout.LINE_START);
         borderLayout.addLayoutComponent(movieDescriptionPanel.getPanel(),BorderLayout.CENTER);*/
         getContentPane().add(jScrollPane1, BorderLayout.LINE_START);
-        getContentPane().add(movieDescriptionPanel.getPanel(), BorderLayout.CENTER);
+        getContentPane().add(tabbedPane);
         getContentPane().add(rightColumn,BorderLayout.LINE_END);
 
         getContentPane().setPreferredSize(new Dimension(preferences.getMainWidth(),preferences.getMainHeight()));

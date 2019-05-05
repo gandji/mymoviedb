@@ -42,13 +42,13 @@ public class DbDisplayTable extends JTable implements ActionListener {
     @Autowired
     private MovieGuiService movieGuiService;
 
-    private JPanel movieDescriptionPanel;
+    private JTabbedPane tabbedPane;
 
     @Autowired
     private MovieDataModelPoster movieDataModelPoster;
 
-    public DbDisplayTable(JPanel movieDescriptionPanel) {
-        this.movieDescriptionPanel = movieDescriptionPanel;
+    public DbDisplayTable(JTabbedPane tabbedPane) {
+        this.tabbedPane = tabbedPane;
     }
 
     @PostConstruct
@@ -173,8 +173,17 @@ public class DbDisplayTable extends JTable implements ActionListener {
     private void displayMovieDetails(int row) {
         // get the movie, with the "-1" trick
         Movie movie = (Movie) this.getModel().getValueAt(row, -1);
-        // TODO fix this cast
-        ((MovieDescriptionPanel)movieDescriptionPanel).setData(movie);
+        int i = tabbedPane.indexOfTab(movie.getTitle());
+        if (-1==i) {
+            MovieDescriptionPanel mdp = (MovieDescriptionPanel)applicationContext.getBean("movieDescriptionPanel");
+            mdp.setData(movie);
+            tabbedPane.addTab(movie.getTitle(), mdp.getPanel());
+            i = tabbedPane.indexOfTab(movie.getTitle());
+            tabbedPane.setTabComponentAt(i, new ButtonTabComponent(tabbedPane));
+            tabbedPane.setSelectedIndex(i);
+        } else {
+            tabbedPane.setSelectedIndex(i);
+        }
     }
 
     private void playSelectedMovie() {

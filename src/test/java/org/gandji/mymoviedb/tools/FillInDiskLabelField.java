@@ -53,7 +53,7 @@ public class FillInDiskLabelField {
 
             LOG.info("FILE "+vf.getFileName()+" DRIVE "+vf.getDirectory().substring(0,3)+" AND DISK : "+label);
             vf.setDriveLabel(label);
-            hibernateVideoFileDao.save(vf);
+            //hibernateVideoFileDao.save(vf);
 
         }
 
