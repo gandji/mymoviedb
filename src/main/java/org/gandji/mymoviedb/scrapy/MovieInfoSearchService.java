@@ -36,7 +36,6 @@ import com.omertron.themoviedbapi.model.movie.MovieInfo;
 import com.omertron.themoviedbapi.model.tv.TVBasic;
 import com.omertron.themoviedbapi.model.tv.TVInfo;
 import com.omertron.themoviedbapi.results.ResultList;
-import com.sun.istack.internal.NotNull;
 import org.gandji.mymoviedb.data.Movie;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -109,7 +108,6 @@ public class MovieInfoSearchService {
         return moviesImdb;
     }
 
-    @NotNull
     private List<Movie> searchTmdbForMovies(List<String> kwds, MovieFoundCallback callback) throws InterruptedException {
         String queryString = assembleQueryString(kwds);
         Integer nMoviesToReturn = maxMoviesReturned;

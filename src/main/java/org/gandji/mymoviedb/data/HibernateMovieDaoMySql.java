@@ -89,8 +89,10 @@ public class HibernateMovieDaoMySql extends HibernateMovieDao {
                                           String commentsKeywords, String qualiteVideoKeyword) {
         Map<String,String> criterias = new HashMap<>();
         if (null!=titleKeywords && !"".equals(titleKeywords)) {
-            criterias.put("title"," ( ( match title          against (\""+titleKeywords + "\" in natural language mode) ) " +
-                    "or ( match alternate_title against (\""+titleKeywords + "\" in natural language mode) ) )");
+            for (String titleKeyword : titleKeywords.split(" +")) {
+                criterias.put(titleKeyword," ( ( match title          against (\""+titleKeyword + "\" in natural language mode) ) " +
+                        "or ( match alternate_title against (\""+titleKeyword + "\" in natural language mode) ) )");
+            }
         }
 
         if (null!=directorKeywords && !"".equals(directorKeywords)) {
