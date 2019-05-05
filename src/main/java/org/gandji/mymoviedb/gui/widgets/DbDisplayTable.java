@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -26,7 +28,7 @@ import java.util.prefs.Preferences;
  */
 @Component
 public class DbDisplayTable extends JTable implements ActionListener {
-    
+
     Logger LOG = Logger.getLogger(DbDisplayTable.class.getName());
     
     // the popup for db display
@@ -35,6 +37,8 @@ public class DbDisplayTable extends JTable implements ActionListener {
     private JMenuItem menuItemPlayMovie;
     private JMenuItem menuItemInternetCritics;
     private JMenuItem menuItemOpenInfoUrl;
+
+    private final JLabel titleLabel;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -47,7 +51,8 @@ public class DbDisplayTable extends JTable implements ActionListener {
     @Autowired
     private MovieDataModelPoster movieDataModelPoster;
 
-    public DbDisplayTable(JTabbedPane tabbedPane) {
+    public DbDisplayTable(JTabbedPane tabbedPane, JLabel titleLabel) {
+        this.titleLabel = titleLabel;
         this.tabbedPane = tabbedPane;
     }
 
@@ -112,6 +117,18 @@ public class DbDisplayTable extends JTable implements ActionListener {
         }
         this.setRowHeight(Math.max(268,getRowHeight()));
 
+        movieDataModelPoster.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (titleLabel != null) {
+                    if (movieDataModelPoster.getRowCount()>200) {
+                        titleLabel.setText("Films");
+                    } else {
+                        titleLabel.setText(""+movieDataModelPoster.getRowCount()+" films");
+                    }
+                }
+            }
+        });
     }
 
     // popup menu actions

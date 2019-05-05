@@ -224,7 +224,12 @@ public class NewLayout extends JFrame {
                 jToggleButton1.setSelected(false);
             }
         });
-        dbDisplayTable = (DbDisplayTable) applicationContext.getBean("dbDisplayTable", tabbedPane);
+        JLabel titleLabel = new JLabel("Films");
+        dbDisplayTable = (DbDisplayTable) applicationContext.getBean("dbDisplayTable", tabbedPane, titleLabel);
+        JPanel leftPanel = new JPanel();
+        leftPanel.setLayout(new BoxLayout(leftPanel,BoxLayout.PAGE_AXIS));
+        leftPanel.add(titleLabel);
+        leftPanel.add(jScrollPane1);
         jScrollPane1.setViewportView(dbDisplayTable);
 
         // put things in the main layout
@@ -234,7 +239,7 @@ public class NewLayout extends JFrame {
         /*borderLayout.addLayoutComponent(rightColumn, BorderLayout.LINE_END);
         borderLayout.addLayoutComponent(jScrollPane1, BorderLayout.LINE_START);
         borderLayout.addLayoutComponent(movieDescriptionPanel.getPanel(),BorderLayout.CENTER);*/
-        getContentPane().add(jScrollPane1, BorderLayout.LINE_START);
+        getContentPane().add(leftPanel, BorderLayout.LINE_START);
         getContentPane().add(tabbedPane);
         getContentPane().add(rightColumn,BorderLayout.LINE_END);
 

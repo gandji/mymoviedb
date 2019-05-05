@@ -135,7 +135,7 @@ public class MovieDataModel extends AbstractTableModel {
 
         allColumns = new HashMap<>();
 
-        allColumns.put(Role.POSTER, new ColumnDescription(Role.POSTER, "Films",190));
+        allColumns.put(Role.POSTER, new ColumnDescription(Role.POSTER, "",190));
         allColumns.put(Role.TITLE, new ColumnDescription(Role.TITLE, "Title",120));
         allColumns.put(Role.YEAR, new ColumnDescription(Role.YEAR, "Year",35));
         allColumns.put(Role.DIRECTOR, new ColumnDescription(Role.DIRECTOR, "Director",80));
