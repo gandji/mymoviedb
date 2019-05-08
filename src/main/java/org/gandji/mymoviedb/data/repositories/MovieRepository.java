@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.net.URL;
 import java.util.List;
@@ -38,6 +39,8 @@ public interface MovieRepository extends PagingAndSortingRepository<Movie,Long> 
     List<Movie> findByInfoUrl(URL infoUrl);
     List<Movie> findByDirector(String kwds);
     List<Movie> findByGenres(String genr);
+
+    List<Movie> findByActorName(String name);
 
     Page<Movie> findAllByOrderByCreatedDesc(Pageable pageRequest);
 }

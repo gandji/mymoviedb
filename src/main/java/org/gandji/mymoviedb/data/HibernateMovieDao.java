@@ -300,6 +300,8 @@ public abstract class HibernateMovieDao {
 
     public abstract List<Movie> findByActorsKeywords(String kwds);
 
+    public abstract List<Movie> findByActorName(String name);
+
     public abstract List<Movie> findByInfoUrl(URL infoUrl);
 
     public abstract Iterable<Movie> searchInternal(String titleKeywords, String directorKeywords,

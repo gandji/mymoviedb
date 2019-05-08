@@ -57,9 +57,15 @@ public interface MovieRepositoryMySql extends MovieRepository { //PagingAndSorti
             nativeQuery = true)
     List<Movie> findByActorsKeywords(@Param("kwds") String kwds);
 
+    @Query(value="select * from movie left join movie_actors as ma on ma.movies_id=movie.id          \n" +
+            "                     join actor on actor.id=actors_id\n" +
+            " where actor.name like :#{#name} ;",
+            nativeQuery = true)
+    List<Movie> findByActorName(@Param("name") String name);
+
     List<Movie> findByInfoUrl(URL imdbUrl);
 
-    @Query(value="select * from movie left outer join movie_genre as mg on mg.movies_id=movie.id \n" +
+    @Query(value="select * from movie left outer join movie_genres as mg on mg.movies_id=movie.id \n" +
             "                  where genres_name like :#{#genr} ;",
             nativeQuery = true)
     List<Movie> findByGenreName(@Param("genr") String genr);

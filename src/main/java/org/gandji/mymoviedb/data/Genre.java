@@ -16,6 +16,8 @@
  */
 package org.gandji.mymoviedb.data;
 
+import org.gandji.mymoviedb.data.repositories.MovieCountPerAttribute;
+
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.HashSet;
@@ -26,6 +28,26 @@ import javax.persistence.*;
  *
  * @author gandji <gandji@free.fr>
  */
+@NamedNativeQuery(name="countMoviesPerGenre",query="select g.name,count(name) FROM "
+        +" genre as g "
+        +" join movie_genres as mg on mg.genres_name=g.name"
+        +" left join movie as m on m.id=mg.movies_id"
+        +" GROUP BY g.name"
+        +" order by count(name) desc"
+        +" limit 40;",
+        resultSetMapping = "moviesPerGenreResult")
+@SqlResultSetMapping(
+        name="moviesPerGenreResult",
+        classes={
+                @ConstructorResult(
+                        targetClass = MovieCountPerAttribute.class,
+                        columns = {
+                                @ColumnResult(name = "g.name",type = String.class),
+                                @ColumnResult(name = "count(name)",type = Long.class)
+                        }
+                )
+        }
+)
 @Entity
 @Table(name="GENRE")
 public class Genre {

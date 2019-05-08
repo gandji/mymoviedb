@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.PersistenceContext;
 
 import org.gandji.mymoviedb.data.repositories.ActorRepository;

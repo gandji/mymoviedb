@@ -79,6 +79,11 @@ public class HibernateMovieDaoMySql extends HibernateMovieDao {
     }
 
     @Override
+    public List<Movie> findByActorName(String name) {
+        return movieRepository.findByActorName(name);
+    }
+
+    @Override
     public List<Movie> findByInfoUrl(URL infoUrl) {
         return movieRepository.findByInfoUrl(infoUrl);
     }
@@ -100,7 +105,11 @@ public class HibernateMovieDaoMySql extends HibernateMovieDao {
         }
 
         if (null!=actorsKeywords && !"".equals(actorsKeywords)) {
-            criterias.put("actors", " (match a.name against (\""+actorsKeywords+"\" in natural language mode)) ");
+            for (String actorKeyword : actorsKeywords.split(" +")) {
+                if (actorKeyword.length() > 3) {
+                    criterias.put(actorKeyword, " (match a.name against (\"" + actorKeyword + "\" in natural language mode)) ");
+                }
+            }
         }
 
         if (null!=genreKeyword && !"".equals(genreKeyword) && !"Any".equals(genreKeyword)) {
@@ -124,7 +133,7 @@ public class HibernateMovieDaoMySql extends HibernateMovieDao {
         }
 
         String queryString = "SELECT * from movie ";
-        if (criterias.containsKey("actors")) {
+        if (actorsKeywords!=null) {
             queryString = queryString + "left outer join movie_actors as ma on movie.id=ma.movies_id " +
                     "left outer join actor as a on a.id=actors_id ";
         }

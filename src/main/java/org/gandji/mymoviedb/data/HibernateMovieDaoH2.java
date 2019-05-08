@@ -125,6 +125,10 @@ public class HibernateMovieDaoH2 extends HibernateMovieDao {
     }
 
     @Override
+    public List<Movie> findByActorName(String name) {
+        return movieRepository.findByActorName(name);
+    }
+    @Override
     public List<Movie> findByInfoUrl(URL infoUrl) {
         return movieRepository.findByInfoUrl(infoUrl);
     }
