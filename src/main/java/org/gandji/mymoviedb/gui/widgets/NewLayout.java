@@ -116,9 +116,9 @@ public class NewLayout extends JFrame {
         JPanel statisticsTab = new JPanel();
         statisticsTab.setLayout(new BoxLayout(statisticsTab,BoxLayout.PAGE_AXIS));
         statisticsTab.add(statisticsPanel);
-        statisticsTab.add(new Box.Filler(new Dimension(preferredRightColumnWidth, 0),
-                new Dimension(preferredRightColumnWidth, preferredHeight),
-                new Dimension(preferredRightColumnWidth, preferredHeight)));
+        //statisticsTab.add(new Box.Filler(new Dimension(preferredRightColumnWidth, 0),
+        //        new Dimension(preferredRightColumnWidth, preferredHeight),
+        //        new Dimension(preferredRightColumnWidth, preferredHeight)));
         rightColumn.addTab("Statistics", statisticsTab);
 
         rightColumn.addChangeListener(e -> {

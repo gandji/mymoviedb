@@ -1,18 +1,11 @@
 package org.gandji.mymoviedb.gui.widgets;
 
-import org.gandji.mymoviedb.data.HibernateMovieDao;
 import org.gandji.mymoviedb.data.Movie;
 import org.gandji.mymoviedb.data.repositories.MovieCountPerAttribute;
-import org.gandji.mymoviedb.gui.MovieDataModelPoster;
-import org.jfree.chart.ChartMouseEvent;
-import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.entity.CategoryItemEntity;
 import org.jfree.chart.entity.ChartEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
 import java.util.Collections;
 
 /**

@@ -3,22 +3,14 @@ package org.gandji.mymoviedb.gui.widgets;
 import org.gandji.mymoviedb.data.HibernateActorDao;
 import org.gandji.mymoviedb.data.HibernateMovieDao;
 import org.gandji.mymoviedb.data.HibernateVideoFileDao;
-import org.gandji.mymoviedb.data.Movie;
 import org.gandji.mymoviedb.data.repositories.MovieRepository;
-import org.gandji.mymoviedb.data.repositories.MovieCountPerAttribute;
 import org.gandji.mymoviedb.gui.MovieDataModelPoster;
-import org.jfree.chart.*;
-import org.jfree.chart.entity.CategoryItemEntity;
-import org.jfree.chart.entity.ChartEntity;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
 import javax.swing.*;
 import java.awt.*;
 
@@ -110,22 +102,9 @@ public class StatisticsPanel extends JPanel {
         movieCountWidget.setText(String.format("%d", movieRepository.count()));
         fileCountWidget.setText(String.format("%d", hibernateVideoFileDao.count()));
         actorCountWidget.setText(String.format("%d",hibernateActorDao.count()));
-        //countActors();
 
         actorsPanel.refresh();
         genresPanel.refresh();
 
     }
-
-    /**
-     *  actors used to be duplicated, in fact one Actor in the actors table
-     *  had only one movie.... it is fixed, but this remains:
-     *  we counted unique names to compute the true number of actors in the DB
-     */
-    /* REMOVE private void countActors() {
-        Iterator<Actor> actors = hibernateActorDao.findAll().iterator();
-        Set<String> names = new HashSet<>();
-        hibernateActorDao.findAll().forEach(actor -> names.add(actor.getName()));
-        actorCountWidget.setText(String.format("%d",names.size()));
-    }*/
 }
