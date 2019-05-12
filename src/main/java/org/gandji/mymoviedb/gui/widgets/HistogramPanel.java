@@ -1,5 +1,6 @@
 package org.gandji.mymoviedb.gui.widgets;
 
+import org.gandji.mymoviedb.MyMovieDBPreferences;
 import org.gandji.mymoviedb.data.HibernateMovieDao;
 import org.gandji.mymoviedb.data.Movie;
 import org.gandji.mymoviedb.data.repositories.MovieCountPerAttribute;
@@ -32,6 +33,9 @@ public abstract class HistogramPanel {
     JScrollPane scrollPane;
 
     @Autowired
+    MyMovieDBPreferences preferences;
+
+    @Autowired
     HibernateMovieDao hibernateMovieDao;
 
     @Autowired
@@ -48,23 +52,28 @@ public abstract class HistogramPanel {
         dataset = new DefaultCategoryDataset();
         chart = ChartFactory.createBarChart(title,categoryName,"films", dataset,
                 PlotOrientation.HORIZONTAL,
-                true,true,false);
+                false,true,false);
 
         chart.getPlot().setBackgroundPaint(UIManager.getColor("Panel.background"));
-        //chart.getCategoryPlot().setFixedDomainAxisSpace(AxisSpace);
         chart.getCategoryPlot().getRenderer().setSeriesPaint(0,Color.decode("0x5580d2"));
         chart.setBackgroundPaint(UIManager.getColor("Panel.background"));
-        chart.removeLegend();
 
         chartPanel = new ChartPanel(chart);
-        Integer ppi = Toolkit.getDefaultToolkit().getScreenResolution();
-        chartPanel.setPreferredSize(new Dimension(600*ppi/96,800*ppi/96));
-
         scrollPane = new JScrollPane(chartPanel);
     }
 
     @PostConstruct
-    public void setCallbacks() {
+    public void postContruct() {
+        Integer ppi = Toolkit.getDefaultToolkit().getScreenResolution();
+        chartPanel.setMinimumSize(new Dimension(Math.toIntExact(Math.round(.95*Double.valueOf(preferences.getRightColumnWidth()*ppi/96))),800*ppi/96));
+        chartPanel.setPreferredSize(new Dimension(Math.toIntExact(Math.round(.95*Double.valueOf(preferences.getRightColumnWidth()*ppi/96))),800*ppi/96));
+        chartPanel.setMaximumSize(new Dimension(Math.toIntExact(Math.round(.95*Double.valueOf(preferences.getRightColumnWidth()*ppi/96))),800*ppi/96));
+
+        int minHeight=300;
+        scrollPane.setMinimumSize(new Dimension(preferences.getRightColumnWidth()*ppi/96/2,minHeight));
+        scrollPane.setPreferredSize(new Dimension(Math.toIntExact(Math.round(Double.valueOf(preferences.getRightColumnWidth()*ppi/96))),800*ppi/96));
+        scrollPane.setMaximumSize(new Dimension(Math.toIntExact(Math.round(Double.valueOf(preferences.getRightColumnWidth()*ppi/96*2))),800*ppi/96));
+
         chartPanel.addChartMouseListener(new ChartMouseListener() {
 
             @Override

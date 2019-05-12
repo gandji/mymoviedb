@@ -85,40 +85,49 @@ public class NewLayout extends JFrame {
 
     private void createComponents() {
 
+        int minHeight = 300;
+
         jScrollPane1 = new javax.swing.JScrollPane();
+        jScrollPane1.setMinimumSize(new Dimension(movieDataModelPoster.getPreferredWidth(0),minHeight));
+        jScrollPane1.setPreferredSize(new Dimension(movieDataModelPoster.getPreferredWidth(0),5000));
         jScrollPane1.setPreferredSize(new Dimension(movieDataModelPoster.getPreferredWidth(0),5000));
 
         // the right hand column
         rightColumn = new JTabbedPane();
 
-        int preferredRightColumnWidth = preferences.getRightColumnWidth();
+        int ppi = Toolkit.getDefaultToolkit().getScreenResolution();
+        int preferredRightColumnWidth = preferences.getRightColumnWidth()*ppi/96;
         int preferredHeight = preferences.getMainHeight();
+
+
+        rightColumn.setMinimumSize(new Dimension(preferredRightColumnWidth/2,minHeight));
+        rightColumn.setPreferredSize(new Dimension(preferredRightColumnWidth,preferredHeight));
+        rightColumn.setMaximumSize(new Dimension(preferredRightColumnWidth*2,Short.MAX_VALUE));
+
+
         JPanel searchPanelContainer = new JPanel();
         searchPanelContainer.setLayout(new BoxLayout(searchPanelContainer, BoxLayout.PAGE_AXIS));
-        searchPanelContainer.setPreferredSize(new Dimension(preferredRightColumnWidth,preferredHeight));
 
-        searchWindow.getContentPane().setPreferredSize(new Dimension(preferredRightColumnWidth, preferredHeight));
         searchPanelContainer.add(searchWindow.getContentPane());
-        searchPanelContainer.add(new Box.Filler(new Dimension(preferredRightColumnWidth, 0),
-                new Dimension(preferredRightColumnWidth, preferredHeight),
-                new Dimension(preferredRightColumnWidth, preferredHeight)));
+        Box.Filler vFiller1 = (Box.Filler)Box.createVerticalGlue();
+        vFiller1.changeShape(vFiller1.getMinimumSize(),new Dimension(0,Short.MAX_VALUE),
+                vFiller1.getMaximumSize());
+        searchPanelContainer.add(vFiller1);
 
         rightColumn.addTab("Search", searchPanelContainer);
 
         JPanel preferencesPanel = new JPanel();
         preferencesPanel.setLayout(new BoxLayout(preferencesPanel, BoxLayout.PAGE_AXIS));
         preferencesPanel.add(preferencesWindow.getContentPane());
-        preferencesPanel.add(new Box.Filler(new Dimension(preferredRightColumnWidth, 0),
-                new Dimension(preferredRightColumnWidth, preferredHeight),
-                new Dimension(preferredRightColumnWidth, preferredHeight)));
+        Box.Filler vFiller2 = (Box.Filler)Box.createVerticalGlue();
+        vFiller2.changeShape(vFiller2.getMinimumSize(),new Dimension(0,Short.MAX_VALUE),
+                vFiller2.getMaximumSize());
+        preferencesPanel.add(vFiller2);
         rightColumn.addTab("Preferences", preferencesPanel);
 
         JPanel statisticsTab = new JPanel();
         statisticsTab.setLayout(new BoxLayout(statisticsTab,BoxLayout.PAGE_AXIS));
         statisticsTab.add(statisticsPanel);
-        //statisticsTab.add(new Box.Filler(new Dimension(preferredRightColumnWidth, 0),
-        //        new Dimension(preferredRightColumnWidth, preferredHeight),
-        //        new Dimension(preferredRightColumnWidth, preferredHeight)));
         rightColumn.addTab("Statistics", statisticsTab);
 
         rightColumn.addChangeListener(e -> {
@@ -236,11 +245,8 @@ public class NewLayout extends JFrame {
         // default layout is BorderLayout
         BorderLayout borderLayout = new BorderLayout();
         getContentPane().setLayout(borderLayout);
-        /*borderLayout.addLayoutComponent(rightColumn, BorderLayout.LINE_END);
-        borderLayout.addLayoutComponent(jScrollPane1, BorderLayout.LINE_START);
-        borderLayout.addLayoutComponent(movieDescriptionPanel.getPanel(),BorderLayout.CENTER);*/
         getContentPane().add(leftPanel, BorderLayout.LINE_START);
-        getContentPane().add(tabbedPane);
+        getContentPane().add(tabbedPane, BorderLayout.CENTER);
         getContentPane().add(rightColumn,BorderLayout.LINE_END);
 
         getContentPane().setPreferredSize(new Dimension(preferences.getMainWidth(),preferences.getMainHeight()));
