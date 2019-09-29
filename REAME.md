@@ -86,10 +86,10 @@ The longest part is in filling in your own local DB:
  - First MyMovieDB searches the local DB for these keywords,
  and you can point it to the movie if it is in the local DB,
  - if the movie is not in the local DB, MyMovieDB searches a famous internet movie database
- for the given movie (namely imdb). 
+ for the given movie (namely themoviedatabase). 
   - It will ask for confirmation once it found a movie,
   - or it will ask for help if it  does not find it. In that case, you search for yourself and enter
- in MyMovieDB just the imdb URL
+ in MyMovieDB just the "themoviedatabase" URL
  
  You can interrupt the process any time and come back to it later.
 
@@ -104,7 +104,23 @@ The longest part is in filling in your own local DB:
  
  File a bug report on github
  
+Programming techniques
+-----
 
- 
+Maven inheritance of modules. I tried to do it more or less cleanly.
+
+Spring usage:
+ - I do all I can to use annotation based configurations rather than file wise configurations.
+ - spring boot
+ - spring beans, singletons and prototypes
+ - spring data with jpa and hibernate, annotation based configurations
+
+Data management Architecture:
+ - DAO layer
+ - the underneath database can be mysql or h2 (I am less at ease with H2, 
+ so everything does not work with h2). I did this as an exercise to 
+ configure the data access bean
+ through spring profiles. Spring profile "mysql" activates the use of MySQL database
+ (the default), profile "h2" uses an h2 database. 
  
  
