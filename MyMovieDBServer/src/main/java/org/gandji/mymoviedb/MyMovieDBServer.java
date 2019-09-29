@@ -12,11 +12,11 @@ import org.springframework.context.annotation.Import;
  *  TODO monitor (and kill) running server?
  *  TODO rename Web to Server
  */
-@Import({MyMovieDBWebConfiguration.class})
+@Import({MyMovieDBServerConfiguration.class})
 @SpringBootApplication
-public class MyMovieDBWebApp extends SpringBootServletInitializer {
+public class MyMovieDBServer extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
-        SpringApplication.run(MyMovieDBWebApp.class,args);
+        SpringApplication.run(MyMovieDBServer.class,args);
     }
 }

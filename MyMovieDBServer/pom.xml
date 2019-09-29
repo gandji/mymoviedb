@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!-- groupId and version are inherited -->
-    <artifactId>MyMovieDBWeb</artifactId>
-    <name>MyMovieDBWeb</name>
+    <artifactId>MyMovieDBServer</artifactId>
+    <name>MyMovieDBServer</name>
     <packaging>jar</packaging>
 
     <parent>
@@ -17,7 +17,7 @@
     </parent>
 
     <properties>
-        <mainClass>org.gandji.mymoviedb.MyMovieDBWebApp</mainClass>
+        <mainClass>org.gandji.mymoviedb.MyMovieDBServer</mainClass>
     </properties>
 
     <dependencies>
@@ -114,8 +114,8 @@
                             <goal>rename</goal>
                         </goals>
                         <configuration>
-                            <sourceFile>${project.build.directory}/MyMovieDBWebServer.bat</sourceFile>
-                            <destinationFile>${project.build.directory}/MyMovieDBWebServer-${project.version}.bat
+                            <sourceFile>${project.build.scriptSourceDirectory}/MyMovieDBServer.bat</sourceFile>
+                            <destinationFile>${project.build.directory}/MyMovieDBServer-${project.version}.bat
                             </destinationFile>
                         </configuration>
                     </execution>

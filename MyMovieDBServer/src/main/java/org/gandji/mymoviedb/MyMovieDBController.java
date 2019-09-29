@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 @Slf4j
-public class MyMovieDBWebController {
+public class MyMovieDBController {
 
     @GetMapping("/mymoviedb")
     public String greeting(Model model) {
