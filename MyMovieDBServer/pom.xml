@@ -114,7 +114,7 @@
                             <goal>rename</goal>
                         </goals>
                         <configuration>
-                            <sourceFile>${project.build.scriptSourceDirectory}/MyMovieDBServer.bat</sourceFile>
+                            <sourceFile>${project.build.directory}/MyMovieDBServer.bat</sourceFile>
                             <destinationFile>${project.build.directory}/MyMovieDBServer-${project.version}.bat
                             </destinationFile>
                         </configuration>
