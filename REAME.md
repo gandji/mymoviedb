@@ -106,18 +106,22 @@ The longest part is in filling in your own local DB:
  
 Programming techniques
 -----
+I started implementing this database as an exercise for various techniques
+I learned recently, and other techniques I learned along the way.
+It can been seen as a demonstrator for :
 
-Maven inheritance of modules. I tried to do it more or less cleanly.
+ - Maven inheritance of modules. the project now has three modules,
+ I tried to end up with more or less clean pom files.
 
-Spring usage:
- - I do all I can to use annotation based configurations rather than file wise configurations.
- - spring boot
- - spring beans, singletons and prototypes
- - spring data with jpa and hibernate, annotation based configurations
+ - Spring usage:
+   - I do all I can to use annotation based configurations rather than file wise configurations.
+   - spring boot
+   - spring beans, singletons and prototypes
+   - spring data with jpa and hibernate, annotation based configurations
 
-Data management Architecture:
- - DAO layer
- - the underneath database can be mysql or h2 (I am less at ease with H2, 
+ - Data management Architecture:
+   - DAO layer
+   - the underneath database can be mysql or h2 (I am less at ease with H2, 
  so everything does not work with h2). I did this as an exercise to 
  configure the data access bean
  through spring profiles. Spring profile "mysql" activates the use of MySQL database
