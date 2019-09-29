@@ -17,6 +17,7 @@
 package org.gandji.mymoviedb.data;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.gandji.mymoviedb.data.repositories.MovieCountPerAttribute;
 
@@ -77,6 +78,7 @@ public class Actor {
     private String name;
     
     @ManyToMany(mappedBy="actors",cascade={})
+    @JsonIgnoreProperties("actors")
     private Set<Movie> movies = null;
 
     public Actor(String _name){

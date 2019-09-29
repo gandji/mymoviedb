@@ -34,7 +34,7 @@ public class MovieRestController {
     }
 
     @GetMapping("/mymoviedb/movies/{id}")
-    Integer oneMovie(@PathVariable Long id) {
-        return id.intValue();
+    Movie oneMovie(@PathVariable Long id) {
+        return hibernateMovieDao.findOne(id);
     }
 }

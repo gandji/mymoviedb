@@ -17,6 +17,7 @@
 package org.gandji.mymoviedb.data;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.CreatedDate;
@@ -69,6 +70,7 @@ public class Movie {
     @JoinColumns({
         @JoinColumn(name="ACTORS_ID",referencedColumnName = "id"),
         @JoinColumn(name="ACTORS_NAME",referencedColumnName = "name")})
+    @JsonIgnoreProperties("movies")
     private Set<Actor> actors = null;
 
     @Column(columnDefinition="VARCHAR(1025)")
@@ -84,6 +86,7 @@ public class Movie {
     @ManyToMany(cascade=CascadeType.MERGE)
     @JoinColumns({
         @JoinColumn(name="GENRES_NAME",referencedColumnName = "name")})
+    @JsonIgnoreProperties("movies")
     private Set<Genre> genres=null;
     
     @OneToMany(mappedBy="movie",cascade=CascadeType.MERGE)
