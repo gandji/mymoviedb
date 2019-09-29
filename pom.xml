@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.gandji.MyMovieDB</groupId>
     <artifactId>MyMovieDB</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.4.0-SNAPSHOT</version>
     <modules>
-        <module>MyMovieDBWeb</module>
         <module>MyMovieDBCommon</module>
+        <module>MyMovieDBWeb</module>
         <module>MyMovieDBGui</module>
     </modules>
     <packaging>pom</packaging>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.0.1.RELEASE</version>
+    </parent>
     <developers>
         <developer>
             <name>gandji</name>
@@ -17,13 +23,13 @@
     </developers>
 
     <properties>
+        <splashimage.name>splash.gif</splashimage.name>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <hibernate.version>5.0.10.Final</hibernate.version>
         <spring.version>5.0.4.RELEASE</spring.version>
         <spring-data.version>1.13.0.RELEASE</spring-data.version>
-        <!-- spring-boot.version>1.2.5.RELEASE</spring-boot.version -->
         <springboot.version>1.5.10.RELEASE</springboot.version>
         <maven-jar-plugin.version>2.5</maven-jar-plugin.version>
     </properties>
@@ -45,11 +51,23 @@
             </releases>
         </pluginRepository>
     </pluginRepositories>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.1.RELEASE</version>
-        <relativePath/>
-    </parent>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.gandji.MyMovieDB</groupId>
+                <artifactId>MyMovieDBCommon</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.10</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 </project>

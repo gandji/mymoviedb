@@ -567,6 +567,14 @@ public class MovieDescriptionPanel extends JPanel {
 
     private void createUIComponents() {
 
+        /*playMovieButton = new JButton("Play movie");
+        openInfoButton = new JButton("Open internet info page");
+        internetCriticsButton = new JButton("Internet critics");
+        saveButton = new JButton("Save");
+        enterInfoUrlButton = new JButton("Enter URL");
+        addActorButton = new JButton("Add");
+        addGenreButton = new JButton("Add");*/
+
         playMovieButton.addActionListener(e -> playMovieButtonActionPerformed(e));
         openInfoButton.addActionListener(e -> openInfoUrlButtonActionPerformed(e));
         internetCriticsButton.addActionListener(e -> internetCriticsButtonActionPerformed(e));
