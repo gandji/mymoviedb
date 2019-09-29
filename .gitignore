@@ -6,3 +6,4 @@ MyMovieDB.iml
 MyMovieDB.xml
 nbactions.xml
 nb-configuration.xml
+*.iml
