@@ -19,7 +19,6 @@ package org.gandji.mymoviedb;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Import;
 
 import java.awt.*;
 import java.util.logging.Level;
@@ -30,7 +29,6 @@ import java.util.logging.Logger;
  * @author gandji <gandji@free.fr>
  * 
  */
-@Import(MyMovieDBConfiguration.class)
 @SpringBootApplication// replacement for Configuration, ComponentScan and EnableAutoConfiguration
 public class MyMovieDBGUI {
 

@@ -2,8 +2,8 @@ package org.gandji.mymoviedb;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.*;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -15,7 +15,8 @@ import java.sql.Driver;
 /**
  * Created by gandji on 21/09/2019.
  */
-@Import({H2Configuration.class,MySqlConfiguration.class})
+//@ComponentScan("org.gandji.mymoviedb")
+@EntityScan(basePackages = {"org.gandji.mymoviedb.data"})
 @EnableJpaRepositories
 @EnableTransactionManagement
 @EnableJpaAuditing(auditorAwareRef = "nullAuditorBean")
@@ -41,7 +42,7 @@ public class MyMovieDBCommonConfiguration {
      * utilisation de jdbc pour la source de donnees
      */
     @Bean
-    DataSource dataSource() {
+    public DataSource dataSource() {
 
         // jdbc:
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
@@ -61,7 +62,7 @@ public class MyMovieDBCommonConfiguration {
     }
 
     @Bean
-    String myMovieDBVersion() {
+    public String myMovieDBVersion() {
         return myMovieDBVersionString;
     }
 }

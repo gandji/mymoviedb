@@ -38,44 +38,36 @@ public class HibernateMovieDaoMySql extends HibernateMovieDao {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private MovieRepositoryMySql movieRepository;
-
-    @Autowired
     private MovieRowMapper movieRowMapper;
-
-    @PostConstruct
-    void init() {
-        super.setMovieRepository(movieRepository);
-    }
 
     @Override
     public List<Movie> findByDirectorKeywords(String kwds) {
-        return movieRepository.findByDirectorKeywords(kwds);
+        return ((MovieRepositoryMySql)movieRepository).findByDirectorKeywords(kwds);
     }
 
     @Override
     public List<Movie> findByTitleKeywords(String kwds) {
-        return movieRepository.findByTitleKeywords(kwds);
+        return ((MovieRepositoryMySql)movieRepository).findByTitleKeywords(kwds);
     }
 
     @Override
     public List<Movie> findByAlternateTitleKeywords(String kwds) {
-        return movieRepository.findByAlternateTitleKeywords(kwds);
+        return ((MovieRepositoryMySql)movieRepository).findByAlternateTitleKeywords(kwds);
     }
 
     @Override
     public List<Movie> findByGenreName(String genre) {
-        return movieRepository.findByGenreName(genre);
+        return ((MovieRepositoryMySql)movieRepository).findByGenreName(genre);
     }
 
     @Override
     public List<Movie> findByCommentsKeywords(String kwds) {
-        return movieRepository.findByCommentsKeywords(kwds);
+        return ((MovieRepositoryMySql)movieRepository).findByCommentsKeywords(kwds);
     }
 
     @Override
     public List<Movie> findByActorsKeywords(String kwds) {
-        return movieRepository.findByActorsKeywords(kwds);
+        return ((MovieRepositoryMySql)movieRepository).findByActorsKeywords(kwds);
     }
 
     @Override

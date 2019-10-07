@@ -152,7 +152,7 @@ public class VideoFile {
 
     }
     
-    @ManyToOne(cascade=CascadeType.MERGE,fetch=FetchType.LAZY)
+    @ManyToOne(cascade={CascadeType.MERGE},fetch=FetchType.LAZY)
     @JoinColumn(name="movie_id", foreignKey = @ForeignKey(name="fkey_constraint_movie"))
     private Movie movie;
 }

@@ -192,7 +192,7 @@ public class MovieDescriptionPanel extends JPanel {
     }
 
     private void openInfoUrlButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_openImdbButtonActionPerformed
-        movieGuiService.openInfoUrl(movie);
+        movieGuiService.openInfoUrl(movie.getInfoUrl());
     }
 
     private void internetCriticsButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_internetCriticsButtonActionPerformed

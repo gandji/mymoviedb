@@ -400,7 +400,7 @@ public class MovieInfoSearchService {
     }
 
     public TmdbDescriptor getTmbdIdFromUrl(String url) {
-        Pattern extractId = Pattern.compile("https?://www.themoviedb.org/(tv|movie|season|episode)/([0-9]+?)-.*");
+        Pattern extractId = Pattern.compile("https?://www.themoviedb.org/(tv|movie|season|episode)/([0-9]+)(\\D.*)?");
         Matcher movieMatcher = extractId.matcher(url);
 
         if (!movieMatcher.find()) {

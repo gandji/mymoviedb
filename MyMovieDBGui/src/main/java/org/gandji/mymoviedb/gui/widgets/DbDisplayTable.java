@@ -221,7 +221,7 @@ public class DbDisplayTable extends JTable implements ActionListener {
         int selectedRow = this.convertRowIndexToModel(this.getSelectedRow());
         // get the movie, with the "-1" trick
         Movie movie = (Movie) this.getModel().getValueAt(selectedRow, -1);
-        movieGuiService.openInfoUrl(movie);
+        movieGuiService.openInfoUrl(movie.getInfoUrl());
     }
 
 }

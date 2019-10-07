@@ -20,10 +20,20 @@ package org.gandji.mymoviedb.data.repositories.h2;
 import org.gandji.mymoviedb.data.Movie;
 import org.gandji.mymoviedb.data.repositories.MovieRepository;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Created by gandji on 16/02/2018.
  */
 @Profile("h2")
+@Repository
 public interface MovieRepositoryH2 extends MovieRepository {
+    @Query(value="select * from movie left join movie_actors as ma on ma.movies_id=movie.id " +
+            "                     join actor on actor.id=actors_id" +
+            " where actor.name like :#{#name} ;", nativeQuery = true)
+    List<Movie> findByActorName(@Param("name") String name);
 }

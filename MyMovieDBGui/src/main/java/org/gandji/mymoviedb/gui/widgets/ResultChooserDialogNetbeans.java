@@ -299,7 +299,7 @@ public class ResultChooserDialogNetbeans extends javax.swing.JDialog implements 
 
     private void gotoImdbPage(java.awt.event.ActionEvent event) {
         selectedMovie = (Movie) table.getModel().getValueAt(table.getSelectedRow(), -1);
-        movieGuiService.openInfoUrl(this.selectedMovie);
+        movieGuiService.openInfoUrl(this.selectedMovie.getInfoUrl());
     }
 
     private void enterMovieMyselfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enterMovieMyselfButtonActionPerformed

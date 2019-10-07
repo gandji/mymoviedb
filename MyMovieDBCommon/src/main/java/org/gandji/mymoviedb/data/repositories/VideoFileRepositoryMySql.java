@@ -18,10 +18,12 @@
 package org.gandji.mymoviedb.data.repositories;
 
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Repository;
 
 /**
  * Created by gandji on 14/02/2018.
  */
 @Profile("mysql")
+@Repository
 public interface VideoFileRepositoryMySql extends VideoFileRepository {
 }

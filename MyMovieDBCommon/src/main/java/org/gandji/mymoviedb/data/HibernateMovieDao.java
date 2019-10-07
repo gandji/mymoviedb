@@ -38,16 +38,16 @@ import javax.persistence.PersistenceContext;
  *
  * @author gandji <gandji@free.fr>
  */
-@Component
 public abstract class HibernateMovieDao {
 
-    @PersistenceContext
-    EntityManager entityManager;
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    MovieRepository movieRepository;
 
     @Autowired
     protected MovieFileServices movieFileServices;
-
-    protected MovieRepository movieRepository;
 
     @Autowired
     private ActorRepository actorRepository;
@@ -73,6 +73,9 @@ public abstract class HibernateMovieDao {
                 if (actorsFromDB.hasNext()) {
                     Actor actorFromDB = actorsFromDB.next();
                     actor.setId(actorFromDB.getId());
+                } else {
+                    // olololo, I really must automate this
+                    hibernateActorDao.save(actor);
                 }
             }
         } else {
@@ -144,6 +147,11 @@ public abstract class HibernateMovieDao {
 
     }
 
+    @Transactional
+    public void updateOrCreateMovie(Movie movie) {
+        updateOrCreateMovie(movie,(VideoFile)null);
+    }
+
     public Movie findOne(Long id) {
         return movieRepository.findById(id).get();
     }
@@ -168,7 +176,7 @@ public abstract class HibernateMovieDao {
     }
 
     private Pageable createPageRequest(int offset, int pageSize) {
-        return new PageRequest(offset,pageSize);
+        return PageRequest.of(offset,pageSize);
     }
 
     public Page<Movie> findAll(Pageable pageRequest) {

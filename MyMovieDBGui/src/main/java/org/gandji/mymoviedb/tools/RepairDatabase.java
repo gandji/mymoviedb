@@ -142,7 +142,7 @@ public class RepairDatabase {
     }
 
     private void fixMissingCreated() {
-        Pageable pageRequest = new PageRequest(0,50);
+        Pageable pageRequest = PageRequest.of(0,50);
         Page<Movie> moviePage = hibernateMovieDao.findAll(pageRequest);
         while (moviePage.hasContent()) {
             List<Movie> movies = moviePage.getContent();

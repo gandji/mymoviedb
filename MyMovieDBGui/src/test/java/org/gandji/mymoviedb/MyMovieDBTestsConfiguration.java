@@ -8,9 +8,7 @@ import org.springframework.context.annotation.PropertySource;
 /**
  * Created by gandji on 20/05/2017.
  */
-@Import(MyMovieDBConfiguration.class)
 @SpringBootApplication
-@PropertySource(value = "classpath:test.properties")
-//@EntityScan(basePackages = {"org.gandji"})
+@PropertySource(value = {"classpath:test.properties","classpath:mymoviedb_common.properties"})
 public class MyMovieDBTestsConfiguration {
 }

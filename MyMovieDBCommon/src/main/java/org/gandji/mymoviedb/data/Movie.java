@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -66,6 +67,13 @@ public class Movie {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
+    @CreatedDate
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastModified;
+
+    @CreatedBy
+    String creator;
+
     @ManyToMany(cascade={CascadeType.MERGE})
     @JoinColumns({
         @JoinColumn(name="ACTORS_ID",referencedColumnName = "id"),
@@ -83,13 +91,13 @@ public class Movie {
     @Column(name="poster")
     private byte[] posterBytes;
 
-    @ManyToMany(cascade=CascadeType.MERGE)
+    @ManyToMany(cascade={CascadeType.MERGE,CascadeType.PERSIST})
     @JoinColumns({
         @JoinColumn(name="GENRES_NAME",referencedColumnName = "name")})
     @JsonIgnoreProperties("movies")
     private Set<Genre> genres=null;
     
-    @OneToMany(mappedBy="movie",cascade=CascadeType.MERGE)
+    @OneToMany(mappedBy="movie",cascade={CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private Set<VideoFile> files;
 
     @Column(name = "alternateTitle")
@@ -181,6 +189,34 @@ public class Movie {
 
     public void setCreated(Date added) {
         this.created = added;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    public void setActors(Set<Actor> actors) {
+        this.actors = actors;
+    }
+
+    public void setGenres(Set<Genre> genres) {
+        this.genres = genres;
+    }
+
+    public void setFiles(Set<VideoFile> files) {
+        this.files = files;
     }
 
     public Set<Actor> getActors() {

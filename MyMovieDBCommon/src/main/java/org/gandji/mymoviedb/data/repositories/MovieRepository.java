@@ -20,6 +20,7 @@ package org.gandji.mymoviedb.data.repositories;
 import org.gandji.mymoviedb.data.Movie;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -32,9 +33,7 @@ import java.util.Optional;
  * Created by gandji on 18/02/2018.
  */
 @NoRepositoryBean
-public interface MovieRepository extends PagingAndSortingRepository<Movie,Long> {
-    void delete(Movie movie);
-    Page<Movie> findAll(Pageable pageRequest);
+public interface MovieRepository extends JpaRepository<Movie,Long> {
     Optional<Movie> findById(Long id);
 
     List<Movie> findByInfoUrl(URL infoUrl);

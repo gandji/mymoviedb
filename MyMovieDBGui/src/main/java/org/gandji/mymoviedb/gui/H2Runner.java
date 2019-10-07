@@ -86,7 +86,7 @@ public class H2Runner extends MyMovieDBRunner {
         }
 
 
-        fillDbForTests();
+        //fillDbForTests();
 
         /*FullTextEntityManager ftem = Search.getFullTextEntityManager(entityManager);
         try {

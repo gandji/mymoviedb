@@ -16,7 +16,11 @@
  */
 package org.gandji.mymoviedb;
 
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  *
@@ -39,6 +43,6 @@ import org.springframework.context.annotation.Import;
  * @todo user configurable regexps: implement friendly add/remove regexp
  * @todo search criteria: file version, file name
  */
-@Import({MyMovieDBCommonConfiguration.class})
+@Configuration
 public class MyMovieDBConfiguration {
 }

@@ -21,6 +21,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -190,19 +191,19 @@ public class MovieGuiService {
             return;
         }
     }
-    public void openInfoUrl(Movie movie) {
+    public void openInfoUrl(URL movieUrl) {
 
-        MovieInfoSearchService.UrlType movieUrlType = MovieInfoSearchService.UrlType.fromUrlString(movie.getInfoUrl().toString());
+        MovieInfoSearchService.UrlType movieUrlType = MovieInfoSearchService.UrlType.fromUrlString(movieUrl.toString());
         MovieInfoSearchService.UrlType preferencesUrlType = preferences.getInternetTarget();
 
         String infoUrl = null;
         if (movieUrlType.equals(preferencesUrlType)) {
-            infoUrl = movie.getInfoUrl().toString();
+            infoUrl = movieUrl.toString();
         } else if (movieUrlType.equals(MovieInfoSearchService.UrlType.TMDB)) {
-            log.info("Compute imdb url from : "+movie.getInfoUrl().toString());
+            log.info("Compute tmdb url from : "+movieUrl.toString());
 
             MovieInfoSearchService.TmdbDescriptor tmdbDescriptor =
-                    movieInfoSearchService.getTmbdIdFromUrl(movie.getInfoUrl().toString());
+                    movieInfoSearchService.getTmbdIdFromUrl(movieUrl.toString());
 
             TheMovieDbApi tmdbApi = null;
             try {
@@ -223,10 +224,10 @@ public class MovieGuiService {
 
         } else if (movieUrlType.equals(MovieInfoSearchService.UrlType.IMDB)) {
             Pattern extractId = Pattern.compile("https?://www.imdb.com/title/(tt[0-9]+)");
-            Matcher movieMatcher = extractId.matcher(movie.getInfoUrl().toString());
+            Matcher movieMatcher = extractId.matcher(movieUrl.toString());
 
             if (!movieMatcher.find()) {
-                log.warn("Could not match id in <" + movie.getInfoUrl().toString() + ">");
+                log.warn("Could not match id in <" + movieUrl.toString() + ">");
                 return;
             }
             String movieId = movieMatcher.group(1);
@@ -252,7 +253,7 @@ public class MovieGuiService {
 
         }
         if (null==infoUrl) {
-            infoUrl = movie.getInfoUrl().toString();
+            infoUrl = movieUrl.toString();
         }
         Desktop dt = Desktop.getDesktop();
         try {

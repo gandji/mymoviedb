@@ -20,6 +20,7 @@ package org.gandji.mymoviedb.data.repositories;
 import org.gandji.mymoviedb.data.VideoFile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ import java.util.List;
  *
  * @author gandji <gandji@free.fr>
  */
+@NoRepositoryBean
 public interface VideoFileRepository extends JpaRepository<VideoFile, Long> {
     List<VideoFile> findByFileName(String fileName);
 

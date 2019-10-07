@@ -371,6 +371,6 @@ public class ResultChooserDialog extends javax.swing.JDialog implements ActionLi
         int selectedRow = table.convertRowIndexToModel(table.getSelectedRow());
         // get the movie, with the "-1" trick
         Movie movie = (Movie) table.getModel().getValueAt(selectedRow, -1);
-        movieGuiService.openInfoUrl(movie);
+        movieGuiService.openInfoUrl(movie.getInfoUrl());
     }
 }

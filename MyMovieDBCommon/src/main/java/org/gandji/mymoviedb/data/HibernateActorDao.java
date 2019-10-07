@@ -19,7 +19,6 @@ package org.gandji.mymoviedb.data;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 
 import org.gandji.mymoviedb.data.repositories.ActorRepository;
@@ -43,11 +42,13 @@ public class HibernateActorDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Transactional
     public void save(Actor actor) {
-        EntityTransaction transaction = entityManager.getTransaction();
+        /*EntityTransaction transaction = entityManager.getTransaction();
         transaction.begin();
         entityManager.persist(actor);
-        transaction.commit();
+        transaction.commit();*/
+        actorRepository.save(actor);
     }
 
     public Iterable<Actor> findAll() {
