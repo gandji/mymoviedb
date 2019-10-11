@@ -16,6 +16,8 @@ import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableColumn;
+import javax.swing.text.DateFormatter;
+import javax.swing.text.DefaultFormatterFactory;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,9 +30,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -104,6 +107,7 @@ public class MovieDescriptionPanel extends JPanel {
     private JLabel createdLabel;
     private JTextField createdTextField;
     private JPanel summaryFilePanel;
+    private JButton seenNowButton;
 
     private MovieHolder movieHolder;
 
@@ -132,6 +136,14 @@ public class MovieDescriptionPanel extends JPanel {
 
     @PostConstruct
     public void postConstruct() {
+        JFormattedTextField.AbstractFormatter dateFormatDisplay = new DateFormatter(new SimpleDateFormat(myMovieDBPreferences.getDateFormat()));
+        JFormattedTextField.AbstractFormatter dateFormatEdit = dateFormatDisplay;
+        lastSeenFormattedTextField.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+        lastSeenFormattedTextField.setFormatterFactory(new DefaultFormatterFactory(dateFormatEdit, dateFormatDisplay));
+
+        seenNowButton.addActionListener(e -> {
+            lastSeenFormattedTextField.setValue(Date.from(Instant.now()));
+        });
 
         fakePoster();
         deleteButton.addActionListener(new ActionListener() {
@@ -210,10 +222,12 @@ public class MovieDescriptionPanel extends JPanel {
         // @todo manage date of last seen: editor? formatter?
         // hack for unset last seen date!
         try {
-            this.movie.setLastSeen(lastSeenFormattedTextField.getText().equals("unset") ? null : Date.valueOf(lastSeenFormattedTextField.getText()));
+            Date lastSeen = (Date) lastSeenFormattedTextField.getValue();
+            this.movie.setLastSeen(lastSeen);
+            log.info("Successfully updated last seen date to "+lastSeen.toString());
         } catch (IllegalArgumentException e) {
             log.info("Unknown date : "+lastSeenFormattedTextField.getText());
-            log.info("Accepted date format is yyy-mm-dd");
+            log.info("Accepted date format is yyyy-MM-dd or dd/MM/yyyy");
             e.printStackTrace();
         }
         this.movie = hibernateMovieDao.save(this.movie);
@@ -331,7 +345,7 @@ public class MovieDescriptionPanel extends JPanel {
         SpinnerNumberModel ratingModel = new SpinnerNumberModel((int) data.getRating(), 0, 5, 1);
         ratingSpinner.setModel(ratingModel);
         // hack for null last seen dates
-        lastSeenFormattedTextField.setText(data.getLastSeen() == null ? "unset" : data.getLastSeen().toString());
+        lastSeenFormattedTextField.setValue(movie.getLastSeen());
 
 
         // actors
@@ -543,7 +557,7 @@ public class MovieDescriptionPanel extends JPanel {
         movie.setDuree(durationTextField.getText());
 
         movie.setRating((Integer) ratingSpinner.getValue());
-        movie.setLastSeen(lastSeenFormattedTextField.getText().equals("unset") ? null : Date.valueOf(lastSeenFormattedTextField.getText()));
+        movie.setLastSeen((Date)lastSeenFormattedTextField.getValue());
 
     }
 
