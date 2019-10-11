@@ -141,6 +141,9 @@ public class MovieDescriptionPanel extends JPanel {
         lastSeenFormattedTextField.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
         lastSeenFormattedTextField.setFormatterFactory(new DefaultFormatterFactory(dateFormatEdit, dateFormatDisplay));
 
+        //TODO use jdatepicker
+        //TODO        last modified not working
+
         seenNowButton.addActionListener(e -> {
             lastSeenFormattedTextField.setValue(Date.from(Instant.now()));
         });

@@ -105,7 +105,7 @@ public class Movie {
     
     private Integer rating = 0;
     
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date lastSeen;
 
     public Movie() {
