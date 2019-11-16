@@ -5,5 +5,5 @@ Start-Class: MyMovieDBGUI
 Spring-Boot-Version: 1.2.5.RELEASE
 Created-By: Apache Maven
 Build-Jdk: 1.8.0_102
-Main-Class: org.springframework.boot.loader.JarLauncher
 SplashScreen-Image: splash.gif
+Main-Class: org.springframework.boot.loader.JarLauncher

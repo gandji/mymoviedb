@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.gandji.MyMovieDB</groupId>
     <artifactId>MyMovieDB</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <version>1.4.0-SNAPSHOT</version>
+    <modules>
+        <module>MyMovieDBCommon</module>
+        <module>MyMovieDBServer</module>
+        <module>MyMovieDBGui</module>
+    </modules>
+    <packaging>pom</packaging>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.0.1.RELEASE</version>
+    </parent>
     <developers>
         <developer>
             <name>gandji</name>
@@ -16,13 +27,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <hibernate.version>5.0.10.Final</hibernate.version>
+        <!--hibernate.version>5.0.10.Final</hibernate.version>
         <spring.version>5.0.4.RELEASE</spring.version>
         <spring-data.version>1.13.0.RELEASE</spring-data.version>
-        <!-- spring-boot.version>1.2.5.RELEASE</spring-boot.version -->
-        <springboot.version>1.5.10.RELEASE</springboot.version>
-        <maven-jar-plugin.version>2.5</maven-jar-plugin.version>
-        <mainClass>org.gandji.mymoviedb.MyMovieDBGUI</mainClass>
+        <springboot.version>1.5.10.RELEASE</springboot.version-->
+        <!--maven-jar-plugin.version>2.5</maven-jar-plugin.version-->
     </properties>
     <repositories>
         <repository>
@@ -42,91 +51,22 @@
             </releases>
         </pluginRepository>
     </pluginRepositories>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.10.RELEASE</version>
-        <!-- relativePath/ -->
-    </parent>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.gandji.MyMovieDB</groupId>
+                <artifactId>MyMovieDBCommon</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
-        <!-- SPRING BOOT -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-        </dependency>
-        <!-- SPRING DATA -->
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-            <type>jar</type>
-        </dependency>
-        <!-- HIBERNATE -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <!--version>${hibernate.version}</version-->
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-        </dependency>
-        <!-- I need this for com.mysql.jdbc.Driver: -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-        <!-- this for h2: -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-        </dependency>
-        <!-- OTHERS -->
-        <dependency>
-            <groupId>com.omertron</groupId>
-            <artifactId>themoviedbapi</artifactId>
-            <version>4.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.j256.simplemagic</groupId>
-            <artifactId>simplemagic</artifactId>
-            <version>1.9-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>1.10.2</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.10</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -138,91 +78,7 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
-            <!--exclusions>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-            </exclusions-->
         </dependency>
     </dependencies>
-    <build>
-        <!--resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources -->
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <fork>false</fork>
-                    <mainClass>${mainClass}</mainClass>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <Implementation-Version>${project.version}</Implementation-Version>
-                            <splashscreen-image>BOOT-INF/classes/${splashimage.name}</splashscreen-image>
-                            <Built-By>gandji</Built-By>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>batch-resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <delimiters>@</delimiters>
-                            <outputDirectory>target</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.build.scriptSourceDirectory}</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.coderplus.maven.plugins</groupId>
-                <artifactId>copy-rename-maven-plugin</artifactId>
-                <version>1.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-and-rename-batch-file</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>rename</goal>
-                        </goals>
-                        <configuration>
-                            <sourceFile>${project.build.directory}/MyMovieDB.bat</sourceFile>
-                            <destinationFile>${project.build.directory}/MyMovieDB-${project.version}.bat</destinationFile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+
 </project>
