@@ -20,6 +20,8 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -50,6 +52,8 @@ import javax.persistence.Temporal;
         property = "id")
 @Slf4j
 public class Movie {
+
+    static final Logger log = LoggerFactory.getLogger(Movie.class);
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO,generator="movie_seq")
@@ -98,6 +102,7 @@ public class Movie {
     private Set<Genre> genres=null;
     
     @OneToMany(mappedBy="movie",cascade={CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
+    @JsonIgnoreProperties("movie")
     private Set<VideoFile> files;
 
     @Column(name = "alternateTitle")

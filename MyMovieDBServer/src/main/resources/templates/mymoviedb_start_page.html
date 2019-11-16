@@ -2,9 +2,63 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>MyMovieDB: Friendly movie database</title>
+    <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" ></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
-<p th:text="'Welcome to MyMovieDB on the web!'" />
+
+<h1>MyMovieDB - Recently added movies</h1>
+<div class="container-fluid"  style="width:25%;">
+    <div class="row">
+    <!-- this is the bootstrap carousel-->
+        <div class="col">
+            <div id="moviesCarousel" class="carousel slide" data-ride="false" data-wrap="false">
+        <!--ol class="carousel-indicators">
+            <li data-target="#moviesCarousel" data-slide-to="0" class="active"></li>
+            <li data-target="#moviesCarousel" data-slide-to="1"></li>
+            <li data-target="#moviesCarousel" data-slide-to="2"></li>
+        </ol-->
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner">
+            <div th:class="${movieStat.count==1}?'item active' : 'item'"
+                  th:each="movie : ${movies}">
+
+                <img class="center-block"
+                     th:src="${'data:image/jpeg;base64,'+movie.getPosterAsString()}"
+                     th:alt="${movie.getTitle()}" style="height:80%;"
+                th:onclick="|movieClicked(${movie.getDbId()})|"/>
+                <!--div class="carousel-caption">
+                    <h3 th:text="${movie.getTitle()}">Movie Title</h3>
+                </div-->
+                <script th:inline="javascript">
+                    function movieClicked(id) {
+                        console.log("display movie "+id);
+                        $('#oneMovieDisplay').load("/mymoviedb/"+id);
+                    };
+                </script>
+            </div>
+
+        </div>
+        <a class="left carousel-control" href="#moviesCarousel" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" href="#moviesCarousel" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+        </div>
+        <div class="col">
+            <div id="oneMovieDisplay"></div>
+    </div>
+    </div>
+</div>
 </body>
 </html>

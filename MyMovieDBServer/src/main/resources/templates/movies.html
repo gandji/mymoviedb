@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Movies</title>
+</head>
+<body>
+
+<div th:fragment="oneMovie">
+<div class="card horizontal">
+    <div class="card-image">
+        <img th:src="${'data:image/jpeg;base64,'+movie.getPosterAsString()}" alt="No poster">
+    </div>
+    <div class="card-stacked">
+        <div class="card-title html blue-grey-text" th:text="${movie.getTitle()}">
+            Retour vers le futur
+        </div>
+    <p class="card-content">
+        <div class="container">
+        <div class="row">
+        <div class="col s8">
+             <p align="left" class="html blue-grey-text mymoviedb-offset">Director: [(${movie.getDirector()})]</p>
+        </div>
+        <div class="col s4">
+            <p align="left" class="html blue-grey-text mymoviedb-offset">Year    : [(${movie.getYear()})]</p>
+        </div>
+        </div>
+        <div class="row">
+            <div class="col s12">
+                <p align="left" class="html blue-grey-text mymoviedb-offset">Duree   : [(${movie.getDuree()})]</p>
+            </div>
+            <div class="col s12">
+                <p align="left" class="html blue-grey-text mymoviedb-offset">[(${movie.getSummary()})]</p>
+            </div>
+        </div>
+        </div>
+        <div class="card-action">
+            <div class="waves-effect waves-light btn-large" th:onclick="|playMovie(${movie.getDbId()})|">
+                Play movie
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script th:inline="javascript">
+        function playMovie(id) {
+            console.log("Play movie "+id);
+        };
+    </script>
+</div>
+</body>
+</html>

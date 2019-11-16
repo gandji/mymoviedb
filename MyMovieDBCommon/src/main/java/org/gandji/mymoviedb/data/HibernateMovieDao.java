@@ -23,6 +23,7 @@ import java.util.*;
 
 import org.gandji.mymoviedb.data.repositories.ActorRepository;
 import org.gandji.mymoviedb.data.repositories.MovieRepository;
+import org.gandji.mymoviedb.errors.MovieNotFoundException;
 import org.gandji.mymoviedb.services.MovieFileServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -153,7 +154,7 @@ public abstract class HibernateMovieDao {
     }
 
     public Movie findOne(Long id) {
-        return movieRepository.findById(id).get();
+        return movieRepository.findById(id).orElseThrow(() -> new MovieNotFoundException(id));
     }
 
     // TODO fix pagination in movie DAO

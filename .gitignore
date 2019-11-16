@@ -7,3 +7,5 @@ MyMovieDB.xml
 nbactions.xml
 nb-configuration.xml
 *.iml
+**/out
+**/main/web

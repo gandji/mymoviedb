@@ -215,6 +215,7 @@ public class MovieDescriptionPanel extends JPanel {
     }
 
     private void saveButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        log.info("Saving movie in DB: " + movie.getTitle());
         this.movie.setTitle(titleTextField.getText());
         this.movie.setAlternateTitle(alternateTitleTextField.getText());
         this.movie.setDirector(directorTextField.getText());
@@ -227,7 +228,6 @@ public class MovieDescriptionPanel extends JPanel {
         try {
             Date lastSeen = (Date) lastSeenFormattedTextField.getValue();
             this.movie.setLastSeen(lastSeen);
-            log.info("Successfully updated last seen date to "+lastSeen.toString());
         } catch (IllegalArgumentException e) {
             log.info("Unknown date : "+lastSeenFormattedTextField.getText());
             log.info("Accepted date format is yyyy-MM-dd or dd/MM/yyyy");

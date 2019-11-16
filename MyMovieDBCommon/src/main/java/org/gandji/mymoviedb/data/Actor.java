@@ -108,10 +108,6 @@ public class Actor {
         }
     }
 
-    public Long getId() {
-        return id;
-    }
-
     private boolean hasMovie(Movie movie) {
         return movies.contains(movie);
     }
@@ -127,7 +123,4 @@ public class Actor {
         return name.equals(((Actor)actor).getName());
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 }

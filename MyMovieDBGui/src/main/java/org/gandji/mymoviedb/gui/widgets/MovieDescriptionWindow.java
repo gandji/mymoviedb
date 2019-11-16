@@ -34,7 +34,4 @@ public class MovieDescriptionWindow extends JFrame {
         movieDescriptionPanel.setData(movie);
     }
 
-    public Movie getMovie() {
-        return movieDescriptionPanel.getMovie();
-    }
 }

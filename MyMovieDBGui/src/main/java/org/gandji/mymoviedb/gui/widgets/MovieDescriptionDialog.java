@@ -36,12 +36,4 @@ public class MovieDescriptionDialog extends JDialog {
         movieDescriptionPanel.setData(movie);
     }
 
-    // REMOVE @Override
-    public Movie getMovie() {
-        return movieDescriptionPanel.getMovie();
-    }
-
-    // REMOVE @Override
-    // REMOVE public void close() {setVisible(false);}
-
 }

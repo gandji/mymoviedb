@@ -23,6 +23,9 @@ import javax.persistence.PersistenceContext;
 
 import org.gandji.mymoviedb.data.repositories.ActorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +56,13 @@ public class HibernateActorDao {
 
     public Iterable<Actor> findAll() {
         return actorRepository.findAll();
+    }
+
+    public Page<Actor> findAll(int offset, int pageSize) {
+        Pageable pageRequest = PageRequest.of(offset, pageSize);
+        Page<Actor> searchResultPage = actorRepository.findAll(pageRequest);
+        return searchResultPage;
+
     }
 
     public Iterable<Actor> findByName(String name) {
