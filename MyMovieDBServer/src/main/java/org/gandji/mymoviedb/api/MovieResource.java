@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 public class MovieResource extends /*Resource<Movie>*/ ResourceSupport {
 
     List<ActorResource> actors;
+    List<VideoFileResource> videoFiles;
     Movie movie;
 
     String title;
@@ -110,6 +111,10 @@ public class MovieResource extends /*Resource<Movie>*/ ResourceSupport {
         return this.actors;
     }
 
+    public List<VideoFileResource> getVideoFiles() {
+        return videoFiles;
+    }
+
     public void setMovie(Movie movie) {
         this.movie = movie;
     }
@@ -152,5 +157,9 @@ public class MovieResource extends /*Resource<Movie>*/ ResourceSupport {
 
     public void setActors(List<ActorResource> actors) {
         this.actors = actors;
+    }
+
+    public void setVideoFiles(List<VideoFileResource> videoFiles) {
+        this.videoFiles = videoFiles;
     }
 }

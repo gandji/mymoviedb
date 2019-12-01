@@ -69,6 +69,19 @@ public class MyMovieDBController {
         return "movies::oneMovie";
     }
 
+    @GetMapping("mymoviedb/play/{movieId}")
+    public String playMovie(@PathVariable Long movieId, Model model) {
+        if (null!=movieId) {
+            log.info("Individual movie file controller mapping: id = "+movieId);
+            Movie movie = hibernateMovieDao.findOne(movieId);
+            MovieResource movieResource = movieResourceAssembler.toResource(movie);
+            model.addAttribute("movie", movieResource);
+        } else {
+            log.info("Individual movie file controller mapping: id = null");
+        }
+        return "movies::oneMoviePlayer";
+    }
+
     @GetMapping("mymoviedb/search")
     public String searchAll(@RequestParam("q") String q, Model model) {
 

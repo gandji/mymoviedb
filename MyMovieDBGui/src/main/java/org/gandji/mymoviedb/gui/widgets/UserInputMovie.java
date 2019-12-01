@@ -93,9 +93,9 @@ public class UserInputMovie extends javax.swing.JDialog {
 
         firstLineLabel.setText("No IMDB results for: ");
 
-        jLabel2.setText("Please search IMDB yourself and enter url here:");
+        jLabel2.setText("Please search TMDB yourself and enter url here:");
 
-        urlInput.setText("Enter imdb url in the form : http://www.imdb.com/title/ttxxxxxxx");
+        urlInput.setText("Enter tmbd url in the form : http://www.themoviedb.org/movie/1234-titre-du-film");
 
         playTheFileButton.setText("Play the file");
         playTheFileButton.addActionListener(new java.awt.event.ActionListener() {

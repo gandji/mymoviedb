@@ -25,7 +25,7 @@ public class AboutWindow extends JFrame {
     @PostConstruct
     public void init() {
 
-        GridLayout layout = new GridLayout(2,1);
+        GridLayout layout = new GridLayout(4,1);
         layout.setVgap(25);
         layout.setHgap(25);
         this.panel = new JPanel(layout);
@@ -37,6 +37,14 @@ public class AboutWindow extends JFrame {
         JLabel versionString = new JLabel(myMovieDBVersion);
         this.panel.add(versionString);
         versionString.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JLabel authorString = new JLabel("gandji");
+        this.panel.add(authorString);
+        authorString.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JLabel githubString = new JLabel("https://github.com/gandji/mymoviedb");
+        this.panel.add(githubString);
+        githubString.setHorizontalAlignment(SwingConstants.CENTER);
 
         this.panel.setBorder(BorderFactory.createEmptyBorder(25,25,25,25));
         setContentPane(this.panel);

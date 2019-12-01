@@ -42,9 +42,16 @@
     </div>
     </div>
 
+    <div align="center" th:fragment="oneMoviePlayer">
+        <video>
+            <source th:src="${movie.getVideoFiles().get(0).getVideoFilePath()}" type="video/mp4">
+            Your browser does not support HTML5 video.
+        </video>
+    </div>
     <script th:inline="javascript">
         function playMovie(id) {
             console.log("Play movie "+id);
+            $('#oneMoviePlayer').load("/mymoviedb/play/" + id);
         };
     </script>
 </div>

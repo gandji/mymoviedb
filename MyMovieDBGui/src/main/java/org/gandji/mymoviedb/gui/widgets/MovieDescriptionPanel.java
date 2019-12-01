@@ -43,7 +43,7 @@ import java.util.Set;
 @Component
 @Scope("prototype")
 @Slf4j
-public class MovieDescriptionPanel extends JPanel {
+public class MovieDescriptionPanel extends JPanel implements MovieHolder {
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -109,12 +109,6 @@ public class MovieDescriptionPanel extends JPanel {
     private JPanel summaryFilePanel;
     private JButton seenNowButton;
 
-    private MovieHolder movieHolder;
-
-    public void setMovieHolder(MovieHolder movieHolder) {
-        this.movieHolder = movieHolder;
-    }
-
     public static void main(String[] args) {
         JFrame frame = new JFrame("JPanel");
         //frame.setContentPane(new MovieDescriptionPanel(frame).panel);
@@ -140,9 +134,6 @@ public class MovieDescriptionPanel extends JPanel {
         JFormattedTextField.AbstractFormatter dateFormatEdit = dateFormatDisplay;
         lastSeenFormattedTextField.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
         lastSeenFormattedTextField.setFormatterFactory(new DefaultFormatterFactory(dateFormatEdit, dateFormatDisplay));
-
-        //TODO use jdatepicker
-        //TODO        last modified not working
 
         seenNowButton.addActionListener(e -> {
             lastSeenFormattedTextField.setValue(Date.from(Instant.now()));
@@ -260,14 +251,15 @@ public class MovieDescriptionPanel extends JPanel {
         }
 
         if (null != filePath) {
-            userInputMovie.setText("Enter IMDB url found for file: "+filePath.getFileName().toString());
+            userInputMovie.setText("Enter TMDB url found for file: "+filePath.getFileName().toString());
         } else {
-            userInputMovie.setText("Enter IMDB url for new movie: ");
+            userInputMovie.setText("Enter TMDB url for new movie: ");
         }
-        userInputMovie.setMovieHolder(movieHolder);
+        userInputMovie.setMovieHolder(this); // REMOVE MovieHolder
         userInputMovie.setVisible(true);
     }
 
+    @Override
     public void setData(Movie data) {
         this.movie = data;
         if (null==data){
@@ -359,6 +351,11 @@ public class MovieDescriptionPanel extends JPanel {
 
         // files
         updateFiles();
+    }
+
+    @Override
+    public Movie getMovie() {
+        return movie;
     }
 
     private void updateFiles() {

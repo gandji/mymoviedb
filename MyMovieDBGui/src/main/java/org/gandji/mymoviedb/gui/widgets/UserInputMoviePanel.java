@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
  * @author gandji <gandji@free.fr>
  */
 @Component
+@Deprecated
 @Scope("prototype")
 public class UserInputMoviePanel extends javax.swing.JPanel {
 
@@ -79,9 +80,9 @@ public class UserInputMoviePanel extends javax.swing.JPanel {
 
         firstLineOfText.setText("No IMDB results for: ");
 
-        jLabel2.setText("Please search IMDB yourself and enter url here:");
+        jLabel2.setText("Please search TMDB yourself and enter url here:");
 
-        urlInput.setText("Enter imdb url in the form : http://www.imdb.com/title/ttxxxxxxx");
+        urlInput.setText("Enter tmdb url in the form : http://www.themoviedb.org/movie/1234-the-title");
         urlInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 urlInputActionPerformed(evt);
