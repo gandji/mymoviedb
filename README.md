@@ -127,4 +127,14 @@ It can been seen as a demonstrator for :
  through spring profiles. Spring profile "mysql" activates the use of MySQL database
  (the default), profile "h2" uses an h2 database. 
  
+ - REST api
  
+ - Web app with thymeleaf renderer. I did this because I wanted a nice carousel
+ for the movie selection. I did not pursue because I want to be able 
+ to launch a movie from the app, and this is "forbidden" from a web app,
+ for obvious security reasons.
+ 
+ - so I turned to a JavaFX GUI. And I use an embedded JavaFX browser. I use an embedded JavaFX browser
+ because I want to reuse the thymeleaf rendering I made, and I still wanted the nice
+ "material" carousel. Unfortunately, the carousel does not render as nicely
+ in the JavaFX web browser (:sigh:).
