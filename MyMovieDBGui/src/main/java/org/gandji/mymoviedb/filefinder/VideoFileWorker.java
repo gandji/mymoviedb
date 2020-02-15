@@ -25,7 +25,7 @@ import javax.swing.SwingWorker;
 
 import org.gandji.mymoviedb.data.Movie;
 import org.gandji.mymoviedb.gui.widgets.NewLayout;
-import org.gandji.mymoviedb.services.MovieFileGuiServices;
+import org.gandji.mymoviedb.services.MovieDaoGuiServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -46,7 +46,7 @@ public class VideoFileWorker extends SwingWorker<Integer, Movie> {
 
 
     @Autowired
-    private MovieFileGuiServices movieFileGuiServices;
+    private MovieDaoGuiServices movieFileGuiServices;
 
     @Autowired
     private NewLayout mainFrame;
@@ -94,7 +94,7 @@ public class VideoFileWorker extends SwingWorker<Integer, Movie> {
             isVideoFile = false;
         }
         if (isVideoFile) {
-            cancelAll = movieFileGuiServices.addFileOrFindMovie(file,movie,limitPopups,mainFrame);
+            cancelAll = movieFileGuiServices.addFileOrFindMovieInfo(file,movie,limitPopups,mainFrame);
         } else {
             LOG.log(Level.INFO,"FILE " + file.toString() + "      IS NOT A VIDEO FILE.");
         }

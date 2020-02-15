@@ -21,9 +21,9 @@ import java.util.logging.Logger;
 
 import org.gandji.mymoviedb.filefinder.VideoFileWorker;
 import org.gandji.mymoviedb.scrapy.MovieInfoSearchService;
-import org.gandji.mymoviedb.data.HibernateMovieDao;
 import org.gandji.mymoviedb.data.Movie;
 import org.gandji.mymoviedb.gui.MovieGuiService;
+import org.gandji.mymoviedb.services.MovieDaoServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -39,20 +39,20 @@ public class UserInputMoviePanel extends javax.swing.JPanel {
 
     private static final Logger LOG = Logger.getLogger(UserInputMoviePanel.class.getName());
 
-    @Autowired
-    private MovieInfoSearchService movieInfoSearchService;
+    //@Autowired
+    //private MovieInfoSearchService movieInfoSearchService;
     
-    @Autowired
-    private HibernateMovieDao hibernateMovieDao;
+    //@Autowired
+    //private MovieDaoServices movieDaoServices;
     
-    @Autowired
-    private MovieGuiService movieGuiService;
+    //@Autowired
+    //private MovieGuiService movieGuiService;
     
-    private VideoFileWorker videoFileWorker;
+    //private VideoFileWorker videoFileWorker;
 
-    public void setVideoFileWorker(VideoFileWorker videoFileWorker) {
+    /*public void setVideoFileWorker(VideoFileWorker videoFileWorker) {
         this.videoFileWorker = videoFileWorker;
-    }
+    }*/
     
     
     /**
@@ -157,18 +157,20 @@ public class UserInputMoviePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_urlInputActionPerformed
 
     private void playTheFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playTheFileButtonActionPerformed
-        movieGuiService.playTheFile(videoFileWorker.getFile());
+        throw new IllegalStateException("Deprecated class");
+        //movieGuiService.playTheFile(videoFileWorker.getFile());
     }//GEN-LAST:event_playTheFileButtonActionPerformed
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         String userInfoUrl = urlInput.getText();
         if ((userInfoUrl != null) && (userInfoUrl.length() > 0)) {
             LOG.info("Adding movie from info url " + userInfoUrl);
-            Movie movie = movieInfoSearchService.getOneFilmFromUrl(userInfoUrl);
-            // check whether movie is already in DB
-            hibernateMovieDao.updateOrCreateMovie(movie, videoFileWorker.getFile());
+            //Movie movie = movieInfoSearchService.getOneFilmFromUrl(userInfoUrl);
+            throw new IllegalStateException("This class is deprecated");
+            /*movie = movieDaoServices.checkActorsAndSaveMovie(movie);
+            movieDaoServices.addFileToMovie(movie, videoFileWorker.getFile());
             this.setVisible(false);
-            return;
+            return;*/
         }
     }//GEN-LAST:event_okButtonActionPerformed
 

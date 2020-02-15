@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.net.URL;
@@ -42,32 +43,32 @@ public class HibernateMovieDaoMySql extends HibernateMovieDao {
 
     @Override
     public List<Movie> findByDirectorKeywords(String kwds) {
-        return ((MovieRepositoryMySql)movieRepository).findByDirectorKeywords(kwds);
+        return ((MovieRepositoryMySql) movieRepository).findByDirectorKeywords(kwds);
     }
 
     @Override
     public List<Movie> findByTitleKeywords(String kwds) {
-        return ((MovieRepositoryMySql)movieRepository).findByTitleKeywords(kwds);
+        return ((MovieRepositoryMySql) movieRepository).findByTitleKeywords(kwds);
     }
 
     @Override
     public List<Movie> findByAlternateTitleKeywords(String kwds) {
-        return ((MovieRepositoryMySql)movieRepository).findByAlternateTitleKeywords(kwds);
+        return ((MovieRepositoryMySql) movieRepository).findByAlternateTitleKeywords(kwds);
     }
 
     @Override
     public List<Movie> findByGenreName(String genre) {
-        return ((MovieRepositoryMySql)movieRepository).findByGenreName(genre);
+        return ((MovieRepositoryMySql) movieRepository).findByGenreName(genre);
     }
 
     @Override
     public List<Movie> findByCommentsKeywords(String kwds) {
-        return ((MovieRepositoryMySql)movieRepository).findByCommentsKeywords(kwds);
+        return ((MovieRepositoryMySql) movieRepository).findByCommentsKeywords(kwds);
     }
 
     @Override
     public List<Movie> findByActorsKeywords(String kwds) {
-        return ((MovieRepositoryMySql)movieRepository).findByActorsKeywords(kwds);
+        return ((MovieRepositoryMySql) movieRepository).findByActorsKeywords(kwds);
     }
 
     @Override
@@ -75,28 +76,23 @@ public class HibernateMovieDaoMySql extends HibernateMovieDao {
         return movieRepository.findByActorName(name);
     }
 
-    @Override
-    public List<Movie> findByInfoUrl(URL infoUrl) {
-        return movieRepository.findByInfoUrl(infoUrl);
-    }
-
-    @Override
-    public Iterable<Movie> searchInternal(String titleKeywords, String directorKeywords,
-                                          String actorsKeywords, String genreKeyword,
-                                          String commentsKeywords, String qualiteVideoKeyword) {
-        Map<String,String> criterias = new HashMap<>();
-        if (null!=titleKeywords && !"".equals(titleKeywords)) {
+    private Map<String, String> gatherCriteria(String titleKeywords, String directorKeywords,
+                                               String actorsKeywords, String genreKeyword,
+                                               String commentsKeywords, String qualiteVideoKeyword) {
+        Map<String, String> criterias = new HashMap<>();
+        if (null != titleKeywords && !"".equals(titleKeywords)) {
             for (String titleKeyword : titleKeywords.split(" +")) {
-                criterias.put(titleKeyword," ( ( match title          against (\""+titleKeyword + "\" in natural language mode) ) " +
-                        "or ( match alternate_title against (\""+titleKeyword + "\" in natural language mode) ) )");
+                criterias.put("title:" + titleKeyword, " ( ( match title          against (\"" + titleKeyword + "\" in natural language mode) ) " +
+                        "or ( match alternate_title against (\"" + titleKeyword + "\" in natural language mode) ) )");
             }
         }
 
-        if (null!=directorKeywords && !"".equals(directorKeywords)) {
-            criterias.put("director"," (match director against (\""+directorKeywords+"\" in natural language mode)) ");
+        if (null != directorKeywords && !"".equals(directorKeywords)) {
+            criterias.put("director", " (match director against (\"" + directorKeywords + "\" in natural language mode)) ");
         }
 
-        if (null!=actorsKeywords && !"".equals(actorsKeywords)) {
+        if (null != actorsKeywords && !"".equals(actorsKeywords)) {
+            criterias.put("actors", ""); // just to signal we search actor name
             for (String actorKeyword : actorsKeywords.split(" +")) {
                 if (actorKeyword.length() > 3) {
                     criterias.put(actorKeyword, " (match a.name against (\"" + actorKeyword + "\" in natural language mode)) ");
@@ -104,15 +100,15 @@ public class HibernateMovieDaoMySql extends HibernateMovieDao {
             }
         }
 
-        if (null!=genreKeyword && !"".equals(genreKeyword) && !"Any".equals(genreKeyword)) {
-            criterias.put("genres", " (g.name like \""+genreKeyword+"\" ) ");
+        if (null != genreKeyword && !"".equals(genreKeyword) && !"Any".equals(genreKeyword)) {
+            criterias.put("genres", " (g.name like \"" + genreKeyword + "\" ) ");
         }
 
-        if (null!=commentsKeywords && !"".equals(commentsKeywords)) {
-            criterias.put("comments", " (match comments against (\""+commentsKeywords+"\" in natural language mode)) ");
+        if (null != commentsKeywords && !"".equals(commentsKeywords)) {
+            criterias.put("comments", " (match comments against (\"" + commentsKeywords + "\" in natural language mode)) ");
         }
 
-        if (null!=qualiteVideoKeyword && !"".equals(qualiteVideoKeyword) && !"Any".equals(qualiteVideoKeyword)) {
+        if (null != qualiteVideoKeyword && !"".equals(qualiteVideoKeyword) && !"Any".equals(qualiteVideoKeyword)) {
             if (qualiteVideoKeyword.equals("Unknown")) {
                 criterias.put("qualiteVideo", " (vf.qualite_video is null ) ");
             } else {
@@ -120,12 +116,16 @@ public class HibernateMovieDaoMySql extends HibernateMovieDao {
             }
         }
 
+        return criterias;
+    }
+
+    private Iterable<Movie> assembleQueryStringThenQuery(Map<String, String> criterias, String booleanOp) {
         if (criterias.isEmpty()) {
             return findAllByOrderByCreated(0, 300).getContent();
         }
 
         String queryString = "SELECT * from movie ";
-        if (actorsKeywords!=null) {
+        if (criterias.containsKey("actors")) {
             queryString = queryString + "left outer join movie_actors as ma on movie.id=ma.movies_id " +
                     "left outer join actor as a on a.id=actors_id ";
         }
@@ -140,8 +140,13 @@ public class HibernateMovieDaoMySql extends HibernateMovieDao {
         queryString = queryString + "where ";
         boolean first = true;
         for (String criteria : criterias.values()) {
+
+            if (null == criteria || criteria.equals("")) {
+                continue;
+            }
+
             if (!first) {
-                queryString = queryString + " and ";
+                queryString = queryString + " " + booleanOp + " ";
             }
             queryString = queryString + criteria;
             first = false;
@@ -149,7 +154,7 @@ public class HibernateMovieDaoMySql extends HibernateMovieDao {
 
         queryString = queryString + " order by created desc";
 
-        List<Movie> movies = jdbcTemplate.query(queryString,(Object[])null,movieRowMapper);
+        List<Movie> movies = jdbcTemplate.query(queryString, (Object[]) null, movieRowMapper);
         // remove duplicates
         Set<Long> uniqueMovieIds = new HashSet<>();
         List<Movie> uniqueMovies = new ArrayList<>();
@@ -162,4 +167,39 @@ public class HibernateMovieDaoMySql extends HibernateMovieDao {
         return uniqueMovies;
     }
 
+    @Override
+    public Iterable<Movie> searchInternal(String titleKeywords, String directorKeywords,
+                                          String actorsKeywords, String genreKeyword,
+                                          String commentsKeywords, String qualiteVideoKeyword) {
+
+        Map<String, String> criterias = gatherCriteria(titleKeywords, directorKeywords, actorsKeywords,
+                genreKeyword, commentsKeywords, qualiteVideoKeyword);
+
+        return assembleQueryStringThenQuery(criterias, "and");
+    }
+
+    @Override
+    public Iterable<Movie> searchInternalAll(String keywords) {
+        Map<String, String> criterias = gatherCriteria(keywords, keywords, keywords,
+                keywords, keywords, null);
+
+        return assembleQueryStringThenQuery(criterias, "or");
+    }
+
+    @Override
+    @Transactional
+    public Movie populateMovie(Movie movie) {
+        List<Actor> actors = findActorsForMovie(movie);
+        Set<Actor> actorSet = new HashSet<>(actors);
+        movie.setActors(actorSet);
+
+        List<VideoFile> videoFiles = findVideoFilesForMovie(movie);
+        Set<VideoFile> videoFileSet = new HashSet<>(videoFiles);
+        movie.setFiles(videoFileSet);
+
+        List<Genre> genres = findGenresForMovie(movie);
+        Set<Genre> genresSet = new HashSet<>(genres);
+        movie.setGenres(genresSet);
+        return movie;
+    }
 }

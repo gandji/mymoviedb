@@ -24,16 +24,15 @@ import java.util.*;
 import org.gandji.mymoviedb.data.repositories.ActorRepository;
 import org.gandji.mymoviedb.data.repositories.MovieRepository;
 import org.gandji.mymoviedb.errors.MovieNotFoundException;
-import org.gandji.mymoviedb.services.MovieFileServices;
+import org.gandji.mymoviedb.services.MovieDaoServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 /**
  *
@@ -48,7 +47,7 @@ public abstract class HibernateMovieDao {
     MovieRepository movieRepository;
 
     @Autowired
-    protected MovieFileServices movieFileServices;
+    protected MovieDaoServices movieDaoServices;
 
     @Autowired
     private ActorRepository actorRepository;
@@ -60,8 +59,9 @@ public abstract class HibernateMovieDao {
         this.movieRepository = movieRepository;
     }
 
+    // this moved to the movie dao service.... like MovieFileServices?
     @Transactional
-    public Movie save(Movie movie) {
+    public Movie save(Movie movie) {/*
         // TODO: configure unicity of actors, for now we enforce unicity of actors by hand, grrrr.....
         Set<Actor> actors;
         if (movie.getId()==null) {
@@ -81,7 +81,7 @@ public abstract class HibernateMovieDao {
             }
         } else {
             // if the movie is in DB, update of actors must be done through addActor below
-        }
+        }*/
         return entityManager.merge(movie);
     }
 
@@ -92,69 +92,12 @@ public abstract class HibernateMovieDao {
         movieRepository.delete(movie);
     }
 
-    // @todo this duplicates code in videofileworker.saveMovie
-    @Transactional
-    public Movie updateOrCreateMovie(Movie selectedMovie, Path filePath) {
-        List<Movie> ml = movieRepository.findByInfoUrl(selectedMovie.getInfoUrl());
-        if (!ml.isEmpty()) {
-            // if there, add file to it and save
-            Movie updateMovie = ml.get(0);
-            if (null != filePath) {
-                VideoFile videoFile = new VideoFile();
-                movieFileServices.updateVideoFile(videoFile,filePath);
-                updateMovie.addFile(videoFile);
-            }
-            return save(updateMovie);
-
-        } else {
-            // if not there,
-            // truncate long summaries
-            if (selectedMovie.getSummary().length() > 1024) {
-                selectedMovie.setSummary(selectedMovie.getSummary().substring(0, 1024));
-            }
-            // then add "selectedMovie" and save
-            if (null != filePath) {
-                VideoFile videoFile = new VideoFile();
-                movieFileServices.updateVideoFile(videoFile, filePath);
-                selectedMovie.addFile(videoFile);
-            }
-            return save(selectedMovie);
-        }
-    }
-
-    @Transactional
-    public Movie updateOrCreateMovie(Movie selectedMovie, VideoFile videoFile){
-        List<Movie> ml = movieRepository.findByInfoUrl(selectedMovie.getInfoUrl());
-        if (!ml.isEmpty()) {
-            // if there, add file to it and save
-            Movie updateMovie = ml.get(0);
-            if (null != videoFile) {
-                updateMovie.addFile(videoFile);
-            }
-            return save(updateMovie);
-
-        } else {
-            // if not there,
-            // truncate long summaries
-            if (selectedMovie.getSummary().length() > 1024) {
-                selectedMovie.setSummary(selectedMovie.getSummary().substring(0, 1024));
-            }
-            // then add file and save
-            if (null != videoFile) {
-                selectedMovie.addFile(videoFile);
-            }
-            return save(selectedMovie);
-        }
-
-    }
-
-    @Transactional
-    public void updateOrCreateMovie(Movie movie) {
-        updateOrCreateMovie(movie,(VideoFile)null);
-    }
-
     public Movie findOne(Long id) {
         return movieRepository.findById(id).orElseThrow(() -> new MovieNotFoundException(id));
+    }
+
+    public List<Movie> findByInfoUrl(URL infoUrl) {
+        return movieRepository.findByInfoUrl(infoUrl);
     }
 
     // TODO fix pagination in movie DAO
@@ -199,7 +142,7 @@ public abstract class HibernateMovieDao {
 
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     public List<Actor> findActorsForMovie(Movie movie) {
         Movie movieAndActors = findOne(movie.getId());
         ArrayList<Actor> al = new ArrayList<>();
@@ -209,7 +152,7 @@ public abstract class HibernateMovieDao {
         return al;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     public List<Genre> findGenresForMovie(Movie movie) {
         Movie movieAndGenres = findOne(movie.getId());
         ArrayList<Genre> gl = new ArrayList<>();
@@ -219,7 +162,7 @@ public abstract class HibernateMovieDao {
         return gl;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     public List<VideoFile> findVideoFilesForMovie(Movie movie) {
         Movie movieAndFiles = findOne(movie.getId());
         ArrayList<VideoFile> vfl = new ArrayList<>();
@@ -269,7 +212,7 @@ public abstract class HibernateMovieDao {
     public Movie addActor(Movie movie, Actor actor) {
         Movie movieManaged = findOne(movie.getId());
         if (actor.getId() == null) {
-            movieManaged.addActor(actor);
+            throw new IllegalStateException("Cannot add unknown actor");
         } else {
             Actor actorInDB = actorRepository.findById(actor.getId()).get();
             //Actor actorInDB = new Actor(actor.getName());
@@ -311,10 +254,11 @@ public abstract class HibernateMovieDao {
 
     public abstract List<Movie> findByActorName(String name);
 
-    public abstract List<Movie> findByInfoUrl(URL infoUrl);
-
     public abstract Iterable<Movie> searchInternal(String titleKeywords, String directorKeywords,
                                                    String actorsKeywords, String genreKeyword,
                                                    String commentsKeywords, String qualiteVideoKeyword);
 
+    public abstract Iterable<Movie> searchInternalAll(String keywords);
+
+    public abstract Movie populateMovie(Movie movie);
 }

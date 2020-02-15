@@ -53,8 +53,6 @@ import javax.persistence.Temporal;
 @Slf4j
 public class Movie {
 
-    static final Logger log = LoggerFactory.getLogger(Movie.class);
-
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO,generator="movie_seq")
     @SequenceGenerator(name="movie_seq")
@@ -78,7 +76,7 @@ public class Movie {
     @CreatedBy
     String creator;
 
-    @ManyToMany(cascade={CascadeType.MERGE})
+    @ManyToMany(cascade={CascadeType.PERSIST,CascadeType.MERGE})
     @JoinColumns({
         @JoinColumn(name="ACTORS_ID",referencedColumnName = "id"),
         @JoinColumn(name="ACTORS_NAME",referencedColumnName = "name")})
@@ -101,7 +99,7 @@ public class Movie {
     @JsonIgnoreProperties("movies")
     private Set<Genre> genres=null;
     
-    @OneToMany(mappedBy="movie",cascade={CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(mappedBy="movie",cascade={CascadeType.REMOVE}, orphanRemoval = true)
     @JsonIgnoreProperties("movie")
     private Set<VideoFile> files;
 

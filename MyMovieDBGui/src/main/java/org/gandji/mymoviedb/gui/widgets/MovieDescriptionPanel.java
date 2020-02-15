@@ -5,6 +5,7 @@ import org.gandji.mymoviedb.MyMovieDBPreferences;
 import org.gandji.mymoviedb.gui.FileDataModel;
 import org.gandji.mymoviedb.gui.MovieGuiService;
 import org.gandji.mymoviedb.data.*;
+import org.gandji.mymoviedb.services.MovieDaoServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -50,6 +51,9 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
 
     @Autowired
     private HibernateMovieDao hibernateMovieDao;
+
+    @Autowired
+    private MovieDaoServices movieDaoServices;
 
     @Autowired
     private HibernateVideoFileDao hibernateVideoFileDao;
@@ -224,11 +228,16 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
             log.info("Accepted date format is yyyy-MM-dd or dd/MM/yyyy");
             e.printStackTrace();
         }
-        this.movie = hibernateMovieDao.save(this.movie);
+        Movie forFiles = this.movie;
+        this.movie = movieDaoServices.checkActorsAndSaveMovie(this.movie);
+        for (VideoFile vf : forFiles.getFiles()) {
+            vf.setMovie(this.movie);
+            hibernateVideoFileDao.save(vf);
+        }
         log.info("Updated movie in DB: " + movie.getTitle());
     }
 
-    private void imbdUrlButtonActionPerformed(ActionEvent evt) {
+    private void enterInfoUrlButtonActionPerformed(ActionEvent evt) {
         //UserInputMovie userInputMovie = (UserInputMovie) applicationContext.getBean("userInputMovie",this.movieHolder);
 
         int selectedRow = filesTable.convertRowIndexToModel(filesTable.getSelectedRow());
@@ -593,7 +602,7 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
         openInfoButton.addActionListener(e -> openInfoUrlButtonActionPerformed(e));
         internetCriticsButton.addActionListener(e -> internetCriticsButtonActionPerformed(e));
         saveButton.addActionListener(e -> saveButtonActionPerformed(e));
-        enterInfoUrlButton.addActionListener(e -> imbdUrlButtonActionPerformed(e));
+        enterInfoUrlButton.addActionListener(e -> enterInfoUrlButtonActionPerformed(e));
         addActorButton.addActionListener(e -> addActorButtonActionPerformed(e));
         addGenreButton.addActionListener(e -> addGenreButtonActionPerformed(e));
 

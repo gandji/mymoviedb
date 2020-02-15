@@ -22,11 +22,12 @@ import java.nio.file.Path;
 
 import lombok.extern.slf4j.Slf4j;
 import org.gandji.mymoviedb.scrapy.MovieInfoSearchService;
-import org.gandji.mymoviedb.services.MovieFileGuiServices;
+import org.gandji.mymoviedb.services.MovieDaoGuiServices;
 import org.gandji.mymoviedb.data.HibernateMovieDao;
 import org.gandji.mymoviedb.data.Movie;
 import org.gandji.mymoviedb.data.VideoFile;
 import org.gandji.mymoviedb.gui.MovieGuiService;
+import org.gandji.mymoviedb.services.MovieDaoServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -44,10 +45,7 @@ public class UserInputMovie extends javax.swing.JDialog {
 
     @Autowired
     private MovieInfoSearchService movieInfoSearchService;
-    
-    @Autowired
-    private HibernateMovieDao hibernateMovieDao;
-    
+
     @Autowired
     private MovieGuiService movieGuiService;
 
@@ -55,7 +53,10 @@ public class UserInputMovie extends javax.swing.JDialog {
     private MovieHolder movieHolder;
 
     @Autowired
-    private MovieFileGuiServices movieFileGuiServices;
+    private MovieDaoGuiServices movieFileGuiServices;
+
+    @Autowired
+    private MovieDaoServices movieDaoServices;
 
     public void setFile(Path file) { this.file = file; }
 
@@ -167,7 +168,11 @@ public class UserInputMovie extends javax.swing.JDialog {
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         String userInfoUrl = urlInput.getText();
-        if ((userInfoUrl != null) && (userInfoUrl.length() > 0)) {
+
+        if (userInfoUrl==null || userInfoUrl.length()<=0) {
+            return;
+        }
+
             log.info("Adding movie from Internet Info url " + userInfoUrl);
             Movie movie =null;
 
@@ -220,10 +225,10 @@ public class UserInputMovie extends javax.swing.JDialog {
                 }
                 movieHolder.setData(movie);
             } else {
-                movie = hibernateMovieDao.updateOrCreateMovie(movie, this.file);
+                movie = movieDaoServices.checkActorsAndSaveMovie(movie);
+                movie = movieDaoServices.addFileToMovie(movie, this.file);
             }
             this.setVisible(false);
-        }
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
@@ -237,7 +242,7 @@ public class UserInputMovie extends javax.swing.JDialog {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

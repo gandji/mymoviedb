@@ -126,10 +126,6 @@ public class HibernateMovieDaoH2 extends HibernateMovieDao {
     public List<Movie> findByActorName(String name) {
         return movieRepository.findByActorName(name);
     }
-    @Override
-    public List<Movie> findByInfoUrl(URL infoUrl) {
-        return movieRepository.findByInfoUrl(infoUrl);
-    }
 
     private class MoviesTitleSearch implements RowCallbackHandler {
 
@@ -326,4 +322,13 @@ public class HibernateMovieDaoH2 extends HibernateMovieDao {
         return matchingMovies;
     }
 
+    @Override
+    public Iterable<Movie> searchInternalAll(String keywords) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Movie populateMovie(Movie movie) {
+        return null;
+    }
 }

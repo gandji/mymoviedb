@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import com.omertron.themoviedbapi.MovieDbException;
 import com.omertron.themoviedbapi.TheMovieDbApi;

@@ -17,8 +17,15 @@
  */
 package org.gandji.mymoviedb;
 
+import javafx.application.Application;
+import lombok.extern.slf4j.Slf4j;
+import org.gandji.mymoviedb.gui.MyMovieDBRunner;
+import org.gandji.mymoviedb.gui.widgets.MyMovieDBJavaFX;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.awt.*;
 import java.util.logging.Level;
@@ -27,23 +34,34 @@ import java.util.logging.Logger;
 /**
  *
  * @author gandji <gandji@free.fr>
+ *
+ * @todo search AND per category
+ * @todo About dialog in javafx
+ * @todo select file when play, using javafx
+ * @todo Add actor list, file list to movie display
+ *
+ * @todo revoir unicity of actors et la couche de persistence
  * 
  */
 @SpringBootApplication// replacement for Configuration, ComponentScan and EnableAutoConfiguration
+@Slf4j
 public class MyMovieDBGUI {
 
     private static final Logger LOG = Logger.getLogger(MyMovieDBGUI.class.getName());
+
+    @Value("${spring.profiles.active}")
+    static private String activeProfileProperty;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-         /* set the Nimbus look and feel */
+        /* set the Nimbus look and feel */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                LOG.info("Available look end feel: "+info.getName());
+                LOG.info("Available look end feel: " + info.getName());
             }
-                for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
@@ -51,13 +69,13 @@ public class MyMovieDBGUI {
             }
             Font orig = javax.swing.UIManager.getFont("defaultFont");
             if (orig != null) {
-                LOG.info("ORIGINAL FONT : "+orig.toString());
+                LOG.info("ORIGINAL FONT : " + orig.toString());
             }
 
             // cannot use injection here
             MyMovieDBPreferences preferences = new MyMovieDBPreferences();
             int fontSize = preferences.getFontSize();
-            Font f = new javax.swing.plaf.FontUIResource("Lucida",Font.PLAIN,fontSize);
+            Font f = new javax.swing.plaf.FontUIResource("Lucida", Font.PLAIN, fontSize);
             javax.swing.UIManager.getLookAndFeelDefaults().put("defaultFont", f);
 
         } catch (ClassNotFoundException ex) {
@@ -70,9 +88,21 @@ public class MyMovieDBGUI {
             LOG.log(Level.SEVERE, null, ex);
         }
 
-        // launch spring boot application not as web service but using the runner!
-        SpringApplication.run(MyMovieDBGUI.class, args);
-        
+        if (args.length>=1 && args[0].equals("javafx")) {
+            /* launch the javafx part */
+            try {
+                Application.launch(MyMovieDBJavaFX.class, args);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            log.info("OK... bye");
+
+        } else {
+            // launch spring boot application not as web service but using the runner!
+            SpringApplication.run(MyMovieDBGUI.class, args);
+        }
+
+
     }
 
 }

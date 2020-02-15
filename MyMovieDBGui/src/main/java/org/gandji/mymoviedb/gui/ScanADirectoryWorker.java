@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 
 import org.gandji.mymoviedb.gui.widgets.NewLayout;
-import org.gandji.mymoviedb.services.MovieFileGuiServices;
+import org.gandji.mymoviedb.services.MovieDaoGuiServices;
 import org.gandji.mymoviedb.data.Movie;
 import org.gandji.mymoviedb.filefinder.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class ScanADirectoryWorker extends SwingWorker<Integer, Movie>  {
     private Path dirToProcess;
     
     @Autowired
-    private MovieFileGuiServices movieFileGuiServices;
+    private MovieDaoGuiServices movieFileGuiServices;
 
     @Autowired
     private NewLayout mainFrame;

@@ -30,7 +30,7 @@ import java.util.Set;
  */
 @Component
 @Slf4j
-public class  MovieFileGuiServices extends MovieFileServices {
+public class MovieDaoGuiServices extends MovieDaoServices {
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -49,7 +49,10 @@ public class  MovieFileGuiServices extends MovieFileServices {
 
     private ResultChooserDialog resultChooserDialog;
 
-    public int addFileOrFindMovie(Path fileToProcess, Movie maybeMovie, boolean limitPopups, NewLayout mainFrame) {
+    /**
+     * Movie could be null, or could be id==null
+     */
+    public int addFileOrFindMovieInfo(Path fileToProcess, Movie maybeMovie, boolean limitPopups, NewLayout mainFrame) {
 
         // compute file hash
         String hashCode = FileUtils.computeHash(fileToProcess);
@@ -116,7 +119,7 @@ public class  MovieFileGuiServices extends MovieFileServices {
                         // ok, we change the movie for this file
                         log.info("Switching file " + fileToProcess.getFileName() + " over to movie " + movie.getTitle());
                         videoFileDao.deleteFile(videoFileSameHash);
-                        hibernateMovieDao.updateOrCreateMovie(movie, fileToProcess);
+                        addFileToMovie(movie, fileToProcess);
                     }
                 }
                 return 0;
@@ -124,7 +127,8 @@ public class  MovieFileGuiServices extends MovieFileServices {
 
             // ok, file is not in DB, add file to maybeMovie
             log.info("Adding file " + fileToProcess.toString() + " to movie: " + movie.getTitle());
-            hibernateMovieDao.updateOrCreateMovie(movie, fileToProcess);
+            movie = checkActorsAndSaveMovie(movie);
+            movie = addFileToMovie(movie, fileToProcess);
             return 0;
         }
 
@@ -165,7 +169,10 @@ public class  MovieFileGuiServices extends MovieFileServices {
                     updateVideoFile(newVideoFile,file);
                     newVideoFile.setQualiteVideo(videoFileSameHash.getQualiteVideo());
                     newVideoFile.setVersion(videoFileSameHash.getVersion());
-                    hibernateMovieDao.updateOrCreateMovie(movie, newVideoFile);
+                    if (movie.getId() == null) {
+                        movie = checkActorsAndSaveMovie(movie);
+                    }
+                    addFileToMovie(movie, newVideoFile);
                 } else {
                     log.info("Could not find movie for file : "+videoFileSameHash.getFileName());
                 }
@@ -295,7 +302,10 @@ public class  MovieFileGuiServices extends MovieFileServices {
                     Movie foundMovie = resultChooserDialog.getSelectedMovie();
                     if (null != foundMovie) {
                         // add file to DB
-                        hibernateMovieDao.updateOrCreateMovie(foundMovie, file);
+                        if (foundMovie.getId()==null) {
+                            foundMovie = checkActorsAndSaveMovie(foundMovie);
+                        }
+                        foundMovie = addFileToMovie(foundMovie, file);
                         return 0;
                     } else {
                         log.error("No movie in local DB for file " + file.toString());
@@ -353,7 +363,10 @@ public class  MovieFileGuiServices extends MovieFileServices {
             Movie foundMovie = resultChooserDialog.getSelectedMovie();
             if (null != foundMovie) {
                 // add file to DB
-                hibernateMovieDao.updateOrCreateMovie(foundMovie, file);
+                if (foundMovie.getId()==null) {
+                    foundMovie = checkActorsAndSaveMovie(foundMovie);
+                }
+                foundMovie = addFileToMovie(foundMovie, file);
                 return 0;
             } else {
                 log.info("No movie in IMDB for file " + file.toString());

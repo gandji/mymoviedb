@@ -74,7 +74,8 @@ public class Actor {
     @GeneratedValue(strategy=GenerationType.AUTO,generator="actor_seq")
     @SequenceGenerator(name="actor_seq")
     private Long id;
-    
+
+    @Column(unique = true)
     private String name;
     
     @ManyToMany(mappedBy="actors",cascade={})

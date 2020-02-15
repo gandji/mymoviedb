@@ -59,7 +59,7 @@ public class RepairDatabase {
        //fixNullHashCodes();
        //fixMissingActors();
         //fixMissingCreated();
-        fixDoubleActors();
+        //fixDoubleActors();
     }
 
     private void fixDoubleActors() {
@@ -138,24 +138,6 @@ public class RepairDatabase {
                 log.info("Not deleting actor "+actor.getName()+":"+actor.getId()
                 +" because has "+movies.size()+" movies");
             }
-        }
-    }
-
-    private void fixMissingCreated() {
-        Pageable pageRequest = PageRequest.of(0,50);
-        Page<Movie> moviePage = hibernateMovieDao.findAll(pageRequest);
-        while (moviePage.hasContent()) {
-            List<Movie> movies = moviePage.getContent();
-
-            for (Movie movie : movies) {
-                movie.getCreated();
-                hibernateMovieDao.save(movie);
-            }
-            pageRequest = moviePage.nextPageable();
-            if (null == pageRequest) {
-                break;
-            }
-            moviePage = hibernateMovieDao.findAll(pageRequest);
         }
     }
 
