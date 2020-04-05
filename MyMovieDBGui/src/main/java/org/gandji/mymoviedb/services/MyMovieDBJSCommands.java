@@ -1,5 +1,6 @@
 package org.gandji.mymoviedb.services;
 
+import javafx.concurrent.Task;
 import lombok.extern.slf4j.Slf4j;
 import org.gandji.mymoviedb.data.HibernateMovieDao;
 import org.gandji.mymoviedb.data.Movie;
@@ -12,6 +13,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -67,24 +69,47 @@ public class MyMovieDBJSCommands {
     }
 
     public String searchKeywords(String query){
-        Iterable<Movie> moviesIterable = hibernateMovieDao.searchInternalAll(query);
 
-        List<Movie> moviesList = new ArrayList<>();
-        Iterator<Movie> moviesIt = moviesIterable.iterator();
-        while (moviesIt.hasNext()) {
-            moviesList.add(moviesIt.next());
+        // this is broken
+
+
+        final Task<List<MovieResource>> task = new Task<List<MovieResource>>() {
+
+            @Override
+            public List<MovieResource> call() throws Exception {
+                    Iterable<Movie> moviesIterable = hibernateMovieDao.searchInternalAll(query);
+
+                    List<Movie> moviesList = new ArrayList<>();
+                    Iterator<Movie> moviesIt = moviesIterable.iterator();
+                    while (moviesIt.hasNext()) {
+                        moviesList.add(moviesIt.next());
+                    }
+                    List<MovieResource> movies = moviesList
+                            .stream()
+                            .map(hibernateMovieDao::populateMovie)
+                            .map(movieResourceAssembler::toResource).collect(Collectors.toList());
+                    return movies;
+            }
+        };
+
+        final Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return "";
         }
-        List<MovieResource> movies = moviesList
-                .stream()
-                .map(hibernateMovieDao::populateMovie)
-                .map(movieResourceAssembler::toResource).collect(Collectors.toList());
 
         Context context = new Context(Locale.FRENCH);
-        context.setVariable("movies",movies);
+        context.setVariable("movies",task.getValue());
 
         Set<String> params = new HashSet<>();
         params.add("moviesCarousel");
         return pageTemplateResolver.process("mymoviedb_start_page_materialize",params,context);
+
     }
 
     public void playMovie(String id) {

@@ -19,13 +19,12 @@ package org.gandji.mymoviedb;
 
 import javafx.application.Application;
 import lombok.extern.slf4j.Slf4j;
-import org.gandji.mymoviedb.gui.MyMovieDBRunner;
 import org.gandji.mymoviedb.gui.widgets.MyMovieDBJavaFX;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.StandardEnvironment;
 
 import java.awt.*;
 import java.util.logging.Level;
@@ -98,10 +97,17 @@ public class MyMovieDBGUI {
             log.info("OK... bye");
 
         } else {
-            // launch spring boot application not as web service but using the runner!
-            SpringApplication.run(MyMovieDBGUI.class, args);
-        }
+            // launch spring boot application, not as web service, but using the runner!
+            ConfigurableEnvironment environment = new StandardEnvironment();
 
+            // tell spring we are wiring things for swing
+            environment.setActiveProfiles("swing");
+
+            SpringApplication myMovieDBGuiApp = new SpringApplication(MyMovieDBGUI.class);
+            myMovieDBGuiApp.setEnvironment(environment);
+            myMovieDBGuiApp.run(args);
+
+        }
 
     }
 

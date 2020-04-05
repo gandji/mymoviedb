@@ -77,35 +77,35 @@ public class MovieGuiService {
     @Autowired
     private MyMovieDBPreferences preferences;
 
+    @Autowired
+    private DialogsService dialogsService;
+
     public void playTheFile(Path fileToPlay) {
       // launch the default action for this file (works on linux?)
-        if (!Desktop.isDesktopSupported()){
-            JOptionPane.showMessageDialog(mainFrame,
+        if (!Desktop.isDesktopSupported()) {
+            dialogsService.showMessageDialog(mainFrame,
                     "Cannot launch  default video player!",
                     "Warning",
-                    JOptionPane.WARNING_MESSAGE);
+                    DialogsService.MessageType.WARN);
             return;
         }
-        Desktop dt = Desktop.getDesktop();
-        File fd = null;
         try {
-            fd = new File(fileToPlay.getParent().resolve(fileToPlay.getFileName()).toString());
-            dt.open(fd);
+            dialogsService.externalOpenFile(fileToPlay);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(mainFrame,
+            dialogsService.showMessageDialog(mainFrame,
                     "Cannot open file " + fileToPlay + "\n"
                     + "Make sure the file is there, and that it is associated to a video player.",
                     "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                    DialogsService.MessageType.WARN);
         }
     }
     
     public void playTheMovie(Movie movie) {
         if (null == movie) {
-            JOptionPane.showMessageDialog(mainFrame,
+            dialogsService.showMessageDialog(mainFrame,
                     "Cannot find movie!",
                     "Internal error",
-                    JOptionPane.ERROR_MESSAGE);
+                    DialogsService.MessageType.ERROR);
             return;
         }
         String fileToPlay = null;
@@ -129,10 +129,10 @@ public class MovieGuiService {
 
         if (null==files || files.isEmpty()) {
             // no files found
-             JOptionPane.showMessageDialog(mainFrame,
+             dialogsService.showMessageDialog(mainFrame,
                     "No files for movie "+movie.getTitle(),
                     "Warning",
-                    JOptionPane.WARNING_MESSAGE);
+                    DialogsService.MessageType.WARN);
             return;
         } else if (1==files.size()) {
             //only one file found
@@ -164,30 +164,29 @@ public class MovieGuiService {
 
     public void internetCritics(Movie movie) {
         if (null == movie) {
-            JOptionPane.showMessageDialog(mainFrame,
+            dialogsService.showMessageDialog(mainFrame,
                     "Cannot find movie!",
                     "Internal error",
-                    JOptionPane.ERROR_MESSAGE);
+                    DialogsService.MessageType.ERROR);
             return;
         }
         log.info("Searching for movie title : "+movie.getTitle());
         String url = googleSearch.getResult("telerama"+" "+movie.getTitle());
         // launch the default action for urls (works on linux?)
         if (!Desktop.isDesktopSupported()){
-            JOptionPane.showMessageDialog(mainFrame,
+            dialogsService.showMessageDialog(mainFrame,
                     "Cannot launch  default browser!",
                     "Warning",
-                    JOptionPane.WARNING_MESSAGE);
+                    DialogsService.MessageType.WARN);
             return;
         }
-        Desktop dt = Desktop.getDesktop();
         try {
-        dt.browse(URI.create(url));
+            dialogsService.externalOpenUrl(url);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(mainFrame,
+            dialogsService.showMessageDialog(mainFrame,
                     "Cannot open "+url+"\n",
                     "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                    DialogsService.MessageType.WARN);
             return;
         }
     }
@@ -255,14 +254,13 @@ public class MovieGuiService {
         if (null==infoUrl) {
             infoUrl = movieUrl.toString();
         }
-        Desktop dt = Desktop.getDesktop();
         try {
-        dt.browse(URI.create(infoUrl));
+            dialogsService.externalOpenUrl(infoUrl);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(mainFrame,
+            dialogsService.showMessageDialog(mainFrame,
                     "Cannot open "+infoUrl+"\n",
                     "Error",
-                    JOptionPane.ERROR_MESSAGE);
+                    DialogsService.MessageType.WARN);
             return;
         }
     }
