@@ -23,7 +23,6 @@ import java.nio.file.Path;
 import lombok.extern.slf4j.Slf4j;
 import org.gandji.mymoviedb.scrapy.MovieInfoSearchService;
 import org.gandji.mymoviedb.services.MovieDaoGuiServices;
-import org.gandji.mymoviedb.data.HibernateMovieDao;
 import org.gandji.mymoviedb.data.Movie;
 import org.gandji.mymoviedb.data.VideoFile;
 import org.gandji.mymoviedb.gui.MovieGuiService;
@@ -220,7 +219,7 @@ public class UserInputMovie extends javax.swing.JDialog {
             if (null != movieHolder) {
                 if (file!=null) {
                     VideoFile videoFile = new VideoFile();
-                    movieFileGuiServices.updateVideoFile(videoFile,file);
+                    movieFileGuiServices.populateVideoFile(videoFile,file);
                     movie.addFile(videoFile);
                 }
                 movieHolder.setData(movie);

@@ -11,7 +11,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import java.nio.file.Path;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,7 +34,7 @@ public class MovieDaoServices {
     @Autowired
     HibernateMovieDao hibernateMovieDao;
 
-    public void updateVideoFile(VideoFile file, Path path) {
+    public void populateVideoFile(VideoFile file, Path path) {
         file.setFileName(path.getFileName().toString());
         file.setDirectory(path.getParent().toString());
         file.setDriveLabel(file.computeCurrentDriveLabel());
@@ -79,13 +78,12 @@ public class MovieDaoServices {
         return movie;
     }
 
-    // @todo this duplicates code in videofileworker.saveMovie
     public Movie addFileToMovie(Movie selectedMovie, Path filePath) {
 
         VideoFile videoFile = null;
         if (null != filePath) {
             videoFile = new VideoFile();
-            updateVideoFile(videoFile,filePath);
+            populateVideoFile(videoFile,filePath);
         }
 
         return addFileToMovie(selectedMovie,videoFile);

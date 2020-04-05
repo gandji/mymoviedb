@@ -46,7 +46,11 @@ public class MovieResource extends /*Resource<Movie>*/ ResourceSupport {
 
         this.title = movie.getTitle();
         this.alternateTitle = movie.getAlternateTitle();
-        this.posterBytesAsString = Base64.getEncoder().encodeToString(movie.getPosterBytes());
+        if (movie.getPosterBytes()!=null) {
+            this.posterBytesAsString = Base64.getEncoder().encodeToString(movie.getPosterBytes());
+        } else {
+            this.posterBytesAsString = "\\0";
+        }
         this.genres = movie.getGenres();
         this.files = movie.getFiles();
         this.director = movie.getDirector();

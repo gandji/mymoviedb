@@ -98,7 +98,7 @@ public abstract class MyMovieDBRunner implements CommandLineRunner{
                         "SVR", "afrique31","HDLIGHT",".*[eE][mM][uU][lL][eE].*",
                         ".*[dD][iI][vV][xX].*",".*[dD][vV][dD].*","[cC][dD][12]",
                         "[lLe]","[lL]a","[lL]es",
-                        "[mM][hH][dD]","JOKPIC"
+                        "[mM][hH][dD]","JOKPIC","gismo65"
                 );
         for (String dropk : dropRegexs) {
             try {

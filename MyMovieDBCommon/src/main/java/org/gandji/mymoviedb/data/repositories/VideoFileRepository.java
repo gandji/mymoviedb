@@ -36,8 +36,6 @@ public interface VideoFileRepository extends JpaRepository<VideoFile, Long> {
 
     VideoFile findOneByHashCode(String fileHash);
 
-    void delete(VideoFile videoFile);
-
     @Query(value = "select vf from VideoFile vf where vf.hashCode is null ")
     List<VideoFile> findNullHashCodes();
 }

@@ -47,7 +47,7 @@ public class GoogleSearch {
 
         Elements links = null;
         try {
-            links = Jsoup.connect(google + URLEncoder.encode(search, charset)).userAgent(userAgent).get().select(".g>.r>a");
+            links = Jsoup.connect(google + URLEncoder.encode(search, charset)).userAgent(userAgent).get().select(".ZINbbc>.kCrYT>a[href]");
         } catch (UnsupportedEncodingException ex) {
             log.error("Malformed URL", ex);
         } catch (IOException ex) {            

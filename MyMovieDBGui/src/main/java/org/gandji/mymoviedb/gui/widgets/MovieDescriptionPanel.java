@@ -86,7 +86,7 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
     private JButton openInfoButton;
     private JButton saveButton;
     private JButton internetCriticsButton;
-    private JTable filesTable;
+    private JTable filesTable; 
 
     public JPanel getPanel() {
         return panel;
@@ -124,12 +124,12 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
 
     public MovieDescriptionPanel() {
         super();
-        createUIComponents();
+        //createUIComponents();
     }
 
     @PostConstruct
     public void init() {
-        //createUIComponents();
+        createUIComponents();
     }
 
     @PostConstruct
@@ -219,20 +219,18 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
         this.movie.setDuree(durationTextField.getText());
         this.movie.setRating((Integer) ratingSpinner.getValue());
         // @todo manage date of last seen: editor? formatter?
-        // hack for unset last seen date!
+        //   hack for unset last seen date!
         try {
             Date lastSeen = (Date) lastSeenFormattedTextField.getValue();
             this.movie.setLastSeen(lastSeen);
         } catch (IllegalArgumentException e) {
             log.info("Unknown date : "+lastSeenFormattedTextField.getText());
-            log.info("Accepted date format is yyyy-MM-dd or dd/MM/yyyy");
+            log.info("Accepted date format  is yyyy-MM-dd or dd/MM/yyyy");
             e.printStackTrace();
         }
-        Movie forFiles = this.movie;
         this.movie = movieDaoServices.checkActorsAndSaveMovie(this.movie);
-        for (VideoFile vf : forFiles.getFiles()) {
-            vf.setMovie(this.movie);
-            hibernateVideoFileDao.save(vf);
+        for (VideoFile file : this.movie.getFiles()) {
+            movieDaoServices.addFileToMovie(this.movie, file);
         }
         log.info("Updated movie in DB: " + movie.getTitle());
     }

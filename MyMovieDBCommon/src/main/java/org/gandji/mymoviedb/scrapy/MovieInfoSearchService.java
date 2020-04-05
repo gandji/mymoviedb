@@ -100,7 +100,13 @@ public class MovieInfoSearchService {
     public MovieInfoSearchService() {}
 
     public List<Movie> searchInternetInfoForMovies(List<String> kwds, MovieFoundCallback callback) throws InterruptedException {
-        List<Movie> moviesImdb = searchImdbForMovies(kwds,callback);
+        boolean searchOnImdbToo = false;
+        List<Movie> moviesImdb;
+        if (searchOnImdbToo) {
+            moviesImdb = searchImdbForMovies(kwds, callback);
+        } else {
+            moviesImdb = new ArrayList<>();
+        }
         List<Movie> movieTmdb = searchTmdbForMovies(kwds, callback);
         moviesImdb.addAll(movieTmdb);
         return moviesImdb;

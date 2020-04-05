@@ -57,7 +57,7 @@ public class HibernateVideoFileDao {
 
     @Transactional
     public void deleteFile(VideoFile videoFile) {
-        videoFileRepository.delete(videoFile);
+        videoFileRepository.deleteById(videoFile.getId());
     }
 
     public List<VideoFile> findAll() {

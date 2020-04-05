@@ -37,7 +37,7 @@ public class FileUtils {
 
     private static ContentInfoUtil ciu = null;
 
-    private static final String[] videoTypes = {"Matroska", "avi", "mp4"};
+    private static final String[] videoTypes = {"matroska", "Matroska", "avi", "mp4", "mpeg"};
 
     public static String computeHash(Path path) {
         log.debug("COMPUTING HASH FOR "+path.toString());

@@ -24,6 +24,6 @@ import org.springframework.stereotype.Repository;
  * Created by gandji on 14/02/2018.
  */
 @Profile("h2")
-@Repository
+//@Repository
 public interface VideoFileRepositoryH2 extends VideoFileRepository {
 }

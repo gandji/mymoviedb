@@ -67,7 +67,7 @@ public class ScanADirectoryWorker extends SwingWorker<Integer, Movie>  {
 
                     Integer allCancelled = 0;
                     if (isVideoFile) {
-                        allCancelled = movieFileGuiServices.addFileNoMovie(file, true,mainFrame);
+                        allCancelled = movieFileGuiServices.addFileOrFindMovieInfo(file, null, true,mainFrame);
                     }
                     if (1 == allCancelled) {
                         return FileVisitResult.TERMINATE;

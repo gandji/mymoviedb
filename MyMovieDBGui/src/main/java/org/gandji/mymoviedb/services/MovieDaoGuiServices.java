@@ -127,28 +127,17 @@ public class MovieDaoGuiServices extends MovieDaoServices {
 
             // ok, file is not in DB, add file to maybeMovie
             log.info("Adding file " + fileToProcess.toString() + " to movie: " + movie.getTitle());
-            movie = checkActorsAndSaveMovie(movie);
+            // REMOVE movie = checkActorsAndSaveMovie(movie);
             movie = addFileToMovie(movie, fileToProcess);
             return 0;
         }
 
         // we have no movie
 
-        return addFileNoMovie(fileToProcess,limitPopups, mainFrame);
+        return addFileNoMovie(fileToProcess, mflByHash, limitPopups, mainFrame);
     }
 
-    public int addFileNoMovie(Path file, boolean limitPopups, NewLayout mainFrame) {
-        // compute hash
-        String hashCode = FileUtils.computeHash(file);
-
-        // try to find file in db, by hash
-        List<VideoFile> mflByHash = null;
-        try {
-            mflByHash = videoFileDao.findByHashCode(hashCode);
-        } catch (Exception e) {
-            log.error("Exception while searching by hash: " + e.getMessage());
-            mflByHash = null;
-        }
+    private int addFileNoMovie(Path file, List<VideoFile> mflByHash, boolean limitPopups, NewLayout mainFrame) {
         if (null != mflByHash && !mflByHash.isEmpty()) {
             final VideoFile videoFileSameHash = mflByHash.get(0);
             // file is already in db
@@ -157,7 +146,7 @@ public class MovieDaoGuiServices extends MovieDaoServices {
             if (!myMovieDBPreferences.isKeepDuplicateFilesOnScan()) {
                 // replace old file path
                 log.info("Updating file info in DB from "+videoFileSameHash.getFileName()+" to "+file.getFileName().toString());
-                updateVideoFile(videoFileSameHash,file);
+                populateVideoFile(videoFileSameHash,file);
                 videoFileDao.save(videoFileSameHash);
             } else {
                 // find movie
@@ -166,7 +155,7 @@ public class MovieDaoGuiServices extends MovieDaoServices {
                 if (null!=movie) {
                     log.info("Adding file to movie: "+movie.getTitle());
                     VideoFile newVideoFile = new VideoFile();
-                    updateVideoFile(newVideoFile,file);
+                    populateVideoFile(newVideoFile,file);
                     newVideoFile.setQualiteVideo(videoFileSameHash.getQualiteVideo());
                     newVideoFile.setVersion(videoFileSameHash.getVersion());
                     if (movie.getId() == null) {
@@ -258,7 +247,7 @@ public class MovieDaoGuiServices extends MovieDaoServices {
                 });
             }
             e.printStackTrace();
-            return 0;
+            // it's OK, we have not found in DB, go on
         }
         final List<Movie> moviesList = tempList;
         if (moviesList != null && !moviesList.isEmpty()) {
@@ -382,7 +371,7 @@ public class MovieDaoGuiServices extends MovieDaoServices {
         Movie movie = new Movie();
         VideoFile videoFile = new VideoFile();
 
-        updateVideoFile(videoFile,path);
+        populateVideoFile(videoFile,path);
         movie.addFile(videoFile);
 
         movieDescriptionDialog.setModal(true);

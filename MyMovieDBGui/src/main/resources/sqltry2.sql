@@ -58,17 +58,19 @@ CREATE TABLE `movie` (
   FULLTEXT KEY `fulltext_director` (`director`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8
 */
-SELECT * FROM information_schema.statistics WHERE table_schema = 'mymoviedb' AND index_name ='fulltext_title';
-select IF(  EXISTS(SELECT index_name FROM information_schema.statistics WHERE table_schema = 'mymoviedb' AND index_name ='fultext_title')
+SELECT * FROM information_schema.statistics WHERE table_schema = 'mymoviedb' AND index_name ='FULLTEXT_alternate_title';
+select IF(  EXISTS(SELECT index_name FROM information_schema.statistics WHERE table_schema = 'mymoviedb' AND index_name ='fulltext_director')
    ,1
 
 ,   0
 );
 /*create table ker (id bigint not null auto_increment, rege varchar(25), primary key (id));*/
 
+create fulltext index title on movie(alternate_title);
+
 select * from movie left outer join movie_genres as mg on mg.movies_id=movie.id 
                   where genres_name like 'Adventure';
 
-select * from movie where match (title, alternateTitle) against ("Retour" in natural language mode);
+select * from movie where match (director) against ('Steven Spielberg' in natural language mode);
 
 select * from videofile where hashCode is NULL ;

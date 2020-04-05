@@ -46,7 +46,7 @@ public class VideoFileWorker extends SwingWorker<Integer, Movie> {
 
 
     @Autowired
-    private MovieDaoGuiServices movieFileGuiServices;
+    private MovieDaoGuiServices movieDaoGuiServices;
 
     @Autowired
     private NewLayout mainFrame;
@@ -94,9 +94,7 @@ public class VideoFileWorker extends SwingWorker<Integer, Movie> {
             isVideoFile = false;
         }
         if (isVideoFile) {
-            cancelAll = movieFileGuiServices.addFileOrFindMovieInfo(file,movie,limitPopups,mainFrame);
-        } else {
-            LOG.log(Level.INFO,"FILE " + file.toString() + "      IS NOT A VIDEO FILE.");
+            cancelAll = movieDaoGuiServices.addFileOrFindMovieInfo(file,movie,limitPopups,mainFrame);
         }
         return cancelAll;
     }

@@ -45,7 +45,7 @@ import javax.persistence.Temporal;
  * @author gandji <gandji@free.fr>
  */
 @Entity
-@Table(name="MOVIE")
+@Table(name="movie")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -99,7 +99,7 @@ public class Movie {
     @JsonIgnoreProperties("movies")
     private Set<Genre> genres=null;
     
-    @OneToMany(mappedBy="movie",cascade={CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(mappedBy="movie",cascade={CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JsonIgnoreProperties("movie")
     private Set<VideoFile> files;
 

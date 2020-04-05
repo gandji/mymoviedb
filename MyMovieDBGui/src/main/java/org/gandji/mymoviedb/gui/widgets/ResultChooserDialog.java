@@ -159,14 +159,14 @@ public class ResultChooserDialog extends javax.swing.JDialog implements ActionLi
         playFileButton.addActionListener(e -> playFileButtonActionPerformed(e));
 
         //---- cancelAllButton ----
-        cancelAllButton.setText("Cancel All");
+        cancelAllButton.setText("Cancel");
         cancelAllButton.setFocusable(false);
         cancelAllButton.setHorizontalTextPosition(0);
         cancelAllButton.setVerticalTextPosition(3);
         cancelAllButton.addActionListener(e -> cancelAllButtonActionPerformed(e));
 
         //---- cancelButton ----
-        cancelButton.setText("Cancel");
+        cancelButton.setText("Not in list");
         cancelButton.setFocusable(false);
         cancelButton.setHorizontalTextPosition(0);
         cancelButton.setVerticalTextPosition(3);
