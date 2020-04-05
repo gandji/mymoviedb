@@ -105,6 +105,12 @@ public class MySqlRunner extends MyMovieDBRunner {
         // i dont know better than this:
         String schema = dataSourceUrl.substring(dataSourceUrl.lastIndexOf("/")+1);
 
+        // remove ?xxx=yyy stuff
+        int mark = schema.indexOf("?");
+        if (mark>=0) {
+            schema = schema.substring(0, mark);
+        }
+
         createFulltextIndexIfNotPresent(schema,
                 Movie.class.getAnnotation(Table.class).name(),
                 "title");
@@ -120,6 +126,9 @@ public class MySqlRunner extends MyMovieDBRunner {
         createFulltextIndexIfNotPresent(schema,
                 Movie.class.getAnnotation(Table.class).name(),
                 "comments");
+        createFulltextIndexIfNotPresent(schema,
+                Actor.class.getAnnotation(Table.class).name(),
+                "name");
 
         //fillDbForTests();
     }

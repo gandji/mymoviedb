@@ -51,15 +51,23 @@ public class MyMovieDBJavaFX extends Application {
     }
 
     @Override
+    // this does not get called if "setOnCloseRequest is set below
     public void stop() throws Exception {
         this.context.close();
         Platform.exit();
+        System.exit(0);
     }
 
     public ConfigurableApplicationContext context;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
+        /*primaryStage.setOnCloseRequest(event -> {
+            this.context.close();
+            Platform.exit();
+            System.exit(0);
+        });*/
 
         this.context.publishEvent(new StageReadyEvent(primaryStage));
 

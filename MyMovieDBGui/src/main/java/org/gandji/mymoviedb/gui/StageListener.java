@@ -55,6 +55,9 @@ public class StageListener implements ApplicationListener<StageReadyEvent> {
 
     private WebEngine webEngine;
 
+    private Button maxiMiniButton;
+    private ClassPathResource maxiMiniIconResource;
+
     @Override
     public void onApplicationEvent(StageReadyEvent stageReadyEvent) {
         Stage  stage = stageReadyEvent.getStage();
@@ -93,6 +96,50 @@ public class StageListener implements ApplicationListener<StageReadyEvent> {
         });
         toolBar.getItems().add(resetButton);
 
+        try {
+            if (stage.isMaximized()) {
+                maxiMiniIconResource = new ClassPathResource("icons/icons8-minimize-window-18.png");
+            } else {
+                maxiMiniIconResource = new ClassPathResource("icons/icons8-maximize-window-18.png");
+            }
+            javafx.scene.image.Image img = new Image(maxiMiniIconResource.getInputStream());
+            maxiMiniButton = new Button("",new ImageView(img));
+        } catch (NullPointerException | IOException e) {
+            e.printStackTrace();
+            if (stage.isMaximized()) {
+                maxiMiniButton = new Button("Minimize");
+            }else {
+                maxiMiniButton = new Button("Maximize");
+            }
+        }
+        maxiMiniButton.setOnAction(event -> {
+            stage.setMaximized(!stage.isMaximized());
+            try {
+                if (stage.isMaximized()) {
+                    maxiMiniIconResource = new ClassPathResource("icons/icons8-minimize-window-18.png");
+                } else {
+                    maxiMiniIconResource = new ClassPathResource("icons/icons8-maximize-window-18.png");
+                }
+                javafx.scene.image.Image img = new Image(maxiMiniIconResource.getInputStream());
+                maxiMiniButton.setText("");
+                maxiMiniButton.setGraphic(new ImageView(img));
+            } catch (NullPointerException | IOException e) {
+            }
+        });
+        toolBar.getItems().add(maxiMiniButton);
+
+        Button fullscreenButton;
+        try {
+            Resource fullscreenIconResource = new ClassPathResource("icons/icons8-full-screen-18.png");
+            javafx.scene.image.Image img = new Image(fullscreenIconResource.getInputStream());
+            fullscreenButton = new Button("",new ImageView(img));
+        } catch (NullPointerException | IOException e) {
+            e.printStackTrace();
+            fullscreenButton = new Button("Fullscreen");
+        }
+        fullscreenButton.setOnAction(event -> stage.setFullScreen(!stage.isFullScreen()));
+        toolBar.getItems().add(fullscreenButton);
+
         StackPane root = new StackPane();
         root.setPadding(new Insets(5,5,5,5));
         root.getChildren().addAll(browser, toolBar);
@@ -109,7 +156,7 @@ public class StageListener implements ApplicationListener<StageReadyEvent> {
 
         stage.setTitle("MyMovieDB");
         stage.setScene(scene);
-        stage.setWidth(1000);
+        stage.setWidth(1100);
         stage.setHeight(800);
 
         stage.show();

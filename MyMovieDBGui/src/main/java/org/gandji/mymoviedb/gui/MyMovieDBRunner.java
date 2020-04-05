@@ -51,13 +51,13 @@ public abstract class MyMovieDBRunner implements CommandLineRunner{
     @Override
     public void run(String... strings) throws Exception {
 
+        vendorSpecificDatabaseInitialization();
+
         if (strings.length>=1 && strings[0].equals("javafx")) {
             return;
         }
 
         //additionalLoggingConfiguration();
-
-        vendorSpecificDatabaseInitialization();
 
         populateWithDefaultRegexps();
         movieDataModelPoster.setMovies(hibernateMovieDao.findAllByOrderByCreated(0, 300).getContent());

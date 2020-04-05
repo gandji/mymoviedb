@@ -56,7 +56,7 @@ import javax.persistence.Table;
         }
 )
 @Entity
-@Table(name="ACTOR")
+@Table(name="actor")
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")

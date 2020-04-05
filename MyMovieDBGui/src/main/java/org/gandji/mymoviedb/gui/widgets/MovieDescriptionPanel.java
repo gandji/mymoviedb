@@ -219,7 +219,7 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
         this.movie.setDuree(durationTextField.getText());
         this.movie.setRating((Integer) ratingSpinner.getValue());
         // @todo manage date of last seen: editor? formatter?
-        //   hack for unset last seen date!
+        // hack for unset last seen date!
         try {
             Date lastSeen = (Date) lastSeenFormattedTextField.getValue();
             this.movie.setLastSeen(lastSeen);

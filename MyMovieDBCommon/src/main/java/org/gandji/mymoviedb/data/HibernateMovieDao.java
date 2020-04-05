@@ -25,6 +25,8 @@ import org.gandji.mymoviedb.data.repositories.ActorRepository;
 import org.gandji.mymoviedb.data.repositories.MovieRepository;
 import org.gandji.mymoviedb.errors.MovieNotFoundException;
 import org.gandji.mymoviedb.services.MovieDaoServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,6 +41,8 @@ import javax.persistence.EntityManager;
  * @author gandji <gandji@free.fr>
  */
 public abstract class HibernateMovieDao {
+
+    final static Logger logger = LoggerFactory.getLogger(HibernateMovieDao.class);
 
     @Autowired
     private EntityManager entityManager;

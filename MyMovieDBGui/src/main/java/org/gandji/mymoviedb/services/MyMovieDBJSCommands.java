@@ -70,13 +70,6 @@ public class MyMovieDBJSCommands {
 
     public String searchKeywords(String query){
 
-        // this is broken
-
-
-        final Task<List<MovieResource>> task = new Task<List<MovieResource>>() {
-
-            @Override
-            public List<MovieResource> call() throws Exception {
                     Iterable<Movie> moviesIterable = hibernateMovieDao.searchInternalAll(query);
 
                     List<Movie> moviesList = new ArrayList<>();
@@ -88,23 +81,10 @@ public class MyMovieDBJSCommands {
                             .stream()
                             .map(hibernateMovieDao::populateMovie)
                             .map(movieResourceAssembler::toResource).collect(Collectors.toList());
-                    return movies;
-            }
-        };
-
-        final Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return "";
-        }
 
         Context context = new Context(Locale.FRENCH);
-        context.setVariable("movies",task.getValue());
+        context.setVariable("movies",movies);
+        context.setVariable("mmdb", this);
 
         Set<String> params = new HashSet<>();
         params.add("moviesCarousel");
