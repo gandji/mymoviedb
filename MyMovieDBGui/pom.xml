@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.gandji.MyMovieDB</groupId>
         <artifactId>MyMovieDB</artifactId>
-        <version>1.4.1-SNAPSHOT</version>
+        <version>1.4.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <properties>
@@ -119,9 +119,18 @@
                             <goal>rename</goal>
                         </goals>
                         <configuration>
-                            <sourceFile>${project.build.directory}/MyMovieDB.bat</sourceFile>
-                            <destinationFile>${project.build.directory}/MyMovieDB-${project.version}.bat
-                            </destinationFile>
+                            <fileSets>
+                                <fileSet>
+                                    <sourceFile>${project.build.directory}/MyMovieDB.bat</sourceFile>
+                                    <destinationFile>${project.build.directory}/MyMovieDB-${project.version}.bat
+                                    </destinationFile>
+                                </fileSet>
+                                <fileSet>
+                                    <sourceFile>${project.build.directory}/MyMovieDB.sh</sourceFile>
+                                    <destinationFile>${project.build.directory}/MyMovieDB-${project.version}.sh
+                                    </destinationFile>
+                                </fileSet>
+                            </fileSets>
                         </configuration>
                     </execution>
                 </executions>
