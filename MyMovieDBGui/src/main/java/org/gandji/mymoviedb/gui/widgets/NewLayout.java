@@ -55,10 +55,9 @@ public class NewLayout extends JFrame {
     @Autowired
     private AboutWindow aboutWindow;
 
+    @Autowired
     private DbDisplayTable dbDisplayTable;
     private JScrollPane jScrollPane1;
-
-    private JTabbedPane tabbedPane;
 
     // the main menu bar
     private javax.swing.JMenuItem AddDirectoryMenuItem;
@@ -211,8 +210,6 @@ public class NewLayout extends JFrame {
 
         setJMenuBar(MenuBar);
 
-        // the tabbed pane
-        tabbedPane = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT);
     }
 
     @PostConstruct
@@ -228,11 +225,10 @@ public class NewLayout extends JFrame {
                 jToggleButton1.setSelected(false);
             }
         });
-        JLabel titleLabel = new JLabel("Films");
-        dbDisplayTable = (DbDisplayTable) applicationContext.getBean("dbDisplayTable", tabbedPane, titleLabel);
+        dbDisplayTable = (DbDisplayTable) applicationContext.getBean("dbDisplayTable");
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel,BoxLayout.PAGE_AXIS));
-        leftPanel.add(titleLabel);
+        leftPanel.add(dbDisplayTable.getTitleLabel());
         leftPanel.add(jScrollPane1);
         jScrollPane1.setViewportView(dbDisplayTable);
 
@@ -241,7 +237,7 @@ public class NewLayout extends JFrame {
         BorderLayout borderLayout = new BorderLayout();
         getContentPane().setLayout(borderLayout);
         getContentPane().add(leftPanel, BorderLayout.LINE_START);
-        getContentPane().add(tabbedPane, BorderLayout.CENTER);
+        getContentPane().add(dbDisplayTable.getTabbedPane(), BorderLayout.CENTER);
         getContentPane().add(rightColumn,BorderLayout.LINE_END);
 
         getContentPane().setPreferredSize(new Dimension(preferences.getMainWidth(),preferences.getMainHeight()));

@@ -1,5 +1,8 @@
 package org.gandji.mymoviedb.gui.widgets;
 
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 import lombok.extern.slf4j.Slf4j;
 import org.gandji.mymoviedb.MyMovieDBPreferences;
 import org.gandji.mymoviedb.gui.FileDataModel;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableColumn;
@@ -86,7 +90,7 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
     private JButton openInfoButton;
     private JButton saveButton;
     private JButton internetCriticsButton;
-    private JTable filesTable; 
+    private JTable filesTable;
 
     public JPanel getPanel() {
         return panel;
@@ -151,7 +155,7 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
                         "Remove movie and files from database and delete the files!",
                         "Cancel"};
                 int reply = JOptionPane.showOptionDialog(MovieDescriptionPanel.this,
-                        "Are ou sure to delete movie "+movie.getTitle()+"?",
+                        "Are ou sure to delete movie " + movie.getTitle() + "?",
                         "Delete a movie",
                         JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.QUESTION_MESSAGE,
@@ -164,9 +168,9 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
                 if (reply == JOptionPane.YES_OPTION) {
                     deleteInDB = true;
                     deleteRealFiles = false;
-                    log.info("Deleting movie from database: "+movie.getTitle());
-                } else if (reply == JOptionPane.NO_OPTION){
-                    log.info("Deleting movie and files for "+movie.getTitle());
+                    log.info("Deleting movie from database: " + movie.getTitle());
+                } else if (reply == JOptionPane.NO_OPTION) {
+                    log.info("Deleting movie and files for " + movie.getTitle());
                     deleteInDB = true;
                     deleteRealFiles = true;
                 }
@@ -178,10 +182,10 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
                         if (deleteRealFiles) {
                             try {
                                 log.debug("   deleting file " + vf.getFileName());
-                                Files.deleteIfExists(Paths.get(vf.getDirectory(),vf.getFileName()));
+                                Files.deleteIfExists(Paths.get(vf.getDirectory(), vf.getFileName()));
                             } catch (IOException e1) {
                                 JOptionPane.showMessageDialog(MovieDescriptionPanel.this,
-                                        "Could not delete file "+vf.getFileName()+"\nSee log for details",
+                                        "Could not delete file " + vf.getFileName() + "\nSee log for details",
                                         "Warning",
                                         JOptionPane.WARNING_MESSAGE);
                                 e1.printStackTrace();
@@ -219,12 +223,12 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
         this.movie.setDuree(durationTextField.getText());
         this.movie.setRating((Integer) ratingSpinner.getValue());
         // @todo manage date of last seen: editor? formatter?
-        // hack for unset last seen date!
+        //  hack for unset last seen date!
         try {
             Date lastSeen = (Date) lastSeenFormattedTextField.getValue();
             this.movie.setLastSeen(lastSeen);
         } catch (IllegalArgumentException e) {
-            log.info("Unknown date : "+lastSeenFormattedTextField.getText());
+            log.info("Unknown date : " + lastSeenFormattedTextField.getText());
             log.info("Accepted date format  is yyyy-MM-dd or dd/MM/yyyy");
             e.printStackTrace();
         }
@@ -240,15 +244,15 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
 
         int selectedRow = filesTable.convertRowIndexToModel(filesTable.getSelectedRow());
         // get the selected file with the -1 trick
-        VideoFile file = (VideoFile) filesTable.getModel().getValueAt(selectedRow,-1);
+        VideoFile file = (VideoFile) filesTable.getModel().getValueAt(selectedRow, -1);
         Path filePath = null;
 
-        if (null==file) {
+        if (null == file) {
             // no selected files, take first
             //filePath = this.movie.getFiles().iterator().next().toPath();
-            if (this.fileDataModel.getRowCount() >0) {
+            if (this.fileDataModel.getRowCount() > 0) {
                 VideoFile vf = fileDataModel.getFile(0);
-                if (null!=vf) {
+                if (null != vf) {
                     filePath = vf.toPath();
                     userInputMovie.setFile(filePath);
                 }
@@ -258,7 +262,7 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
         }
 
         if (null != filePath) {
-            userInputMovie.setText("Enter TMDB url found for file: "+filePath.getFileName().toString());
+            userInputMovie.setText("Enter TMDB url found for file: " + filePath.getFileName().toString());
         } else {
             userInputMovie.setText("Enter TMDB url for new movie: ");
         }
@@ -269,7 +273,7 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
     @Override
     public void setData(Movie data) {
         this.movie = data;
-        if (null==data){
+        if (null == data) {
             titleTextField.setText("");
             alternateTitleTextField.setText("");
             directorTextField.setText("");
@@ -302,17 +306,17 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
         yearTextField.setText(data.getYear());
         durationTextField.setText(data.getDuree());
 
-            //poster
-            try {
-                //ImageInputStream iis = ImageIO.createImageInputStream(new ByteArrayInputStream(data.getPosterBytes()));
-                //Iterator<ImageReader> readers= ImageIO.getImageReaders(iis);
-                if (null != data.getPosterBytes()) {
-                    BufferedImage image = ImageIO.read(new ByteArrayInputStream(data.getPosterBytes()));
-                    posterDisplay.setIcon(new ImageIcon(image));
-                    //int newW = myMovieDBPreferences.getPosterWidth() / 2;
-                    //int newH = myMovieDBPreferences.getPosterHeight() / 2;
+        //poster
+        try {
+            //ImageInputStream iis = ImageIO.createImageInputStream(new ByteArrayInputStream(data.getPosterBytes()));
+            //Iterator<ImageReader> readers= ImageIO.getImageReaders(iis);
+            if (null != data.getPosterBytes()) {
+                BufferedImage image = ImageIO.read(new ByteArrayInputStream(data.getPosterBytes()));
+                posterDisplay.setIcon(new ImageIcon(image));
+                //int newW = myMovieDBPreferences.getPosterWidth() / 2;
+                //int newH = myMovieDBPreferences.getPosterHeight() / 2;
                 /* either this */
-                    //posterDisplay.setIcon(new ImageIcon(image.getScaledInstance(newW, newH, Image.SCALE_FAST)));
+                //posterDisplay.setIcon(new ImageIcon(image.getScaledInstance(newW, newH, Image.SCALE_FAST)));
 
                 /* or this:
                 Image resized = image.getScaledInstance(newW,newH, Image.SCALE_SMOOTH);
@@ -321,24 +325,24 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
                 g2d.drawImage(resized, 0, 0, null);
                 g2d.dispose();
                 posterDisplay.setIcon(new ImageIcon(resizedImage));*/
-                } else {
-                    BufferedImage image = new BufferedImage(myMovieDBPreferences.getPosterWidth(),
-                            myMovieDBPreferences.getPosterHeight(), BufferedImage.TYPE_3BYTE_BGR);
-                    Graphics graphics = image.getGraphics();
-                    graphics.drawString(movie.getTitle(), 10, 40);
-                    if (movie.getAlternateTitle() != null) {
-                        graphics.drawString(" (" + movie.getAlternateTitle() + ")",
-                                10, 60);
-                    }
-                    graphics.drawString(" by " + movie.getDirector(),
-                            10, 80);
-                    posterDisplay.setIcon(new ImageIcon(image));
+            } else {
+                BufferedImage image = new BufferedImage(myMovieDBPreferences.getPosterWidth(),
+                        myMovieDBPreferences.getPosterHeight(), BufferedImage.TYPE_3BYTE_BGR);
+                Graphics graphics = image.getGraphics();
+                graphics.drawString(movie.getTitle(), 10, 40);
+                if (movie.getAlternateTitle() != null) {
+                    graphics.drawString(" (" + movie.getAlternateTitle() + ")",
+                            10, 60);
                 }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
+                graphics.drawString(" by " + movie.getDirector(),
+                        10, 80);
+                posterDisplay.setIcon(new ImageIcon(image));
             }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+        }
 
         // hack: put zero as default value
         if (null == data.getRating()) {
@@ -395,13 +399,13 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = filesTable.convertRowIndexToModel(filesTable.getSelectedRow());
                 // get the file with the -1 trick
-                VideoFile file = (VideoFile) filesTable.getModel().getValueAt(selectedRow,-1);
+                VideoFile file = (VideoFile) filesTable.getModel().getValueAt(selectedRow, -1);
 
                 Object[] options = {"Remove file from database (do not delete file)",
                         "Remove file from database and delete the file!",
                         "Cancel"};
                 int reply = JOptionPane.showOptionDialog(MovieDescriptionPanel.this,
-                        "Are ou sure to delete file "+file.getFileName()+"?",
+                        "Are ou sure to delete file " + file.getFileName() + "?",
                         "Delete a file",
                         JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.QUESTION_MESSAGE,
@@ -410,18 +414,18 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
                         options[2]
                 );
                 if (reply == JOptionPane.YES_OPTION) {
-                    log.info("Deleting file "+file.getFileName()+" from DB only");
+                    log.info("Deleting file " + file.getFileName() + " from DB only");
                     hibernateVideoFileDao.deleteFile(file);
                     Movie reloaded = hibernateMovieDao.findOne(MovieDescriptionPanel.this.movie.getId());
                     setData(movie);
-                } else if (reply == JOptionPane.NO_OPTION){
+                } else if (reply == JOptionPane.NO_OPTION) {
                     hibernateVideoFileDao.deleteFile(file);
-                    log.info("Really deleting "+file.getFileName()+" from directory "+file.getDirectory());
+                    log.info("Really deleting " + file.getFileName() + " from directory " + file.getDirectory());
                     try {
-                        Files.deleteIfExists(Paths.get(file.getDirectory(),file.getFileName()));
+                        Files.deleteIfExists(Paths.get(file.getDirectory(), file.getFileName()));
                     } catch (IOException e1) {
                         JOptionPane.showMessageDialog(MovieDescriptionPanel.this,
-                                "Could not delete file "+file.getFileName()+"\nSee log for details",
+                                "Could not delete file " + file.getFileName() + "\nSee log for details",
                                 "Warning",
                                 JOptionPane.WARNING_MESSAGE);
                         e1.printStackTrace();
@@ -437,8 +441,8 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
         openFileLocation.addActionListener(e -> {
             int selectedRow = filesTable.convertRowIndexToModel(filesTable.getSelectedRow());
             // get the file with the -1 trick
-            VideoFile file = (VideoFile) filesTable.getModel().getValueAt(selectedRow,-1);
-            if (!Desktop.isDesktopSupported()){
+            VideoFile file = (VideoFile) filesTable.getModel().getValueAt(selectedRow, -1);
+            if (!Desktop.isDesktopSupported()) {
                 JOptionPane.showMessageDialog(this,
                         "Cannot access desktop!",
                         "Warning",
@@ -452,7 +456,7 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
                 dt.open(fd);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this,
-                        "Cannot open directory " + file.getDirectory() ,
+                        "Cannot open directory " + file.getDirectory(),
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
             }
@@ -536,14 +540,14 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
     private void fakePoster() {
         // fake poster
         BufferedImage image = new BufferedImage(myMovieDBPreferences.getPosterWidth(),
-                myMovieDBPreferences.getPosterHeight(),BufferedImage.TYPE_3BYTE_BGR);
+                myMovieDBPreferences.getPosterHeight(), BufferedImage.TYPE_3BYTE_BGR);
         posterDisplay.setIcon(new ImageIcon(image));
     }
 
     private void playFileAtRow(int row) {
         // get the file with the -1 trick
-        VideoFile file = (VideoFile) filesTable.getModel().getValueAt(row,-1);
-       movieGuiService.playTheFile(Paths.get(file.getDirectory(),file.getFileName()));
+        VideoFile file = (VideoFile) filesTable.getModel().getValueAt(row, -1);
+        movieGuiService.playTheFile(Paths.get(file.getDirectory(), file.getFileName()));
     }
 
     private void addGenreButtonActionPerformed(ActionEvent e) {
@@ -564,7 +568,7 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
         movie.setDuree(durationTextField.getText());
 
         movie.setRating((Integer) ratingSpinner.getValue());
-        movie.setLastSeen((Date)lastSeenFormattedTextField.getValue());
+        movie.setLastSeen((Date) lastSeenFormattedTextField.getValue());
 
     }
 
@@ -607,7 +611,7 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
         filesTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                JTable table =(JTable) evt.getSource();
+                JTable table = (JTable) evt.getSource();
                 Point p = evt.getPoint();
                 int row = table.rowAtPoint(p);
                 if (evt.getClickCount() == 2) {
@@ -618,6 +622,212 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
             }
         });
 
+    }
+
+    {
+// GUI initializer generated by IntelliJ IDEA GUI Designer
+// >>> IMPORTANT!! <<<
+// DO NOT EDIT OR ADD ANY CODE HERE!
+        $$$setupUI$$$();
+    }
+
+    /**
+     * Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     *
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
+        panel = new JPanel();
+        panel.setLayout(new GridLayoutManager(6, 1, new Insets(10, 10, 10, 10), -1, -1));
+        panel.setMaximumSize(new Dimension(1920, 1200));
+        panel.setMinimumSize(new Dimension(300, 500));
+        panel.setOpaque(true);
+        panel.setPreferredSize(new Dimension(800, 800));
+        panel.setRequestFocusEnabled(true);
+        panel.setVerifyInputWhenFocusTarget(false);
+        panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedBevelBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, this.$$$getFont$$$(null, -1, -1, panel.getFont())));
+        actorsGenrePanel = new JPanel();
+        actorsGenrePanel.setLayout(new GridLayoutManager(1, 6, new Insets(0, 0, 0, 0), -1, -1));
+        panel.add(actorsGenrePanel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 100), null, 0, false));
+        final JLabel label1 = new JLabel();
+        label1.setText("Actors");
+        actorsGenrePanel.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label2 = new JLabel();
+        label2.setText("Genres");
+        actorsGenrePanel.add(label2, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JScrollPane scrollPane1 = new JScrollPane();
+        actorsGenrePanel.add(scrollPane1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(140, -1), new Dimension(140, -1), new Dimension(300, -1), 2, false));
+        actorsList = new JList();
+        scrollPane1.setViewportView(actorsList);
+        final JScrollPane scrollPane2 = new JScrollPane();
+        actorsGenrePanel.add(scrollPane2, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(140, -1), new Dimension(140, -1), new Dimension(300, -1), 0, false));
+        genresList = new JList();
+        scrollPane2.setViewportView(genresList);
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        actorsGenrePanel.add(panel1, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(-1, 40), null, 0, false));
+        addActorButton = new JButton();
+        addActorButton.setText("Add");
+        panel1.add(addActorButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JPanel panel2 = new JPanel();
+        panel2.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        actorsGenrePanel.add(panel2, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(-1, 40), null, 0, false));
+        addGenreButton = new JButton();
+        addGenreButton.setText("Add");
+        panel2.add(addGenreButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        commentsPanel = new JPanel();
+        commentsPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel.add(commentsPanel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_SOUTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 80), null, 0, false));
+        commentTextArea = new JTextArea();
+        commentsPanel.add(commentTextArea, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 90), new Dimension(-1, 90), 0, false));
+        commentLabel = new JLabel();
+        commentLabel.setText("Comment");
+        commentsPanel.add(commentLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JSeparator separator1 = new JSeparator();
+        panel.add(separator1, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        buttonsPanel = new JPanel();
+        buttonsPanel.setLayout(new GridLayoutManager(1, 7, new Insets(0, 0, 0, 0), -1, -1));
+        panel.add(buttonsPanel, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        playMovieButton = new JButton();
+        playMovieButton.setText("PlayMovie");
+        buttonsPanel.add(playMovieButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        openInfoButton = new JButton();
+        openInfoButton.setText("Internet Info Page");
+        buttonsPanel.add(openInfoButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        buttonsPanel.add(spacer1, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, null, null, 0, false));
+        saveButton = new JButton();
+        saveButton.setText("Save");
+        buttonsPanel.add(saveButton, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        internetCriticsButton = new JButton();
+        internetCriticsButton.setText("Internet critics");
+        buttonsPanel.add(internetCriticsButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        enterInfoUrlButton = new JButton();
+        enterInfoUrlButton.setText("Enter url");
+        buttonsPanel.add(enterInfoUrlButton, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        deleteButton = new JButton();
+        deleteButton.setText("Delete");
+        buttonsPanel.add(deleteButton, new GridConstraints(0, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JPanel panel3 = new JPanel();
+        panel3.setLayout(new BorderLayout(20, 0));
+        panel.add(panel3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        posterPanel = new JPanel();
+        posterPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        posterPanel.setMaximumSize(new Dimension(-1, -1));
+        panel3.add(posterPanel, BorderLayout.WEST);
+        posterDisplay = new JLabel();
+        posterDisplay.setText("");
+        posterPanel.add(posterDisplay, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final JPanel panel4 = new JPanel();
+        panel4.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel3.add(panel4, BorderLayout.CENTER);
+        titleFilesPanel = new JPanel();
+        titleFilesPanel.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel4.add(titleFilesPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label3 = new JLabel();
+        label3.setText("Title");
+        titleFilesPanel.add(label3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label4 = new JLabel();
+        label4.setText("Alternate Title");
+        titleFilesPanel.add(label4, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label5 = new JLabel();
+        label5.setText("Director");
+        titleFilesPanel.add(label5, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        titleTextField = new JTextField();
+        titleFilesPanel.add(titleTextField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        alternateTitleTextField = new JTextField();
+        titleFilesPanel.add(alternateTitleTextField, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        directorTextField = new JTextField();
+        titleFilesPanel.add(directorTextField, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        ratingDurationPanel = new JPanel();
+        ratingDurationPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel4.add(ratingDurationPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel5 = new JPanel();
+        panel5.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
+        ratingDurationPanel.add(panel5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label6 = new JLabel();
+        label6.setText("Year");
+        panel5.add(label6, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label7 = new JLabel();
+        label7.setText("Rating");
+        panel5.add(label7, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        ratingSpinner = new JSpinner();
+        panel5.add(ratingSpinner, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        yearTextField = new JTextField();
+        panel5.add(yearTextField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JPanel panel6 = new JPanel();
+        panel6.setLayout(new GridLayoutManager(3, 3, new Insets(0, 0, 0, 0), -1, -1));
+        ratingDurationPanel.add(panel6, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label8 = new JLabel();
+        label8.setText("Duration");
+        panel6.add(label8, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label9 = new JLabel();
+        label9.setText("Last seen");
+        panel6.add(label9, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        durationTextField = new JTextField();
+        panel6.add(durationTextField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        lastSeenFormattedTextField = new JFormattedTextField();
+        panel6.add(lastSeenFormattedTextField, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        createdLabel = new JLabel();
+        createdLabel.setText("Created");
+        panel6.add(createdLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        createdTextField = new JTextField();
+        panel6.add(createdTextField, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        seenNowButton = new JButton();
+        seenNowButton.setText("Now");
+        panel6.add(seenNowButton, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        summaryFilePanel = new JPanel();
+        summaryFilePanel.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel.add(summaryFilePanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final JLabel label10 = new JLabel();
+        label10.setText("Summary");
+        summaryFilePanel.add(label10, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 80), null, 0, false));
+        final JLabel label11 = new JLabel();
+        label11.setText("Files");
+        summaryFilePanel.add(label11, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 50), null, 0, false));
+        filesTableScrollPane = new JScrollPane();
+        summaryFilePanel.add(filesTableScrollPane, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        filesTable = new JTable();
+        filesTableScrollPane.setViewportView(filesTable);
+        summaryScrollPane = new JScrollPane();
+        summaryFilePanel.add(summaryScrollPane, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        summaryTextArea = new JTextPane();
+        summaryScrollPane.setViewportView(summaryTextArea);
+        label3.setLabelFor(titleTextField);
+        label4.setLabelFor(alternateTitleTextField);
+        label5.setLabelFor(directorTextField);
+        label6.setLabelFor(yearTextField);
+        label7.setLabelFor(ratingSpinner);
+        label8.setLabelFor(durationTextField);
+        label9.setLabelFor(lastSeenFormattedTextField);
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
+        if (currentFont == null) return null;
+        String resultName;
+        if (fontName == null) {
+            resultName = currentFont.getName();
+        } else {
+            Font testFont = new Font(fontName, Font.PLAIN, 10);
+            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
+                resultName = fontName;
+            } else {
+                resultName = currentFont.getName();
+            }
+        }
+        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    public JComponent $$$getRootComponent$$$() {
+        return panel;
     }
 
 }

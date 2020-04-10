@@ -38,7 +38,7 @@ public class DbDisplayTable extends JTable implements ActionListener {
     private JMenuItem menuItemInternetCritics;
     private JMenuItem menuItemOpenInfoUrl;
 
-    private final JLabel titleLabel;
+    private final JLabel titleLabel = new JLabel("Films");
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -51,13 +51,14 @@ public class DbDisplayTable extends JTable implements ActionListener {
     @Autowired
     private MovieDataModelPoster movieDataModelPoster;
 
-    public DbDisplayTable(JTabbedPane tabbedPane, JLabel titleLabel) {
-        this.titleLabel = titleLabel;
-        this.tabbedPane = tabbedPane;
+    public DbDisplayTable() {
     }
 
     @PostConstruct
     public void postInit() {
+
+        // the tabbed pane
+        tabbedPane = new JTabbedPane(JTabbedPane.TOP,JTabbedPane.SCROLL_TAB_LAYOUT);
 
         // construct the popup menu for film rows
         JPopupMenu popupMenu = new JPopupMenu();
@@ -224,4 +225,11 @@ public class DbDisplayTable extends JTable implements ActionListener {
         movieGuiService.openInfoUrl(movie.getInfoUrl());
     }
 
+    public JTabbedPane getTabbedPane() {
+        return this.tabbedPane;
+    }
+
+    public JLabel getTitleLabel() {
+        return this.titleLabel;
+    }
 }

@@ -51,6 +51,11 @@
             <artifactId>MyMovieDBCommon</artifactId>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.intellij</groupId>
+            <artifactId>annotations</artifactId>
+            <version>12.0</version>
+        </dependency>
     </dependencies>
 
     <build>
