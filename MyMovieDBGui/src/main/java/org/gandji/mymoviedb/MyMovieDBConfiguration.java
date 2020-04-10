@@ -25,8 +25,6 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
  *
  * @author gandji <gandji@free.fr>
  *
- * @todo fix search in JavaFX app
- *
  * @todo configurable query selector for search results in google (could change) + config
  * @todo when clicking prefs "keep file on update", it is not saved unless save button pushed is this really what we want?
  * @todo movie file device for usb: when loading/searching for a file to play or to display information:
