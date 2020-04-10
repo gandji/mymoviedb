@@ -1,4 +1,4 @@
-package org.gandji.mymoviedb.gui;
+package org.gandji.mymoviedb.services;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;

@@ -1,10 +1,10 @@
 package org.gandji.mymoviedb.services;
 
-import javafx.concurrent.Task;
 import lombok.extern.slf4j.Slf4j;
 import org.gandji.mymoviedb.data.HibernateMovieDao;
 import org.gandji.mymoviedb.data.Movie;
 import org.gandji.mymoviedb.gui.MovieGuiService;
+import org.gandji.mymoviedb.javafx.JavaFXPrimaryStage;
 import org.gandji.mymoviedb.resources.MovieResource;
 import org.gandji.mymoviedb.resources.MovieResourceAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +35,9 @@ public class MyMovieDBJSCommands {
     @Autowired
     SpringTemplateEngine pageTemplateResolver;
 
+    @Autowired
+    JavaFXPrimaryStage primaryStage;
+
     public String initialPage() {
         List<MovieResource> movies = hibernateMovieDao.findAllByOrderByCreated(0,25)
                 .stream()
@@ -53,6 +56,13 @@ public class MyMovieDBJSCommands {
         movieGuiService.openInfoUrl(movie.getInfoUrl());
     }
 
+    public void internetCritics(String movieId) {
+        Movie movie = hibernateMovieDao.findOne(Long.parseLong(movieId));
+        // this is how you call java script from java
+        primaryStage.getWebEngine().executeScript("M.toast({html: 'Displaying critics in browser', classes: 'rounded teal'});");
+        movieGuiService.internetCritics(movie);
+    }
+
     public String displayMovie(String movieId) {
 
         Movie movie = hibernateMovieDao.findOne(Long.parseLong(movieId));
@@ -62,9 +72,9 @@ public class MyMovieDBJSCommands {
         Context context = new Context(Locale.FRENCH);
         context.setVariable("movie",movieResource);
 
-        Set<String> params = new HashSet<>();
-        params.add("oneMovie");
-        String ret = pageTemplateResolver.process("movies", params, context);
+        Set<String> templates = new HashSet<>();
+        templates.add("oneMovie");
+        String ret = pageTemplateResolver.process("movies", templates, context);
         return ret;
     }
 
@@ -92,7 +102,7 @@ public class MyMovieDBJSCommands {
 
     }
 
-    public void playMovie(String id) {
+    public void playMovie(String id) throws IllegalArgumentException {
 
         Movie movie = hibernateMovieDao.findOne(Long.parseLong(id));
         log.info("Playing movie "+movie.getTitle());

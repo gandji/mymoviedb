@@ -134,7 +134,17 @@ It can been seen as a demonstrator for :
  to launch a movie from the app, and this is "forbidden" from a web app,
  for obvious security reasons.
  
- - so I turned to a JavaFX GUI. And I use an embedded JavaFX browser. I use an embedded JavaFX browser
+ - so I turned to a JavaFX GUI. I could integrate the JavaFX app with spring, thanks to the web.
+ At launch time, you can choose between JavaFX app or Swing app. For services that depend
+ on being swing or javafx, I internally define a spring
+ profile 'javafx' in case we launch JavaFX, and profile 'swing' in case we launch swing app.  
+ 
+ - In the JavaFX app, I use an embedded JavaFX browser. I use an embedded JavaFX browser
  because I want to reuse the thymeleaf rendering I made, and I still wanted the nice
  "material" carousel. Unfortunately, the carousel does not render as nicely
  in the JavaFX web browser (:sigh:).
+ 
+ - For the browser:
+    - I can call java from javascript
+    - I can call javascript from java through the webEngine
+    - all this thanks to various web tutos.

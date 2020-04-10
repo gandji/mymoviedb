@@ -19,7 +19,7 @@ package org.gandji.mymoviedb;
 
 import javafx.application.Application;
 import lombok.extern.slf4j.Slf4j;
-import org.gandji.mymoviedb.gui.widgets.MyMovieDBJavaFX;
+import org.gandji.mymoviedb.javafx.MyMovieDBJavaFX;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

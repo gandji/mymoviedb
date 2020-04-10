@@ -1,4 +1,4 @@
-package org.gandji.mymoviedb.gui;
+package org.gandji.mymoviedb.javafx;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import netscape.javascript.JSObject;
 import org.gandji.mymoviedb.data.HibernateActorDao;
 import org.gandji.mymoviedb.data.HibernateMovieDao;
+import org.gandji.mymoviedb.gui.JavascriptConsoleLogger;
 import org.gandji.mymoviedb.services.MyMovieDBJSCommands;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -34,7 +35,7 @@ import java.io.IOException;
  */
 @Component
 @Slf4j
-public class StageListener implements ApplicationListener<StageReadyEvent> {
+public class JavaFXPrimaryStage implements ApplicationListener<StageReadyEvent> {
 
     // this is a spring bean so we have @Value available
 
@@ -81,20 +82,37 @@ public class StageListener implements ApplicationListener<StageReadyEvent> {
 
         webEngine.loadContent(myMovieDBJSCommands.initialPage());
 
+
         ToolBar toolBar = new ToolBar();
-        Button resetButton;
-        try {
-            Resource homeIconResource = new ClassPathResource("icons/baseline_home_black_18dp.png");
-            javafx.scene.image.Image img = new Image(homeIconResource.getInputStream());
-            resetButton = new Button("",new ImageView(img));
-        } catch (NullPointerException | IOException e) {
-            e.printStackTrace();
-            resetButton = new Button("Home");
-        }
+        Button resetButton = assembleButton("icons/baseline_home_black_18dp.png", "Home");
         resetButton.setOnAction(event -> {
             webEngine.loadContent(myMovieDBJSCommands.initialPage());
         });
         toolBar.getItems().add(resetButton);
+
+        Button backButton = assembleButton("icons/icons8-back-18.png", "Back");
+        backButton.setOnAction(event -> {
+            webEngine.executeScript("history.back()");
+            // OR
+            /*try {
+                webEngine.getHistory().go(-1);
+            } catch(IndexOutOfBoundsException e) {
+                // it's OK
+            }*/
+        });
+        //useless REMOVE toolBar.getItems().add(backButton);
+
+        Button forwardButton = assembleButton("icons/icons8-forward-18.png", "Next");
+        forwardButton.setOnAction(event -> {
+            // webEngine.executeScript("history.forward()");
+            // OR
+            try {
+                webEngine.getHistory().go(+1);
+            } catch(IndexOutOfBoundsException e) {
+                // it's OK
+            }
+        });
+        // useless REMOVE toolBar.getItems().add(forwardButton);
 
         try {
             if (stage.isMaximized()) {
@@ -128,15 +146,7 @@ public class StageListener implements ApplicationListener<StageReadyEvent> {
         });
         toolBar.getItems().add(maxiMiniButton);
 
-        Button fullscreenButton;
-        try {
-            Resource fullscreenIconResource = new ClassPathResource("icons/icons8-full-screen-18.png");
-            javafx.scene.image.Image img = new Image(fullscreenIconResource.getInputStream());
-            fullscreenButton = new Button("",new ImageView(img));
-        } catch (NullPointerException | IOException e) {
-            e.printStackTrace();
-            fullscreenButton = new Button("Fullscreen");
-        }
+        Button fullscreenButton = assembleButton("icons/icons8-full-screen-18.png", "Fullscreen");
         fullscreenButton.setOnAction(event -> stage.setFullScreen(!stage.isFullScreen()));
         toolBar.getItems().add(fullscreenButton);
 
@@ -160,5 +170,22 @@ public class StageListener implements ApplicationListener<StageReadyEvent> {
         stage.setHeight(800);
 
         stage.show();
+    }
+
+    public WebEngine getWebEngine() {
+        return webEngine;
+    }
+
+    private Button assembleButton(String iconResource, String defaultLabel) {
+        Button button;
+        try {
+            Resource backIconResource = new ClassPathResource((iconResource));
+            javafx.scene.image.Image img = new Image(backIconResource.getInputStream());
+            button = new Button("",new ImageView(img));
+        } catch (NullPointerException | IOException e) {
+            e.printStackTrace();
+            button = new Button(defaultLabel);
+        }
+        return button;
     }
 }

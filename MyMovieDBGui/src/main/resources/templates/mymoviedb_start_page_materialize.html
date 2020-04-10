@@ -8,20 +8,23 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- materialize icons cheatsheet for webview at
     https://github.com/google/material-design-icons/blob/master/iconfont/codepoints -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
     <link rel="stylesheet" href="css/mymoviedb.css">
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+    <!-- link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css"-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
     <script>
         $(document).ready(function(){
             console.log("initializing carousel");
             $('.carousel').carousel({ fullWidth: false, padding: 10, noWrap: true });
+            $('.tooltipped').tooltip();
             console.log("initialized carousel [OK]");
         });
     </script>
 </head>
 <body>
-<nav class="deep-purple lighten-2"> <!-- teal est vert -->
+<nav class="teal"> <!-- "deep-purple lighten-2" OK, teal est vert -->
     <div class="nav-wrapper">
         <a href="#" class="brand-logo left">MyMovieDB</a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
@@ -60,6 +63,9 @@
             function movieClicked(id) {
                 console.log("display movie " + id);
                 $('#oneMovieDisplay').html(mmdb.displayMovie(id));
+                $(document).ready(function(){
+                    $('.tooltipped').tooltip();
+                });
             };
             function searchFor(query) {
                 console.log("Querying for "+query);

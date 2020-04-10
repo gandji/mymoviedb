@@ -1,4 +1,4 @@
-package org.gandji.mymoviedb.gui;
+package org.gandji.mymoviedb.javafx;
 
 import javafx.stage.Stage;
 import org.springframework.context.ApplicationEvent;

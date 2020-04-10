@@ -18,9 +18,7 @@
 package org.gandji.mymoviedb.gui;
 
 import java.awt.Desktop;
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,6 +45,7 @@ import org.gandji.mymoviedb.scrapy.MovieInfoSearchService;
 import org.gandji.mymoviedb.data.HibernateMovieDao;
 import org.gandji.mymoviedb.data.Movie;
 import org.gandji.mymoviedb.data.VideoFile;
+import org.gandji.mymoviedb.services.DialogsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

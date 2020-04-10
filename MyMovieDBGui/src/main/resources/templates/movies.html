@@ -19,12 +19,12 @@
                 <div class="container">
                     <div class="row">
                         <div class="col s8">
-                        <p align="left" class="html blue-grey-text mymoviedb-offset">Director: [(${movie.getDirector()})]</p>
-                        </div>
-                        <div class="col s4">
-                          <p align="left" class="html blue-grey-text mymoviedb-offset">Year : [(${movie.getYear()})]</p>
-                        </div>
-                    </div>
+            <p align="left" class="html blue-grey-text mymoviedb-offset">Director: [(${movie.getDirector()})]</p>
+        </div>
+        <div class="col s4">
+            <p align="left" class="html blue-grey-text mymoviedb-offset">Year : [(${movie.getYear()})]</p>
+        </div>
+    </div>
     <div class="row">
         <div class="col s12">
             <p align="left" class="html blue-grey-text mymoviedb-offset">Duree : [(${movie.getDuree()})]</p>
@@ -36,16 +36,25 @@
 </div>
 <div class="card-action">
     <div class="row">
-        <div class="col s3 offset-s3">
-            <div class="waves-effect waves-light btn" th:onclick="|playMovie(${movie.getDbId()})|">
+        <div class="col s4">
+            <div class="waves-effect waves-light btn tooltipped" data-delay=2000 data-position="top"
+                 data-tooltip="Play the movie" th:onclick="|playMovie(${movie.getDbId()})|">
                 <i class="material-icons center">&#xE037;</i>
                 <!--Play movie-->
             </div>
         </div>
-        <div class="col s3">
-            <div class="waves-effect waves-light btn" th:onclick="|internetInfoPage(${movie.getDbId()})|">
+        <div class="col s4">
+            <div class="waves-effect waves-light btn tooltipped" data-delay=2000 data-position="top"
+                 data-tooltip="Go to Movie DB info page" th:onclick="|internetInfoPage(${movie.getDbId()})|">
                 <i class="material-icons center">&#xE88e;</i>
                 <!--Info page-->
+            </div>
+        </div>
+        <div class="col s4">
+            <div class="waves-effect waves-light btn tooltipped" data-delay=2000 data-position="top"
+                 data-tooltip="See critics on internet" th:onclick="|internetCritics(${movie.getDbId()})|">
+                <i class="material-icons center">&#xE838;</i>
+                <!--Internet critics-->
             </div>
         </div>
     </div>
@@ -56,10 +65,16 @@
 <script th:inline="javascript">
     function playMovie(id) {
         mmdb.playMovie(id);
+        M.toast( {html: "Playing movie\nin external application", classes: "rounded teal"});
     };
 
     function internetInfoPage(id) {
         mmdb.internetInfoPage(id);
+        M.toast( {html: "Opening Movie DB in browser", classes: "rounded teal"});
+    };
+
+    function internetCritics(id) {
+        mmdb.internetCritics(id);
     };
 </script>
 </div>

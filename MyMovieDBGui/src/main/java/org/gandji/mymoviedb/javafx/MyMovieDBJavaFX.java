@@ -1,4 +1,4 @@
-package org.gandji.mymoviedb.gui.widgets;
+package org.gandji.mymoviedb.javafx;
 
 import javafx.application.Application;
 import javafx.application.HostServices;
@@ -6,7 +6,6 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.gandji.mymoviedb.MyMovieDBGUI;
-import org.gandji.mymoviedb.gui.StageReadyEvent;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;

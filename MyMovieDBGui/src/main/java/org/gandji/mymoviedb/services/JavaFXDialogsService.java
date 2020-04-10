@@ -1,4 +1,4 @@
-package org.gandji.mymoviedb.gui;
+package org.gandji.mymoviedb.services;
 
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
