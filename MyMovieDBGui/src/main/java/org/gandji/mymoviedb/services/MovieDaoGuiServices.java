@@ -39,6 +39,9 @@ public class MovieDaoGuiServices extends MovieDaoServices {
     private HibernateMovieDao hibernateMovieDao;
 
     @Autowired
+    private DialogsService dialogsService;
+
+    @Autowired
     private HibernateVideoFileDao videoFileDao;
 
     @Autowired
@@ -86,19 +89,11 @@ public class MovieDaoGuiServices extends MovieDaoServices {
                 if (movie.getId().equals(fileMovie.getId())) {
                     // same file, same movie, nothing to do!
                     if (!limitPopups) {
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                JOptionPane optionPane = new JOptionPane(
-                                        "File " + fileToProcess.getFileName().toString() + " is already in DB\n"
-                                                + "under the name: " + videoFileSameHash.getFileName() + "\n"
-                                                + " for movie " + fileMovie.getTitle(),
-                                        JOptionPane.INFORMATION_MESSAGE);
-                                JDialog dialog = optionPane.createDialog("Information");
-                                dialog.setAlwaysOnTop(true); // to show top of all other application
-                                dialog.setVisible(true); // to visible the dialog
-                            }
-                        });
+                        dialogsService.showMessageDialog(null,
+                                "File " + fileToProcess.getFileName().toString() + " is already in DB\n"
+                                        + "under the name: " + videoFileSameHash.getFileName() + "\n"
+                                        + " for movie " + fileMovie.getTitle(),
+                                "Information", DialogsService.MessageType.INFO);
                     }
                 } else {
                     // file is already in DB, but with different movie
@@ -167,18 +162,10 @@ public class MovieDaoGuiServices extends MovieDaoServices {
                 }
             }
             if (!limitPopups) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        JOptionPane optionPane = new JOptionPane(
-                                "File " + file.getFileName().toString() + " is already in DB\n"
-                                        + "under the name: " + videoFileSameHash.getFileName(),
-                                JOptionPane.INFORMATION_MESSAGE);
-                        JDialog dialog = optionPane.createDialog("Information");
-                        dialog.setAlwaysOnTop(true); // to show top of all other application
-                        dialog.setVisible(true); // to visible the dialog
-                    }
-                });
+                dialogsService.showMessageDialog(null,
+                        "File " + file.getFileName().toString() + " is already in DB\n"
+                                + "under the name: " + videoFileSameHash.getFileName(),
+                        "Information", DialogsService.MessageType.INFO);
             }
             return 0;
         }
@@ -189,20 +176,12 @@ public class MovieDaoGuiServices extends MovieDaoServices {
             // @todo file name is already in db, but different hash!
             log.info("File with name " + file.getFileName().toString() + " is already in DB, but with different hash");
             if (!limitPopups) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        JOptionPane optionPane = new JOptionPane(
-                                "A file with the same file name:\n"
-                                        + file.getFileName().toString()
-                                        + " is already in DB\n"
-                                        + "but seems to be different!\n",
-                                JOptionPane.ERROR_MESSAGE);
-                        JDialog dialog = optionPane.createDialog("Information");
-                        dialog.setAlwaysOnTop(true); // to show top of all other application
-                        dialog.setVisible(true);
-                    }
-                });
+                dialogsService.showMessageDialog(null,
+                        "A file with the same file name:\n"
+                                + file.getFileName().toString()
+                                + " is already in DB\n"
+                                + "but seems to be different!\n",
+                        "Information", DialogsService.MessageType.INFO);
             }
             return 0;
         }
@@ -234,17 +213,10 @@ public class MovieDaoGuiServices extends MovieDaoServices {
         } catch (Exception e) {
             // error while interrogating DB
             if (!limitPopups) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        JOptionPane optionPane = new JOptionPane(
-                                "Exception caught while searching for: " + kwdsConcatCopy + "\n"
-                                        + e.getMessage(), JOptionPane.INFORMATION_MESSAGE);
-                        JDialog dialog = optionPane.createDialog("Information");
-                        dialog.setAlwaysOnTop(true);
-                        dialog.setVisible(true);
-                    }
-                });
+                dialogsService.showMessageDialog(null,
+                        "Exception caught while searching for: " + kwdsConcatCopy + "\n"
+                                + e.getMessage(),
+                        "Information", DialogsService.MessageType.INFO);
             }
             e.printStackTrace();
             // it's OK, we have not found in DB, go on

@@ -10,49 +10,67 @@
     https://github.com/google/material-design-icons/blob/master/iconfont/codepoints -->
     <link rel="stylesheet" href="css/mymoviedb.css">
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
-    <!-- link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css"-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
     <script>
         $(document).ready(function(){
             console.log("initializing carousel");
             $('.carousel').carousel({ fullWidth: false, padding: 10, noWrap: true });
-            $('.tooltipped').tooltip();
             console.log("initialized carousel [OK]");
+            $('.tooltipped').tooltip();
+            $('.dropdown-trigger').dropdown({alignment: 'right', constrainWidth: false, coverTrigger: false, hover: true });
         });
     </script>
 </head>
 <body>
 <nav class="teal"> <!-- "deep-purple lighten-2" OK, teal est vert -->
-    <div class="nav-wrapper">
-        <a href="#" class="brand-logo left">MyMovieDB</a>
-        <ul id="nav-mobile" class="right hide-on-med-and-down">
+    <nav class="nav-wrapper teal">
+        <a href="#" class="brand-logo right">MyMovieDB</a>
+        <ul id="nav-mobile" class="hide-on-med-and-down">
             <li>
-            <form>
-                <div class="input-field">
-                    <input id="search" type="search" onchange="searchFor(this.value)">
-                    <label class="label-icon" for="search"><i class="material-icons">&#xE8B6;</i></label>
-                    <i class="material-icons">&#xE8B6;</i>
-                </div>
-            </form>
+                  <div class='dropdown-trigger teal breadcrumbs_hamburger left' href='#' data-target='files-submenu'>
+                <i class="material-icons">&#xE5d2;</i>
+                  </div>
+            <ul id='files-submenu' class='dropdown-content'>
+                <li>
+                    <a th:onclick="|addAFile()|">
+                        Add a file
+                    </a>
+                </li>
+                <li>
+                    <a th:onclick="|scanADirectory()|">
+                        Scan a directory
+                    </a>
+                </li>
+                <li><a href="#!" th:onclick="|about('${mymoviedb_version}')|">About</a></li>
+            </ul>
+            </li>
+            <li>
+                <form>
+                    <div class="input-field">
+                        <input id="search" type="search" onchange="searchFor(this.value)">
+                        <label class="label-icon" for="search"><i class="material-icons">&#xE8B6;</i></label>
+                        <i class="material-icons">&#xE8B6;</i>
+                    </div>
+                </form>
             </li>
             <!--li><a href="sass.html">Statistics</a></li>
             <li><a href="badges.html">Others</a></li-->
-            <li><a href="collapsible.html">About</a></li>
-        </ul>    </div>
+        </ul>
+    </nav>
 </nav>
 <div class="container" style="width:80%;">
     <div class="row">
         <div class="col s12" height="150">
             <div id="moviesCarousel">
                 <div class="carousel" th:fragment='moviesCarousel'>
-                <a class="carousel-item" th:href="${'#'+movie.getDbId()}" th:each="movie : ${movies}"
-                   th:onclick="|movieClicked(${movie.getDbId()})|">
-                    <img th:src="${'data:image/jpeg;base64,'+movie.posterAsString}"
-                         th:alt="${movie.title}"
-                         width="182" height="268">
-                </a>
+                    <a class="carousel-item" th:href="${'#'+movie.getDbId()}" th:each="movie : ${movies}"
+                       th:onclick="|movieClicked(${movie.getDbId()})|"
+                       th:oncontextmenu="|onContextMenu(${movie.getDbId()})|">
+                        <img th:src="${'data:image/jpeg;base64,'+movie.posterAsString}"
+                             th:alt="${movie.title}"
+                             width="182" height="268">
+                    </a>
                 </div>
             </div>
         </div>
@@ -63,18 +81,45 @@
             function movieClicked(id) {
                 console.log("display movie " + id);
                 $('#oneMovieDisplay').html(mmdb.displayMovie(id));
-                $(document).ready(function(){
+                $(document).ready(function () {
                     $('.tooltipped').tooltip();
                 });
             };
+
             function searchFor(query) {
-                console.log("Querying for "+query);
+                console.log("Querying for " + query);
                 $('#moviesCarousel').html(mmdb.searchKeywords(query));
-                $('.carousel').carousel({ fullWidth: false, padding: 10, noWrap: true });
+                $('.carousel').carousel({fullWidth: false, padding: 10, noWrap: true});
+            };
+
+            function onContextMenu(id) {
+                var e = window.event;
+                e.preventDefault();
+                return false;
+            }
+
+            function addAFile() {
+                console.log('Add a file');
+                mmdb.addAFile();
+            };
+
+            function scanADirectory() {
+                console.log('Scan a directory');
+                mmdb.scanADirectory();
+            };
+
+            function about(version) {
+                M.toast({
+                    html: '<p class="center"> MyMovieDB <br><br>version ' + version + '</p>',
+                    classes: 'rounded teal'
+                });
             };
         </script>
     </div>
-    <div  id="oneMoviePlayer"></div>
+    <div id="oneMoviePlayer"></div>
+
+    <!-- div class="footer"><a target="_blank" href="https://icons8.com/icons/set/menu">Menu icon</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a></div-->
+
 </div>
 </body>
 </html>

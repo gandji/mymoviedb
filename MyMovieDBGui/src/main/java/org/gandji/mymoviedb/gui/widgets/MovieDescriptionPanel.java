@@ -8,6 +8,7 @@ import org.gandji.mymoviedb.MyMovieDBPreferences;
 import org.gandji.mymoviedb.gui.FileDataModel;
 import org.gandji.mymoviedb.gui.MovieGuiService;
 import org.gandji.mymoviedb.data.*;
+import org.gandji.mymoviedb.services.LaunchServices;
 import org.gandji.mymoviedb.services.MovieDaoServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -64,6 +65,9 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
 
     @Autowired
     private MovieGuiService movieGuiService;
+
+    @Autowired
+    private LaunchServices launchServices;
 
     @Autowired
     private UserInputMovie userInputMovie;
@@ -151,50 +155,8 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Object[] options = {"Remove movie and files from database (do not delete files)",
-                        "Remove movie and files from database and delete the files!",
-                        "Cancel"};
-                int reply = JOptionPane.showOptionDialog(MovieDescriptionPanel.this,
-                        "Are ou sure to delete movie " + movie.getTitle() + "?",
-                        "Delete a movie",
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        options,
-                        options[2]
-                );
-                boolean deleteInDB = false;
-                boolean deleteRealFiles = false;
-                if (reply == JOptionPane.YES_OPTION) {
-                    deleteInDB = true;
-                    deleteRealFiles = false;
-                    log.info("Deleting movie from database: " + movie.getTitle());
-                } else if (reply == JOptionPane.NO_OPTION) {
-                    log.info("Deleting movie and files for " + movie.getTitle());
-                    deleteInDB = true;
-                    deleteRealFiles = true;
-                }
-                if (deleteInDB) {
-                    List<VideoFile> vfs = hibernateMovieDao.findVideoFilesForMovie(movie);
-                    for (VideoFile vf : vfs) {
-                        log.debug("   removing file from DB: " + vf.getFileName());
-                        hibernateVideoFileDao.deleteFile(vf);
-                        if (deleteRealFiles) {
-                            try {
-                                log.debug("   deleting file " + vf.getFileName());
-                                Files.deleteIfExists(Paths.get(vf.getDirectory(), vf.getFileName()));
-                            } catch (IOException e1) {
-                                JOptionPane.showMessageDialog(MovieDescriptionPanel.this,
-                                        "Could not delete file " + vf.getFileName() + "\nSee log for details",
-                                        "Warning",
-                                        JOptionPane.WARNING_MESSAGE);
-                                e1.printStackTrace();
-                            }
-                        }
-                    }
-                    hibernateMovieDao.deleteMovie(movie);
-                    setData(null);
-                }
+                launchServices.deleteMovie(movie, MovieDescriptionPanel.this);
+                setData(null);
             }
         });
 

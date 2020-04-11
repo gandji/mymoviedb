@@ -3,6 +3,7 @@ package org.gandji.mymoviedb.gui.widgets;
 import lombok.extern.slf4j.Slf4j;
 import org.gandji.mymoviedb.MyMovieDBPreferences;
 import org.gandji.mymoviedb.filefinder.VideoFileWorker;
+import org.gandji.mymoviedb.services.LaunchServices;
 import org.gandji.mymoviedb.tools.RepairDatabase;
 import org.gandji.mymoviedb.MyMovieDBConfiguration;
 import org.gandji.mymoviedb.gui.MovieDataModelPoster;
@@ -57,6 +58,10 @@ public class NewLayout extends JFrame {
 
     @Autowired
     private DbDisplayTable dbDisplayTable;
+
+    @Autowired
+    LaunchServices launchServices;
+
     private JScrollPane jScrollPane1;
 
     // the main menu bar
@@ -247,63 +252,11 @@ public class NewLayout extends JFrame {
     }
 
     private void addFile(java.awt.event.ActionEvent evt) {
-        Preferences prefs = Preferences.userNodeForPackage(MyMovieDBConfiguration.class);
-        String lastDir = prefs.get("lastdirused", System.getProperty("user.home") + "/Downloads/Video");
-
-        JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new File(lastDir));
-        int rep = chooser.showOpenDialog(null);
-        if (rep == JFileChooser.APPROVE_OPTION) {
-            try {
-
-                Path fileToProcess = chooser.getSelectedFile().toPath();
-
-                prefs.put("lastdirused", chooser.getSelectedFile().getParent());
-
-                VideoFileWorker videoFileWorker = (VideoFileWorker) applicationContext.getBean("videoFileWorker");
-                videoFileWorker.setFile(fileToProcess);
-                videoFileWorker.setLimitPopups(false);
-                videoFileWorker.setMovie(null);
-
-                videoFileWorker.execute();
-
-            } catch (Exception ex) {
-                log.error("Cannot access file " + chooser.getSelectedFile().toString(), ex);
-            }
-        }
+        launchServices.addFileInBackground(null, false);
     }
 
     private void scanADirectory(java.awt.event.ActionEvent evt) {
-
-        Preferences prefs = Preferences.userNodeForPackage(MyMovieDBConfiguration.class);
-        String lastDir = prefs.get("lastdirused", System.getProperty("user.home") + "/Downloads/Video");
-
-        /*
-        In this case, you have two choices.
-        You could provide SwingWorker with a callback interface,
-        which it would be able to call from done
-        once the SwingWorker has completed.
-
-        Or you could attach a PropertyChangeListener to the SwingWorker
-        and monitor the state value, waiting until it equals StateValue.Done
-        */
-        JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new File(lastDir));
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setDialogTitle("Choose directory");
-        chooser.setAcceptAllFileFilterUsed(false);
-        int rep = chooser.showOpenDialog(null);
-        if (rep == JFileChooser.APPROVE_OPTION) {
-            prefs.put("lastdirused", chooser.getSelectedFile().getParent());
-            Path dirToProcess = chooser.getSelectedFile().toPath();
-            ScanADirectoryWorker sdw = (ScanADirectoryWorker) applicationContext.getBean("scanADirectoryWorker");
-            sdw.setDirToProcess(dirToProcess);
-            sdw.execute();
-
-        } else /* CANCEL_OPTION or ERROR_OPTION*/ {
-            //System.out.println("No Selection ");
-        }
-
+        launchServices.scanADirectoryInBackground();
     }
 
     private void exitAction(java.awt.event.ActionEvent evt) {

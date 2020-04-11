@@ -1,19 +1,28 @@
 package org.gandji.mymoviedb.services;
 
 import lombok.extern.slf4j.Slf4j;
+import org.gandji.mymoviedb.MyMovieDBConfiguration;
 import org.gandji.mymoviedb.data.HibernateMovieDao;
 import org.gandji.mymoviedb.data.Movie;
+import org.gandji.mymoviedb.filefinder.VideoFileWorker;
 import org.gandji.mymoviedb.gui.MovieGuiService;
+import org.gandji.mymoviedb.gui.ScanADirectoryWorker;
 import org.gandji.mymoviedb.javafx.JavaFXPrimaryStage;
 import org.gandji.mymoviedb.resources.MovieResource;
 import org.gandji.mymoviedb.resources.MovieResourceAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
+import javax.swing.*;
+import java.io.File;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
+import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
 /**
@@ -22,6 +31,9 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class MyMovieDBJSCommands {
+
+    @Autowired
+    LaunchServices launchServices;
 
     @Autowired
     MovieGuiService movieGuiService;
@@ -38,6 +50,12 @@ public class MyMovieDBJSCommands {
     @Autowired
     JavaFXPrimaryStage primaryStage;
 
+    @Autowired
+    ApplicationContext applicationContext;
+
+    @Value("${application.version}")
+    String myMovieDBVersionString;
+
     public String initialPage() {
         List<MovieResource> movies = hibernateMovieDao.findAllByOrderByCreated(0,25)
                 .stream()
@@ -47,6 +65,7 @@ public class MyMovieDBJSCommands {
         Context context = new Context(Locale.FRENCH);
         context.setVariable("movies",movies);
         context.setVariable("mmdb", this);
+        context.setVariable("mymoviedb_version", myMovieDBVersionString);
 
         return pageTemplateResolver.process("mymoviedb_start_page_materialize",context);
     }
@@ -110,4 +129,17 @@ public class MyMovieDBJSCommands {
 
     }
 
+    public void addAFile() {
+        launchServices.addFileInBackground(null, false);
+    }
+
+    public void scanADirectory() {
+        launchServices.scanADirectoryInBackground();
+    }
+
+    public void deleteMovie(String id) {
+        Movie movie = hibernateMovieDao.findOne(Long.parseLong(id));
+        log.info("Deleting movie "+movie.getTitle());
+        launchServices.deleteMovie(movie,null);
+    }
 }

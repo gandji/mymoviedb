@@ -1,13 +1,13 @@
 package org.gandji.mymoviedb.gui.widgets;
 
-import org.gandji.mymoviedb.filefinder.VideoFileWorker;
 import org.gandji.mymoviedb.gui.MovieDataModelPoster;
-import org.gandji.mymoviedb.MyMovieDBConfiguration;
 import org.gandji.mymoviedb.data.Movie;
 import org.gandji.mymoviedb.gui.MovieGuiService;
 
 import java.awt.*;
 import java.util.logging.Logger;
+
+import org.gandji.mymoviedb.services.LaunchServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -18,10 +18,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.nio.file.Path;
-import java.util.logging.Level;
-import java.util.prefs.Preferences;
 
 /**
  * Created by gandji on 22/11/2017.
@@ -45,6 +41,9 @@ public class DbDisplayTable extends JTable implements ActionListener {
 
     @Autowired
     private MovieGuiService movieGuiService;
+
+    @Autowired
+    private LaunchServices launchServices;
 
     private JTabbedPane tabbedPane;
 
@@ -154,43 +153,30 @@ public class DbDisplayTable extends JTable implements ActionListener {
     }
 
     private void addAFileToMovie() {
-        int selectedRow = this.convertRowIndexToModel(this.getSelectedRow());
-        // get the movie, with the "-1" trick
-        Movie movie = (Movie) this.getModel().getValueAt(selectedRow,-1);
+        Movie movie = getSelectedMovie();
         if (null==movie) {
             // it is a bug
             LOG.severe("No movie in selected row");
             return;
         }
 
-        Preferences prefs = Preferences.userNodeForPackage(MyMovieDBConfiguration.class);
-        String lastDir = prefs.get("lastdirused", System.getProperty("user.home") + "/Downloads/Video");
+        launchServices.addFileInBackground(movie,false);
+    }
 
-        JFileChooser chooser = new JFileChooser();
-        chooser.setCurrentDirectory(new File(lastDir));
-        int rep = chooser.showOpenDialog(null);
-        if (rep == JFileChooser.APPROVE_OPTION) {
-            try {
-                prefs.put("lastdirused",chooser.getSelectedFile().getParent());
+    private Movie getSelectedMovie() {
+        return rowToMovie(this.getSelectedRow());
+    }
 
-                Path fileToProcess = chooser.getSelectedFile().toPath();
-
-                VideoFileWorker videoFileWorker = (VideoFileWorker) applicationContext.getBean("videoFileWorker");
-                videoFileWorker.setFile(fileToProcess);
-                videoFileWorker.setLimitPopups(false);
-                videoFileWorker.setMovie(movie);
-
-                videoFileWorker.execute();
-
-            } catch (Exception ex) {
-                LOG.log(Level.INFO, "Cannot access file " + chooser.getSelectedFile().toString(), ex);
-            }
-        }
+    private Movie rowToMovie(int row) {
+        int selectedRow = this.convertRowIndexToModel(row);
+        // get the movie, with the "-1" trick
+        Movie movie = (Movie) this.getModel().getValueAt(selectedRow, -1);
+        return movie;
     }
 
     private void displayMovieDetails(int row) {
         // get the movie, with the "-1" trick
-        Movie movie = (Movie) this.getModel().getValueAt(row, -1);
+        Movie movie = rowToMovie(row);
         int i = tabbedPane.indexOfTab(movie.getTitle());
         if (-1==i) {
             MovieDescriptionPanel mdp = (MovieDescriptionPanel)applicationContext.getBean("movieDescriptionPanel");
@@ -205,24 +191,15 @@ public class DbDisplayTable extends JTable implements ActionListener {
     }
 
     private void playSelectedMovie() {
-        int selectedRow = this.convertRowIndexToModel(this.getSelectedRow());
-        // get the movie, with the "-1" trick
-        Movie movie = (Movie) this.getModel().getValueAt(selectedRow, -1);
-        movieGuiService.playTheMovie(movie);
+        movieGuiService.playTheMovie(getSelectedMovie());
     }
 
     private void internetCritics(){
-        int selectedRow = this.convertRowIndexToModel(this.getSelectedRow());
-        // get the movie, with the "-1" trick
-        Movie movie = (Movie) this.getModel().getValueAt(selectedRow, -1);
-        movieGuiService.internetCritics(movie);
+        movieGuiService.internetCritics(getSelectedMovie());
     }
 
     private void openInfoUrl() {
-        int selectedRow = this.convertRowIndexToModel(this.getSelectedRow());
-        // get the movie, with the "-1" trick
-        Movie movie = (Movie) this.getModel().getValueAt(selectedRow, -1);
-        movieGuiService.openInfoUrl(movie.getInfoUrl());
+        movieGuiService.openInfoUrl(getSelectedMovie().getInfoUrl());
     }
 
     public JTabbedPane getTabbedPane() {

@@ -1,5 +1,6 @@
 package org.gandji.mymoviedb.javafx;
 
+import com.sun.javafx.webkit.WebConsoleListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
@@ -79,6 +80,10 @@ public class JavaFXPrimaryStage implements ApplicationListener<StageReadyEvent> 
 
         });
 
+        // best way to capture js logging:
+        WebConsoleListener.setDefaultListener((webView, message, lineNumber, sourceId) -> {
+            log.info(message + "["+sourceId +":" + lineNumber + "]");
+        });
 
         webEngine.loadContent(myMovieDBJSCommands.initialPage());
 
@@ -149,6 +154,10 @@ public class JavaFXPrimaryStage implements ApplicationListener<StageReadyEvent> 
         Button fullscreenButton = assembleButton("icons/icons8-full-screen-18.png", "Fullscreen");
         fullscreenButton.setOnAction(event -> stage.setFullScreen(!stage.isFullScreen()));
         toolBar.getItems().add(fullscreenButton);
+
+        Button exitButton = assembleButton("icons/icons8-exit-18.png", "Exit");
+        exitButton.setOnAction(event -> stage.close());
+        toolBar.getItems().add(exitButton);
 
         StackPane root = new StackPane();
         root.setPadding(new Insets(5,5,5,5));

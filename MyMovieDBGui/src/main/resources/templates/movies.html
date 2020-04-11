@@ -36,24 +36,31 @@
 </div>
 <div class="card-action">
     <div class="row">
-        <div class="col s4">
+        <div class="col s3">
             <div class="waves-effect waves-light btn tooltipped" data-delay=2000 data-position="top"
                  data-tooltip="Play the movie" th:onclick="|playMovie(${movie.getDbId()})|">
                 <i class="material-icons center">&#xE037;</i>
                 <!--Play movie-->
             </div>
         </div>
-        <div class="col s4">
+        <div class="col s3">
             <div class="waves-effect waves-light btn tooltipped" data-delay=2000 data-position="top"
                  data-tooltip="Go to Movie DB info page" th:onclick="|internetInfoPage(${movie.getDbId()})|">
                 <i class="material-icons center">&#xE88e;</i>
                 <!--Info page-->
             </div>
         </div>
-        <div class="col s4">
+        <div class="col s3">
             <div class="waves-effect waves-light btn tooltipped" data-delay=2000 data-position="top"
                  data-tooltip="See critics on internet" th:onclick="|internetCritics(${movie.getDbId()})|">
                 <i class="material-icons center">&#xE838;</i>
+                <!--Internet critics-->
+            </div>
+        </div>
+        <div class="col s3">
+            <div class="waves-effect waves-light btn tooltipped" data-delay=2000 data-position="top"
+                 data-tooltip="Delete movie" th:onclick="|deleteMovie(${movie.getDbId()})|">
+                <i class="material-icons center">&#xE872;</i>
                 <!--Internet critics-->
             </div>
         </div>
@@ -75,6 +82,10 @@
 
     function internetCritics(id) {
         mmdb.internetCritics(id);
+    };
+
+    function deleteMovie(id) {
+        mmdb.deleteMovie(id);
     };
 </script>
 </div>

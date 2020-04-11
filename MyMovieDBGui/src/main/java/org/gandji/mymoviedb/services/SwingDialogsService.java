@@ -16,7 +16,22 @@ public class SwingDialogsService implements DialogsService {
 
     @Override
     public void showMessageDialog(Object frame, String message, String title, MessageType messageType) {
-        JOptionPane.showMessageDialog((java.awt.Component) frame, message, title,messageType.getjOptionMessageType());
+        if (frame != null) {
+            SwingUtilities.invokeLater(() ->
+                    JOptionPane.showMessageDialog((java.awt.Component) frame, message, title, messageType.getjOptionMessageType())
+            );
+        } else {
+            // no frame attached
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    JOptionPane optionPane = new JOptionPane(message,messageType.getjOptionMessageType());
+                    JDialog dialog = optionPane.createDialog(title);
+                    dialog.setAlwaysOnTop(true); // to show top of all other application
+                    dialog.setVisible(true); // to visible the dialog
+                }
+            });
+        }
     }
 
     @Override
