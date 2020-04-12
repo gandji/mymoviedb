@@ -13,12 +13,48 @@ public class MyMovieDBPreferences {
     private String dataSourcePassword;
     private String dataSourceDriver;*/
 
+    public enum GuiMode {
+        SWING("swing", "swing"),
+        JAVAFX("javafx", "javafx");
+
+        String preferencesName;
+        String displayName;
+
+        GuiMode(String preferencesName, String displayName) {
+            this.preferencesName = preferencesName;
+            this.displayName = displayName;
+        }
+
+        public static GuiMode fromPreferencesName(String preferencesName) {
+            for (GuiMode guiMode : values()) {
+                if (guiMode.preferencesName.equals(preferencesName)) {
+                    return guiMode;
+                }
+            }
+            throw new IllegalArgumentException("Unknown gui mode (internal name): "+preferencesName);
+        }
+
+        public static GuiMode fromDisplayName(String displayName) {
+            for (GuiMode guiMode : values()) {
+                if (guiMode.displayName.equals(displayName)) {
+                    return guiMode;
+                }
+            }
+            throw new IllegalArgumentException("Unknown gui mode (human readable name): "+displayName);
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+    }
+
+    private GuiMode guiMode = GuiMode.JAVAFX;
     private boolean keepDuplicateFilesOnScan = false;
     private String  dateFormat = DEFAULT_DATE_FORMAT;
     private Integer fontSize = DEFAULT_FONT_SIZE;
     private Integer rightColumnWidth = DEFAULT_RIGHT_COLUMN_WIDTH;
-    private Integer mainHeight = DEFAULT_MAIN_HEIGHT;
-    private Integer mainWidth = DEFAULT_MAIN_WIDTH;
+    /*private Integer mainHeight = DEFAULT_MAIN_HEIGHT;
+    private Integer mainWidth = DEFAULT_MAIN_WIDTH;*/
     private MovieInfoSearchService.UrlType internetTarget = DEFAULT_INTERNET_TARGET;
 
     // Preference keys for this package
@@ -26,14 +62,15 @@ public class MyMovieDBPreferences {
     private static final String DATASOURCE_USERNAME = "datasourceusername";
     private static final String DATASOURCE_PASSWORD = "datasourcepassword";
     private static final String DATASOURCE_DRIVER_NAME = "datasourcedrivername";*/
+    private static  final String GUI_MODE = "guimode";
     private static final String POSTER_HEIGHT = "posterheight";
     private static final String POSTER_WIDTH = "posterwidth";
     private static final String KEEP_DUPLICATE_FILES_ON_SCAN = "keepduplicatesonscan";
     private static final String DATE_FORMAT = "dateformat";
     private static final String FONT_SIZE = "fontsize";
     private static final String RIGHT_COLUMN_WIDTH = "rightcolumnwidth";
-    private static final String MAIN_HEIGHT = "mainheight";
-    private static final String MAIN_WIDTH = "mainwidth";
+    /*private static final String MAIN_HEIGHT = "mainheight";
+    private static final String MAIN_WIDTH = "mainwidth";*/
     private static final String INTERNET_TARGET = "internetTarget";
 
     private final static String DEFAULT_DATE_FORMAT = "dd/mm/yyyy hh:mm::ss";
@@ -41,7 +78,7 @@ public class MyMovieDBPreferences {
     private static final Integer DEFAULT_RIGHT_COLUMN_WIDTH = 550;
     private static final Integer DEFAULT_MAIN_HEIGHT = 800;
     private static final Integer DEFAULT_MAIN_WIDTH = 1700;
-    private static final MovieInfoSearchService.UrlType DEFAULT_INTERNET_TARGET = MovieInfoSearchService.UrlType.IMDB;
+    private static final MovieInfoSearchService.UrlType DEFAULT_INTERNET_TARGET = MovieInfoSearchService.UrlType.TMDB;
 
     private int posterHeight;
     private int posterWidth;
@@ -53,6 +90,14 @@ public class MyMovieDBPreferences {
     public boolean isKeepDuplicateFilesOnScan() { return keepDuplicateFilesOnScan; }
 
     public void setKeepDuplicateFilesOnScan(boolean keepDuplicateFilesOnScan) { this.keepDuplicateFilesOnScan = keepDuplicateFilesOnScan; }
+
+    public GuiMode getGuiMode() {
+        return guiMode;
+    }
+
+    public void setGuiMode(GuiMode guiMode) {
+        this.guiMode = guiMode;
+    }
 
     public Integer getFontSize() { return this.fontSize; }
 
@@ -66,7 +111,7 @@ public class MyMovieDBPreferences {
         this.rightColumnWidth = rightColumnWidth;
     }
 
-    public Integer getMainHeight() {
+    /*public Integer getMainHeight() {
         return mainHeight;
     }
 
@@ -80,18 +125,19 @@ public class MyMovieDBPreferences {
 
     public void setMainWidth(Integer mainWidth) {
         this.mainWidth = mainWidth;
-    }
+    }*/
 
     public void flushPrefs() {
        Preferences prefs = Preferences.userNodeForPackage(MyMovieDBConfiguration.class);
+       prefs.put(GUI_MODE, guiMode.preferencesName);
        prefs.putInt(POSTER_HEIGHT,posterHeight);
        prefs.putInt(POSTER_WIDTH,posterWidth);
        prefs.putBoolean(KEEP_DUPLICATE_FILES_ON_SCAN,keepDuplicateFilesOnScan);
        prefs.put(DATE_FORMAT, dateFormat);
        prefs.putInt(FONT_SIZE, fontSize);
        prefs.putInt(RIGHT_COLUMN_WIDTH, rightColumnWidth);
-       prefs.putInt(MAIN_HEIGHT, mainHeight);
-       prefs.putInt(MAIN_WIDTH, mainWidth);
+       /*prefs.putInt(MAIN_HEIGHT, mainHeight);
+       prefs.putInt(MAIN_WIDTH, mainWidth);*/
        prefs.put(INTERNET_TARGET, internetTarget.name());
        try {
            prefs.flush();
@@ -102,14 +148,15 @@ public class MyMovieDBPreferences {
 
    public void resetPrefs() {
        Preferences prefs = Preferences.userNodeForPackage(MyMovieDBConfiguration.class);
+       setGuiMode(GuiMode.fromPreferencesName(prefs.get(GUI_MODE, GuiMode.SWING.preferencesName)));
        setPosterHeight(prefs.getInt(POSTER_HEIGHT,268));
        setPosterWidth(prefs.getInt(POSTER_WIDTH,182));
        setKeepDuplicateFilesOnScan(prefs.getBoolean(KEEP_DUPLICATE_FILES_ON_SCAN,false));
        setDateFormat(prefs.get(DATE_FORMAT, DEFAULT_DATE_FORMAT));
        setFontSize(prefs.getInt(FONT_SIZE, DEFAULT_FONT_SIZE));
        setRightColumnWidth(prefs.getInt(RIGHT_COLUMN_WIDTH, DEFAULT_RIGHT_COLUMN_WIDTH));
-       setMainHeight(prefs.getInt(MAIN_HEIGHT, DEFAULT_MAIN_HEIGHT));
-       setMainWidth(prefs.getInt(MAIN_WIDTH, DEFAULT_MAIN_WIDTH));
+       /*setMainHeight(prefs.getInt(MAIN_HEIGHT, DEFAULT_MAIN_HEIGHT));
+       setMainWidth(prefs.getInt(MAIN_WIDTH, DEFAULT_MAIN_WIDTH));*/
        setInternetTarget(MovieInfoSearchService.UrlType.fromName(prefs.get(INTERNET_TARGET, DEFAULT_INTERNET_TARGET.name())));
        try {
            prefs.flush();

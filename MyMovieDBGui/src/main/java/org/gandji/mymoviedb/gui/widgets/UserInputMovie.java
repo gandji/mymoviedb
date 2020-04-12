@@ -19,6 +19,7 @@ package org.gandji.mymoviedb.gui.widgets;
 
 import java.lang.reflect.MalformedParametersException;
 import java.nio.file.Path;
+import java.util.prefs.Preferences;
 
 import lombok.extern.slf4j.Slf4j;
 import org.gandji.mymoviedb.scrapy.MovieInfoSearchService;
@@ -31,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.swing.*;
 
 /**
@@ -41,6 +43,8 @@ import javax.swing.*;
 @Scope("prototype")
 @Slf4j
 public class UserInputMovie extends javax.swing.JDialog {
+
+    public static final String WINDOW_NAME = UserInputMovie.class.getSimpleName();
 
     @Autowired
     private MovieInfoSearchService movieInfoSearchService;
@@ -71,6 +75,17 @@ public class UserInputMovie extends javax.swing.JDialog {
     public UserInputMovie(NewLayout mainFrame) {
         super(mainFrame, true);
         initComponents();
+    }
+
+    @PostConstruct
+    public void build() {
+        setName(WINDOW_NAME);
+        Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+        setLocation(prefs.getInt(WINDOW_NAME+".x",50),
+                prefs.getInt(WINDOW_NAME+".y", 50));
+        setSize(prefs.getInt(WINDOW_NAME+".width",600),
+                prefs.getInt(WINDOW_NAME+".height", 120));
+        addComponentListener(new WindowSizeLocationPersist(prefs));
     }
 
     /**

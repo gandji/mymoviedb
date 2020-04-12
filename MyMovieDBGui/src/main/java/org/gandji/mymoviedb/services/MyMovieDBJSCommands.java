@@ -7,6 +7,7 @@ import org.gandji.mymoviedb.data.Movie;
 import org.gandji.mymoviedb.filefinder.VideoFileWorker;
 import org.gandji.mymoviedb.gui.MovieGuiService;
 import org.gandji.mymoviedb.gui.ScanADirectoryWorker;
+import org.gandji.mymoviedb.gui.widgets.PreferencesWindow;
 import org.gandji.mymoviedb.javafx.JavaFXPrimaryStage;
 import org.gandji.mymoviedb.resources.MovieResource;
 import org.gandji.mymoviedb.resources.MovieResourceAssembler;
@@ -52,6 +53,9 @@ public class MyMovieDBJSCommands {
 
     @Autowired
     ApplicationContext applicationContext;
+
+    @Autowired
+    PreferencesWindow preferencesWindow;
 
     @Value("${application.version}")
     String myMovieDBVersionString;
@@ -127,6 +131,11 @@ public class MyMovieDBJSCommands {
         log.info("Playing movie "+movie.getTitle());
         movieGuiService.playTheMovie(movie);
 
+    }
+
+    public void preferences() {
+        preferencesWindow.configureForStandalone();
+        preferencesWindow.setVisible(true);
     }
 
     public void addAFile() {

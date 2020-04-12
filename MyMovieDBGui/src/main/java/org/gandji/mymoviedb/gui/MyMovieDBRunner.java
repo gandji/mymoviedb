@@ -25,6 +25,7 @@ import org.gandji.mymoviedb.gui.widgets.NewLayout;
 import org.gandji.mymoviedb.data.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import javax.swing.*;
@@ -48,12 +49,22 @@ public abstract class MyMovieDBRunner implements CommandLineRunner{
     @Autowired
     private HibernateKerDao hibernateKerDao;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @Override
     public void run(String... strings) throws Exception {
 
         vendorSpecificDatabaseInitialization();
 
-        if (strings.length>=1 && strings[0].equals("javafx")) {
+        boolean useSwingApp = false;
+        for (String activeProfile : applicationContext.getEnvironment().getActiveProfiles()) {
+            if (activeProfile.equals("swing")){
+                useSwingApp = true;
+            }
+        }
+
+        if (!useSwingApp) {
             return;
         }
 

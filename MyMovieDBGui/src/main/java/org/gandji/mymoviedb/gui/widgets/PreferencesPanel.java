@@ -35,16 +35,19 @@ public class PreferencesPanel extends JPanel {
     private JLabel rightColumnWidthLabel;
     private JSpinner rightColumnWidthWidget;
 
-    private JLabel mainHeightLabel;
+    /*private JLabel mainHeightLabel;
     private JSpinner mainHeightWidget;
 
     private JLabel mainWidthLabel;
-    private JSpinner mainWidthWidget;
+    private JSpinner mainWidthWidget;*/
 
     private JLabel dateFormatLabel;
     private JTextField dateFormatField;
 
     private JComboBox<MovieInfoSearchService.UrlType> internetTargetCombo;
+
+    private JLabel guiModeLabel;
+    private JComboBox<MyMovieDBPreferences.GuiMode> guiModeCombo;
 
     @Autowired
     MyMovieDBPreferences myMovieDBPreferences;
@@ -112,12 +115,13 @@ public class PreferencesPanel extends JPanel {
         databaseUserField.setText(data.getDataSourceUser());
         databasePasswordField.setText(data.getDataSourcePassword());
         */
+        guiModeCombo.setSelectedItem(data.getGuiMode());
         keepFileOnUpdateCheckBox.setSelected(data.isKeepDuplicateFilesOnScan());
         dateFormatField.setText(data.getDateFormat());
         fontSizeWidget.setValue(data.getFontSize());
         rightColumnWidthWidget.setValue(data.getRightColumnWidth());
-        mainHeightWidget.setValue(data.getMainHeight());
-        mainWidthWidget.setValue(data.getMainWidth());
+        /*mainHeightWidget.setValue(data.getMainHeight());
+        mainWidthWidget.setValue(data.getMainWidth());*/
         internetTargetCombo.setSelectedItem(data.getInternetTarget());
     }
 
@@ -126,12 +130,13 @@ public class PreferencesPanel extends JPanel {
         data.setDataSourceUser(databaseUserField.getText());
         data.setDataSourcePassword(databasePasswordField.getText());
         */
+        data.setGuiMode((MyMovieDBPreferences.GuiMode)guiModeCombo.getSelectedItem());
         data.setKeepDuplicateFilesOnScan(keepFileOnUpdateCheckBox.isSelected());
         data.setDateFormat(dateFormatField.getText());
         data.setFontSize((int)fontSizeWidget.getValue());
         data.setRightColumnWidth((int)rightColumnWidthWidget.getValue());
-        data.setMainHeight((int)mainHeightWidget.getValue());
-        data.setMainWidth((int)mainWidthWidget.getValue());
+        /*data.setMainHeight((int)mainHeightWidget.getValue());
+        data.setMainWidth((int)mainWidthWidget.getValue());*/
         data.setInternetTarget((MovieInfoSearchService.UrlType)internetTargetCombo.getSelectedItem());
     }
 
@@ -143,17 +148,19 @@ public class PreferencesPanel extends JPanel {
         if (databasePasswordField.getText() != null ? !databasePasswordField.getText().equals(data.getDataSourcePassword()) : data.getDataSourcePassword() != null)
             return true;
             */
+        if (guiModeCombo.getSelectedItem() != data.getGuiMode()) return true;
         if (keepFileOnUpdateCheckBox.isSelected() != data.isKeepDuplicateFilesOnScan()) return true;
         if (!dateFormatField.getText().equals(data.getDateFormat())) return true;
         if (!fontSizeWidget.getValue().equals(data.getFontSize())) return true;
         if (!rightColumnWidthWidget.getValue().equals(data.getRightColumnWidth())) return true;
-        if (!mainHeightWidget.getValue().equals(data.getMainHeight())) return true;
-        if (!mainWidthWidget.getValue().equals(data.getMainWidth())) return true;
+        /*if (!mainHeightWidget.getValue().equals(data.getMainHeight())) return true;
+        if (!mainWidthWidget.getValue().equals(data.getMainWidth())) return true;*/
         return false;
     }
 
     public void createUIComponents() {
-        GridLayout layout = new GridLayout(8,2);
+        GridLayout layout = new GridLayout(0,2);
+        layout.setHgap(100);
 
         databaseUrlLabel = new JLabel("Database URL");
         databaseUrlField = new JTextField();
@@ -175,11 +182,15 @@ public class PreferencesPanel extends JPanel {
         rightColumnWidthLabel = new JLabel("Right column width");
         rightColumnWidthWidget = new JSpinner(new SpinnerNumberModel());
 
-        mainHeightLabel = new JLabel("Initial window height");
+        /*mainHeightLabel = new JLabel("Initial window height");
         mainHeightWidget = new JSpinner(new SpinnerNumberModel());
 
         mainWidthLabel = new JLabel("Initial window width");
-        mainWidthWidget = new JSpinner(new SpinnerNumberModel());
+        mainWidthWidget = new JSpinner(new SpinnerNumberModel());*/
+
+        guiModeLabel = new JLabel("Gui Mode (restart needed)");
+        guiModeCombo = new JComboBox<>(MyMovieDBPreferences.GuiMode.values());
+        guiModeCombo.setRenderer(new GuiModeRenderer());
 
         OKButton = new JButton("OK");
         cancelButton = new JButton("Cancel");
@@ -201,11 +212,11 @@ public class PreferencesPanel extends JPanel {
         internalPanel.add(fontSizeLabel);
         internalPanel.add(fontSizeWidget);
 
-        internalPanel.add(mainHeightLabel);
+        /*internalPanel.add(mainHeightLabel);
         internalPanel.add(mainHeightWidget);
 
         internalPanel.add(mainWidthLabel);
-        internalPanel.add(mainWidthWidget);
+        internalPanel.add(mainWidthWidget);*/
 
         internalPanel.add(rightColumnWidthLabel);
         internalPanel.add(rightColumnWidthWidget);
@@ -220,8 +231,20 @@ public class PreferencesPanel extends JPanel {
         internetTargetCombo = new JComboBox<>(MovieInfoSearchService.UrlType.values());
         internalPanel.add(internetTargetCombo);
 
+        internalPanel.add(guiModeLabel);
+        internalPanel.add(guiModeCombo);
+
         internalPanel.add(buttons);
 
         setLayout(layout);
+    }
+
+    public class GuiModeRenderer extends DefaultListCellRenderer {
+        @Override
+        public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            setText(((MyMovieDBPreferences.GuiMode) value).getDisplayName());
+            return this;
+        }
     }
 }

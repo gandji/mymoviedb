@@ -55,6 +55,11 @@ public class MyMovieDBGUI {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+
+        // cannot use injection here
+        MyMovieDBPreferences preferences = new MyMovieDBPreferences();
+        preferences.resetPrefs();
+
         /* set the Nimbus look and feel */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -71,8 +76,6 @@ public class MyMovieDBGUI {
                 LOG.info("ORIGINAL FONT : " + orig.toString());
             }
 
-            // cannot use injection here
-            MyMovieDBPreferences preferences = new MyMovieDBPreferences();
             int fontSize = preferences.getFontSize();
             Font f = new javax.swing.plaf.FontUIResource("Lucida", Font.PLAIN, fontSize);
             javax.swing.UIManager.getLookAndFeelDefaults().put("defaultFont", f);
@@ -87,7 +90,25 @@ public class MyMovieDBGUI {
             LOG.log(Level.SEVERE, null, ex);
         }
 
-        if (args.length>=1 && args[0].equals("javafx")) {
+        MyMovieDBPreferences.GuiMode effectiveGuiMode = null;
+        if (args.length>=1) {
+            try {
+                effectiveGuiMode = MyMovieDBPreferences.GuiMode.fromDisplayName(args[0]);
+            } catch (IllegalArgumentException e) {
+                // OK revert to preferences
+                effectiveGuiMode = preferences.getGuiMode();
+            }
+        }
+        if (null == effectiveGuiMode){
+            effectiveGuiMode = preferences.getGuiMode();
+        }
+
+        // backwards compatibility, if still null, it means prefs were old version
+        if (null == effectiveGuiMode) {
+            effectiveGuiMode = MyMovieDBPreferences.GuiMode.SWING;
+        }
+
+        if (effectiveGuiMode == MyMovieDBPreferences.GuiMode.JAVAFX) {
             /* launch the javafx part */
             try {
                 Application.launch(MyMovieDBJavaFX.class, args);

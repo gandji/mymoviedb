@@ -21,11 +21,17 @@
             $('.dropdown-trigger').dropdown({alignment: 'right', constrainWidth: false, coverTrigger: false, hover: true });
         });
     </script>
+    <style>
+        .dropdown-content {
+            width: max-content !important;
+            height: auto !important;
+        }
+    </style>
 </head>
 <body>
 <nav class="teal"> <!-- "deep-purple lighten-2" OK, teal est vert -->
     <nav class="nav-wrapper teal">
-        <a href="#" class="brand-logo right">MyMovieDB</a>
+        <a href="#" class="brand-logo right" onclick="preferences();">MyMovieDB</a>
         <ul id="nav-mobile" class="hide-on-med-and-down">
             <li>
                   <div class='dropdown-trigger teal breadcrumbs_hamburger left' href='#' data-target='files-submenu'>
@@ -40,6 +46,11 @@
                 <li>
                     <a th:onclick="|scanADirectory()|">
                         Scan a directory
+                    </a>
+                </li>
+                <li>
+                    <a th:onclick="|preferences()|">
+                        Preferences
                     </a>
                 </li>
                 <li><a href="#!" th:onclick="|about('${mymoviedb_version}')|">About</a></li>
@@ -106,6 +117,10 @@
             function scanADirectory() {
                 console.log('Scan a directory');
                 mmdb.scanADirectory();
+            };
+
+            function preferences() {
+                mmdb.preferences();
             };
 
             function about(version) {

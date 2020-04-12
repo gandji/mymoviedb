@@ -2,12 +2,9 @@ package org.gandji.mymoviedb.gui.widgets;
 
 import lombok.extern.slf4j.Slf4j;
 import org.gandji.mymoviedb.MyMovieDBPreferences;
-import org.gandji.mymoviedb.filefinder.VideoFileWorker;
 import org.gandji.mymoviedb.services.LaunchServices;
 import org.gandji.mymoviedb.tools.RepairDatabase;
-import org.gandji.mymoviedb.MyMovieDBConfiguration;
 import org.gandji.mymoviedb.gui.MovieDataModelPoster;
-import org.gandji.mymoviedb.gui.ScanADirectoryWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -17,8 +14,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.nio.file.Path;
 import java.util.prefs.Preferences;
 
 /**
@@ -27,6 +22,8 @@ import java.util.prefs.Preferences;
 @Component
 @Slf4j
 public class NewLayout extends JFrame {
+
+    private static final String WINDOW_NAME = "myMovieDBMainWindow";
 
     @Autowired
     private MyMovieDBPreferences preferences;
@@ -96,7 +93,9 @@ public class NewLayout extends JFrame {
 
         int ppi = Toolkit.getDefaultToolkit().getScreenResolution();
         int preferredRightColumnWidth = preferences.getRightColumnWidth()*ppi/96;
-        int preferredHeight = preferences.getMainHeight();
+
+        Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+        int preferredHeight = prefs.getInt(WINDOW_NAME+".height",800);
 
 
         rightColumn.setMinimumSize(new Dimension(preferredRightColumnWidth/2,minHeight));
@@ -245,9 +244,17 @@ public class NewLayout extends JFrame {
         getContentPane().add(dbDisplayTable.getTabbedPane(), BorderLayout.CENTER);
         getContentPane().add(rightColumn,BorderLayout.LINE_END);
 
-        getContentPane().setPreferredSize(new Dimension(preferences.getMainWidth(),preferences.getMainHeight()));
+        //getContentPane().setPreferredSize(new Dimension(preferences.getMainWidth(),preferences.getMainHeight()));
 
         pack();
+
+        setName(WINDOW_NAME);
+        Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+        setLocation(prefs.getInt(WINDOW_NAME+".x",50),
+                prefs.getInt(WINDOW_NAME+".y", 50));
+        setSize(prefs.getInt(WINDOW_NAME+".width",1700),
+                prefs.getInt(WINDOW_NAME+".height", 800));
+        addComponentListener(new WindowSizeLocationPersist(prefs));
 
     }
 
