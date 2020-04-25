@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.gandji.MyMovieDB</groupId>
     <artifactId>MyMovieDB</artifactId>
-    <version>1.4.2-SNAPSHOT</version>
+    <version>1.4.2</version>
     <modules>
         <module>MyMovieDBCommon</module>
         <!--module>MyMovieDBServer</module-->
