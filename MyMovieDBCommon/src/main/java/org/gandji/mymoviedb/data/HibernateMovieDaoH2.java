@@ -27,7 +27,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.net.URL;
 import java.sql.*;
 import java.util.*;
 
@@ -242,7 +241,7 @@ public class HibernateMovieDaoH2 extends HibernateMovieDao {
     }
 
     @Override
-    public Iterable<Movie> searchInternal(String titleKeywords, String directorKeywords, String actorsKeywords, String genreKeyword, String commentsKeywords, String qualiteVideoKeyword) {
+    public Iterable<Movie> searchInternal(String titleKeywords, String directorKeywords, String actorsKeywords, String genreKeyword, String commentsKeywords, String qualiteVideoKeyword, Integer dbPageSize) {
         MoviesTitleSearch group = new MoviesTitleSearch();
         //MoviesGroupSearchData group = new MoviesGroupSearchData();
 
@@ -323,7 +322,7 @@ public class HibernateMovieDaoH2 extends HibernateMovieDao {
     }
 
     @Override
-    public Iterable<Movie> searchInternalAll(String keywords) {
+    public Iterable<Movie> searchInternalAll(String keywords, Integer dbPageSize) {
         return new ArrayList<>();
     }
 

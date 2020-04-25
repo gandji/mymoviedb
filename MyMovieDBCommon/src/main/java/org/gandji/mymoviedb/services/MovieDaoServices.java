@@ -34,14 +34,6 @@ public class MovieDaoServices {
     @Autowired
     HibernateMovieDao hibernateMovieDao;
 
-    public void populateVideoFile(VideoFile file, Path path) {
-        file.setFileName(path.getFileName().toString());
-        file.setDirectory(path.getParent().toString());
-        file.setDriveLabel(file.computeCurrentDriveLabel());
-        String hashCode = FileUtils.computeHash(path);
-        file.setHashCode(hashCode);
-    }
-
     public Movie checkActorsAndSaveMovie(Movie movie) {
         // TODO: configure unicity of actors, for now we enforce unicity of actors by hand, grrrr.....
         EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -83,7 +75,7 @@ public class MovieDaoServices {
         VideoFile videoFile = null;
         if (null != filePath) {
             videoFile = new VideoFile();
-            populateVideoFile(videoFile,filePath);
+            hibernateVideoFileDao.populateVideoFile(videoFile,filePath);
         }
 
         return addFileToMovie(selectedMovie,videoFile);

@@ -19,8 +19,11 @@ package org.gandji.mymoviedb.gui.widgets;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -38,6 +41,7 @@ import org.gandji.mymoviedb.gui.InternetInfoSearchWorker;
 import org.gandji.mymoviedb.gui.MovieDataModelText;
 import org.gandji.mymoviedb.gui.MovieGuiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -68,6 +72,9 @@ public class ResultChooserDialog extends javax.swing.JDialog implements ActionLi
 
     @Autowired
     private MyMovieDBPreferences myMovieDBPreferences;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Autowired
     private MovieDataModelText movieDataModelText;
@@ -134,6 +141,7 @@ public class ResultChooserDialog extends javax.swing.JDialog implements ActionLi
     private void initComponents() {
         jLabel1 = new JLabel();
         fileNameDisplay = new JTextField();
+        fileNameDisplay.setEditable(false);
         jScrollPane1 = new JScrollPane();
         table = new JTable();
         infoLabel = new JLabel();
@@ -147,6 +155,29 @@ public class ResultChooserDialog extends javax.swing.JDialog implements ActionLi
         //======== this ========
         setDefaultCloseOperation(2);
         Container contentPane = getContentPane();
+
+        searchField = new JTextField();
+        searchField.addKeyListener(new KeyListener() {
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent event) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent event) {
+                if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+                    newSearch();
+                }
+            }
+        });
+
+
+        searchButton = new JButton("Search");
+        searchButton.addActionListener(e -> newSearch());
 
         //---- jLabel1 ----
         jLabel1.setText("Select movie for file :");
@@ -201,6 +232,10 @@ public class ResultChooserDialog extends javax.swing.JDialog implements ActionLi
                             .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 204, GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(fileNameDisplay))
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                                .addComponent(searchButton, GroupLayout.PREFERRED_SIZE, 204, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(searchField))
                         .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 760, Short.MAX_VALUE)
                         .addGroup(contentPaneLayout.createSequentialGroup()
                             .addComponent(infoLabel, GroupLayout.PREFERRED_SIZE, 560, GroupLayout.PREFERRED_SIZE)
@@ -227,6 +262,10 @@ public class ResultChooserDialog extends javax.swing.JDialog implements ActionLi
                         .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
                         .addComponent(fileNameDisplay, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                     .addGap(18, 18, 18)
+                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(searchButton, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(searchField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGap(18, 18, 18)
                     .addComponent(infoLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGap(18, 18, 18)
                     .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 208, GroupLayout.PREFERRED_SIZE)
@@ -243,6 +282,24 @@ public class ResultChooserDialog extends javax.swing.JDialog implements ActionLi
         pack();
         setLocationRelativeTo(getOwner());
     }// </editor-fold>//GEN-END:initComponents
+
+    private void newSearch() {
+        if (internetInfoSearchWorker != null) {
+            internetInfoSearchWorker.setCancelRequested(true);
+            internetInfoSearchWorker.cancel(false);
+        }
+        InternetInfoSearchWorker iisw = (InternetInfoSearchWorker) applicationContext.getBean("internetInfoSearchWorker");
+        iisw.setFile(this.filePath);
+        iisw.setKwds(Arrays.asList(searchField.getText().split("\\s+")));
+        iisw.setResultChooserDialog(this);
+        this.setInternetInfoSearchWorker(iisw);
+
+        //clear table
+        movieDataModelText.clearAllMovies();
+        movieDataModelText.fireTableDataChanged();
+
+        internetInfoSearchWorker.execute();
+    }
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         setOk(true);
@@ -347,6 +404,9 @@ public class ResultChooserDialog extends javax.swing.JDialog implements ActionLi
     private JButton okButton;
     private JButton enterMovieMyselfButton;
     // End of variables declaration//GEN-END:variables
+
+    private JButton searchButton;
+    private JTextField searchField;
 
     public void addMovie(Movie movie) {
         movieDataModelText.addMovie(movie);

@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 
+import org.gandji.mymoviedb.MyMovieDBPreferences;
 import org.gandji.mymoviedb.data.*;
 import org.gandji.mymoviedb.gui.MovieDataModelPoster;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,9 @@ public class SearchWindow extends javax.swing.JFrame {
 
     @Autowired
     private HibernateMovieDao hibernateMovieDao;
+
+    @Autowired
+    private MyMovieDBPreferences myMovieDBPreferences;
 
     /**
      * Creates new form SearchWindow
@@ -257,7 +261,7 @@ public class SearchWindow extends javax.swing.JFrame {
         commentsInput.setText("");
         genreComboBox.setSelectedIndex(0);
         qualiteVideoComboBox.setSelectedIndex(0);
-        movieDataModelPoster.setMovies(hibernateMovieDao.findAllByOrderByCreated(0, 300).getContent());
+        movieDataModelPoster.setMovies(hibernateMovieDao.findAllByOrderByCreated(0, myMovieDBPreferences.getDbPageSize()).getContent());
         movieDataModelPoster.fireTableDataChanged();
     }//GEN-LAST:event_resetButtonActionPerformed
 
@@ -361,7 +365,7 @@ public class SearchWindow extends javax.swing.JFrame {
         String qualiteVideoKeyword = (String) qualiteVideoComboBox.getSelectedItem();
 
         Iterable<Movie> uniqueMovies = hibernateMovieDao.searchInternal(titleKeywords,directorKeywords,
-                actorsKeywords,genreKeyword,commentsKeywords,qualiteVideoKeyword);
+                actorsKeywords,genreKeyword,commentsKeywords,qualiteVideoKeyword, myMovieDBPreferences.getDbPageSize());
 
         movieDataModelPoster.setMovies(uniqueMovies);
         movieDataModelPoster.fireTableDataChanged();

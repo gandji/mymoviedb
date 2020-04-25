@@ -260,9 +260,9 @@ public abstract class HibernateMovieDao {
 
     public abstract Iterable<Movie> searchInternal(String titleKeywords, String directorKeywords,
                                                    String actorsKeywords, String genreKeyword,
-                                                   String commentsKeywords, String qualiteVideoKeyword);
+                                                   String commentsKeywords, String qualiteVideoKeyword, Integer dbPageSize);
 
-    public abstract Iterable<Movie> searchInternalAll(String keywords);
+    public abstract Iterable<Movie> searchInternalAll(String keywords, Integer dbPageSize);
 
     public abstract Movie populateMovie(Movie movie);
 }

@@ -50,8 +50,11 @@ public class MyMovieDBPreferences {
 
     private GuiMode guiMode = GuiMode.JAVAFX;
     private boolean keepDuplicateFilesOnScan = false;
+    private boolean fullFeatured = true;
+    private boolean hackersHack= false;
     private String  dateFormat = DEFAULT_DATE_FORMAT;
     private Integer fontSize = DEFAULT_FONT_SIZE;
+    private Integer dbPageSize = DEFAULT_DB_PAGE_SIZE;
     private Integer rightColumnWidth = DEFAULT_RIGHT_COLUMN_WIDTH;
     /*private Integer mainHeight = DEFAULT_MAIN_HEIGHT;
     private Integer mainWidth = DEFAULT_MAIN_WIDTH;*/
@@ -66,8 +69,11 @@ public class MyMovieDBPreferences {
     private static final String POSTER_HEIGHT = "posterheight";
     private static final String POSTER_WIDTH = "posterwidth";
     private static final String KEEP_DUPLICATE_FILES_ON_SCAN = "keepduplicatesonscan";
+    private static final String FULL_FEATURED = "fullfeatured";
+    private static final String HACKERS_HACK = "hackershack";
     private static final String DATE_FORMAT = "dateformat";
     private static final String FONT_SIZE = "fontsize";
+    private static final String DB_PAGE_SIZE = "dbpagesize";
     private static final String RIGHT_COLUMN_WIDTH = "rightcolumnwidth";
     /*private static final String MAIN_HEIGHT = "mainheight";
     private static final String MAIN_WIDTH = "mainwidth";*/
@@ -75,6 +81,7 @@ public class MyMovieDBPreferences {
 
     private final static String DEFAULT_DATE_FORMAT = "dd/mm/yyyy hh:mm::ss";
     private static final Integer DEFAULT_FONT_SIZE = 24;
+    private static final Integer DEFAULT_DB_PAGE_SIZE = 300;
     private static final Integer DEFAULT_RIGHT_COLUMN_WIDTH = 550;
     private static final Integer DEFAULT_MAIN_HEIGHT = 800;
     private static final Integer DEFAULT_MAIN_WIDTH = 1700;
@@ -85,6 +92,22 @@ public class MyMovieDBPreferences {
 
     public MyMovieDBPreferences() {
         resetPrefs();
+    }
+
+    public boolean isFullFeatured() {
+        return fullFeatured;
+    }
+
+    public void setFullFeatured(boolean fullFeatured) {
+        this.fullFeatured = fullFeatured;
+    }
+
+    public boolean isHackersHack() {
+        return hackersHack;
+    }
+
+    public void setHackersHack(boolean hackersHack) {
+        this.hackersHack = hackersHack;
     }
 
     public boolean isKeepDuplicateFilesOnScan() { return keepDuplicateFilesOnScan; }
@@ -102,6 +125,14 @@ public class MyMovieDBPreferences {
     public Integer getFontSize() { return this.fontSize; }
 
     public void setFontSize(Integer fontSize) { this.fontSize = fontSize; }
+
+    public Integer getDbPageSize() {
+        return dbPageSize;
+    }
+
+    public void setDbPageSize(Integer dbPageSize) {
+        this.dbPageSize = dbPageSize;
+    }
 
     public Integer getRightColumnWidth() {
         return rightColumnWidth;
@@ -133,8 +164,11 @@ public class MyMovieDBPreferences {
        prefs.putInt(POSTER_HEIGHT,posterHeight);
        prefs.putInt(POSTER_WIDTH,posterWidth);
        prefs.putBoolean(KEEP_DUPLICATE_FILES_ON_SCAN,keepDuplicateFilesOnScan);
+       prefs.putBoolean(FULL_FEATURED,fullFeatured);
+       prefs.putBoolean(HACKERS_HACK,hackersHack);
        prefs.put(DATE_FORMAT, dateFormat);
        prefs.putInt(FONT_SIZE, fontSize);
+       prefs.putInt(DB_PAGE_SIZE, dbPageSize);
        prefs.putInt(RIGHT_COLUMN_WIDTH, rightColumnWidth);
        /*prefs.putInt(MAIN_HEIGHT, mainHeight);
        prefs.putInt(MAIN_WIDTH, mainWidth);*/
@@ -152,8 +186,11 @@ public class MyMovieDBPreferences {
        setPosterHeight(prefs.getInt(POSTER_HEIGHT,268));
        setPosterWidth(prefs.getInt(POSTER_WIDTH,182));
        setKeepDuplicateFilesOnScan(prefs.getBoolean(KEEP_DUPLICATE_FILES_ON_SCAN,false));
+       setFullFeatured(prefs.getBoolean(FULL_FEATURED,true));
+       setHackersHack(prefs.getBoolean(HACKERS_HACK,false));
        setDateFormat(prefs.get(DATE_FORMAT, DEFAULT_DATE_FORMAT));
        setFontSize(prefs.getInt(FONT_SIZE, DEFAULT_FONT_SIZE));
+       setDbPageSize(prefs.getInt(DB_PAGE_SIZE, DEFAULT_DB_PAGE_SIZE));
        setRightColumnWidth(prefs.getInt(RIGHT_COLUMN_WIDTH, DEFAULT_RIGHT_COLUMN_WIDTH));
        /*setMainHeight(prefs.getInt(MAIN_HEIGHT, DEFAULT_MAIN_HEIGHT));
        setMainWidth(prefs.getInt(MAIN_WIDTH, DEFAULT_MAIN_WIDTH));*/

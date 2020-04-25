@@ -24,8 +24,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-import java.net.URL;
 import java.util.*;
 
 /**
@@ -119,9 +117,9 @@ public class HibernateMovieDaoMySql extends HibernateMovieDao {
         return criterias;
     }
 
-    private Iterable<Movie> assembleQueryStringThenQuery(Map<String, String> criterias, String booleanOp) {
+    private Iterable<Movie> assembleQueryStringThenQuery(Map<String, String> criterias, String booleanOp, Integer dbPageSize) {
         if (criterias.isEmpty()) {
-            return findAllByOrderByCreated(0, 300).getContent();
+            return findAllByOrderByCreated(0, dbPageSize).getContent();
         }
 
         String queryString = "SELECT * from movie ";
@@ -170,20 +168,20 @@ public class HibernateMovieDaoMySql extends HibernateMovieDao {
     @Override
     public Iterable<Movie> searchInternal(String titleKeywords, String directorKeywords,
                                           String actorsKeywords, String genreKeyword,
-                                          String commentsKeywords, String qualiteVideoKeyword) {
+                                          String commentsKeywords, String qualiteVideoKeyword, Integer dbPageSize) {
 
         Map<String, String> criterias = gatherCriteria(titleKeywords, directorKeywords, actorsKeywords,
                 genreKeyword, commentsKeywords, qualiteVideoKeyword);
 
-        return assembleQueryStringThenQuery(criterias, "and");
+        return assembleQueryStringThenQuery(criterias, "and", dbPageSize);
     }
 
     @Override
-    public Iterable<Movie> searchInternalAll(String keywords) {
+    public Iterable<Movie> searchInternalAll(String keywords, Integer dbPageSize) {
         Map<String, String> criterias = gatherCriteria(keywords, keywords, keywords,
                 keywords, keywords, null);
 
-        return assembleQueryStringThenQuery(criterias, "or");
+        return assembleQueryStringThenQuery(criterias, "or", dbPageSize);
     }
 
     @Override

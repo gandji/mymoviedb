@@ -2,6 +2,7 @@ package org.gandji.mymoviedb.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.gandji.mymoviedb.MyMovieDBPreferences;
+import org.gandji.mymoviedb.gui.MovieGuiService;
 import org.gandji.mymoviedb.gui.widgets.MovieDescriptionDialog;
 import org.gandji.mymoviedb.gui.widgets.MovieDescriptionPanel;
 import org.gandji.mymoviedb.gui.widgets.NewLayout;
@@ -49,6 +50,9 @@ public class MovieDaoGuiServices extends MovieDaoServices {
 
     @Autowired
     private MyMovieDBPreferences myMovieDBPreferences;
+
+    @Autowired
+    private MovieGuiService movieGuiService;
 
     private ResultChooserDialog resultChooserDialog;
 
@@ -141,7 +145,7 @@ public class MovieDaoGuiServices extends MovieDaoServices {
             if (!myMovieDBPreferences.isKeepDuplicateFilesOnScan()) {
                 // replace old file path
                 log.info("Updating file info in DB from "+videoFileSameHash.getFileName()+" to "+file.getFileName().toString());
-                populateVideoFile(videoFileSameHash,file);
+                hibernateVideoFileDao.populateVideoFile(videoFileSameHash,file);
                 videoFileDao.save(videoFileSameHash);
             } else {
                 // find movie
@@ -150,7 +154,7 @@ public class MovieDaoGuiServices extends MovieDaoServices {
                 if (null!=movie) {
                     log.info("Adding file to movie: "+movie.getTitle());
                     VideoFile newVideoFile = new VideoFile();
-                    populateVideoFile(newVideoFile,file);
+                    hibernateVideoFileDao.populateVideoFile(newVideoFile,file);
                     newVideoFile.setQualiteVideo(videoFileSameHash.getQualiteVideo());
                     newVideoFile.setVersion(videoFileSameHash.getVersion());
                     if (movie.getId() == null) {
@@ -256,7 +260,7 @@ public class MovieDaoGuiServices extends MovieDaoServices {
             } else if (resultChooserDialog.isCancel()) {
                 log.debug("No movie in local DB satisfies the user");
             } else if (resultChooserDialog.isEnterMovieMyself()) {
-                launchMovieDescriptionDialog(file,mainFrame,true);
+                movieGuiService.launchMovieDescriptionDialog(null, file,mainFrame,true);
                 return 0;
             } else {
                     // user pressed OK
@@ -288,7 +292,12 @@ public class MovieDaoGuiServices extends MovieDaoServices {
         // title keywords not found in local DB, try search on imdb
         InternetInfoSearchWorker internetInfoSearchWorker = (InternetInfoSearchWorker) applicationContext.getBean("internetInfoSearchWorker");
         internetInfoSearchWorker.setFile(file);
-        internetInfoSearchWorker.setKwds(kwds);
+        // maybe take out last keyword, often ripper name
+        int endAt = kwds.size();
+        if (myMovieDBPreferences.isHackersHack()) {
+            endAt = endAt -1;
+        }
+        internetInfoSearchWorker.setKwds(kwds.subList(0,endAt));
         internetInfoSearchWorker.setResultChooserDialog(resultChooserDialog);
         internetInfoSearchWorker.execute();
 
@@ -317,7 +326,8 @@ public class MovieDaoGuiServices extends MovieDaoServices {
             log.info("No movie in IMDB satisfies the user");
             return 0;
         } else if (resultChooserDialog.isEnterMovieMyself()) {
-            launchMovieDescriptionDialog(file,mainFrame,true);
+            internetInfoSearchWorker.setCancelRequested(true);
+            movieGuiService.launchMovieDescriptionDialog(null, file,mainFrame,true);
             return 0;
         } else {
             // ok we have to save the movie
@@ -337,18 +347,4 @@ public class MovieDaoGuiServices extends MovieDaoServices {
 
     }
 
-    private void launchMovieDescriptionDialog(Path path, JFrame parent, boolean modal) {
-        MovieDescriptionPanel movieDescriptionPanel = (MovieDescriptionPanel) applicationContext.getBean("movieDescriptionPanel");
-        MovieDescriptionDialog movieDescriptionDialog = (MovieDescriptionDialog) applicationContext.getBean("movieDescriptionDialog",parent, modal, movieDescriptionPanel);
-        Movie movie = new Movie();
-        VideoFile videoFile = new VideoFile();
-
-        populateVideoFile(videoFile,path);
-        movie.addFile(videoFile);
-
-        movieDescriptionDialog.setModal(true);
-        movieDescriptionDialog.setData(movie);
-        movieDescriptionDialog.setVisible(true);
-
-    }
 }

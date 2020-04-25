@@ -101,8 +101,10 @@ public class InternetInfoSearchWorker extends SwingWorker<Integer, Movie> implem
         return 0;
     }
 
+    // called back (by us) from the service at each movie info found
     @Override
     public MovieFoundResult found(Movie movie) {
+        // tell EventDispatchThread we have a movie coming in
         publish(movie);
         if (isCancelRequested()) {
             return MovieFoundResult.STOP;
@@ -110,6 +112,8 @@ public class InternetInfoSearchWorker extends SwingWorker<Integer, Movie> implem
         return MovieFoundResult.CONTINUE;
     }
 
+    // this swing callback receives data asynchronously on the EvetnDispatchThread
+    // when "publish" is called in the worker
     @Override
     protected void process(List<Movie> movies) {
         for (Movie movie : movies) {

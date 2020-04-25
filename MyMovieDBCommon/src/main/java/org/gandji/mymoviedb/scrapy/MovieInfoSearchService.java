@@ -159,8 +159,7 @@ public class MovieInfoSearchService {
     private String assembleQueryString(List<String> kwds) {
         // assemble query string
         String queryString = kwds.get(0);
-        // take out the last keyword, often ripper name
-        for (Integer i = 1; i < kwds.size()-1; i++) {
+        for (Integer i = 1; i < kwds.size(); i++) {
             queryString = queryString + "+" + kwds.get(i);
         }
         return queryString;

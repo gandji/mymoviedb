@@ -39,6 +39,9 @@ import com.omertron.themoviedbapi.model.tv.TVBasic;
 import com.omertron.themoviedbapi.model.tv.TVInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.gandji.mymoviedb.MyMovieDBPreferences;
+import org.gandji.mymoviedb.data.HibernateVideoFileDao;
+import org.gandji.mymoviedb.gui.widgets.MovieDescriptionDialog;
+import org.gandji.mymoviedb.gui.widgets.MovieDescriptionPanel;
 import org.gandji.mymoviedb.gui.widgets.NewLayout;
 import org.gandji.mymoviedb.scrapy.GoogleSearch;
 import org.gandji.mymoviedb.scrapy.MovieInfoSearchService;
@@ -48,6 +51,7 @@ import org.gandji.mymoviedb.data.VideoFile;
 import org.gandji.mymoviedb.services.DialogsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
@@ -66,6 +70,9 @@ public class MovieGuiService {
 
     @Autowired
     private HibernateMovieDao hibernateMovieDao;
+
+    @Autowired
+    private HibernateVideoFileDao hibernateVideoFileDao;
     
     @Autowired
     private GoogleSearch googleSearch;
@@ -78,6 +85,9 @@ public class MovieGuiService {
 
     @Autowired
     private DialogsService dialogsService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     public void playTheFile(Path fileToPlay) {
       // launch the default action for this file (works on linux?)
@@ -262,5 +272,32 @@ public class MovieGuiService {
                     DialogsService.MessageType.WARN);
             return;
         }
+    }
+
+    public void launchMovieDescriptionDialog(Movie movie, Path path, JFrame parent, boolean modal) {
+        MovieDescriptionPanel movieDescriptionPanel = (MovieDescriptionPanel) applicationContext.getBean("movieDescriptionPanel");
+        MovieDescriptionDialog movieDescriptionDialog = (MovieDescriptionDialog) applicationContext.getBean("movieDescriptionDialog",parent, modal, movieDescriptionPanel);
+
+        if (movie != null && path != null) {
+            throw new IllegalArgumentException("Either movie or path, not both");
+        }
+
+        Movie movie_;
+        if (movie == null) {
+            movie_ = new Movie();
+        } else {
+            movie_ = movie;
+        }
+
+        if (path != null) {
+            VideoFile videoFile = new VideoFile();
+            hibernateVideoFileDao.populateVideoFile(videoFile, path);
+            movie_.addFile(videoFile);
+        }
+
+        movieDescriptionDialog.setModal(true);
+        movieDescriptionDialog.setData(movie_);
+        movieDescriptionDialog.setVisible(true);
+
     }
 }

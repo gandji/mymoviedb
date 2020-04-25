@@ -2,11 +2,14 @@ package org.gandji.mymoviedb.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.gandji.mymoviedb.MyMovieDBConfiguration;
+import org.gandji.mymoviedb.MyMovieDBPreferences;
 import org.gandji.mymoviedb.data.HibernateMovieDao;
 import org.gandji.mymoviedb.data.Movie;
 import org.gandji.mymoviedb.filefinder.VideoFileWorker;
 import org.gandji.mymoviedb.gui.MovieGuiService;
 import org.gandji.mymoviedb.gui.ScanADirectoryWorker;
+import org.gandji.mymoviedb.gui.widgets.AboutWindow;
+import org.gandji.mymoviedb.gui.widgets.JavaFXGuiServices;
 import org.gandji.mymoviedb.gui.widgets.PreferencesWindow;
 import org.gandji.mymoviedb.javafx.JavaFXPrimaryStage;
 import org.gandji.mymoviedb.resources.MovieResource;
@@ -55,13 +58,22 @@ public class MyMovieDBJSCommands {
     ApplicationContext applicationContext;
 
     @Autowired
+    JavaFXGuiServices javaFXGuiServices;
+
+    @Autowired
     PreferencesWindow preferencesWindow;
+
+    @Autowired
+    MyMovieDBPreferences myMovieDBPreferences;
+
+    @Autowired
+    private AboutWindow aboutWindow;
 
     @Value("${application.version}")
     String myMovieDBVersionString;
 
     public String initialPage() {
-        List<MovieResource> movies = hibernateMovieDao.findAllByOrderByCreated(0,25)
+        List<MovieResource> movies = hibernateMovieDao.findAllByOrderByCreated(0,myMovieDBPreferences.getDbPageSize())
                 .stream()
                 .map(hibernateMovieDao::populateMovie)
                 .map(movieResourceAssembler::toResource).collect(Collectors.toList());
@@ -76,13 +88,24 @@ public class MyMovieDBJSCommands {
 
     public void internetInfoPage(String movieId) {
         Movie movie = hibernateMovieDao.findOne(Long.parseLong(movieId));
+        if (myMovieDBPreferences.isFullFeatured()) {
+            // this is how you call java script from java
+            primaryStage.getWebEngine().executeScript("M.toast( {html: 'Opening Movie DB in browser', classes: 'rounded teal'});");
+        }
         movieGuiService.openInfoUrl(movie.getInfoUrl());
+    }
+
+    public void editMovie(String movieId) {
+        Movie movie = hibernateMovieDao.findOne(Long.parseLong(movieId));
+        javaFXGuiServices.launchMovieDescriptionPanel(movie);
     }
 
     public void internetCritics(String movieId) {
         Movie movie = hibernateMovieDao.findOne(Long.parseLong(movieId));
-        // this is how you call java script from java
-        primaryStage.getWebEngine().executeScript("M.toast({html: 'Displaying critics in browser', classes: 'rounded teal'});");
+        if (myMovieDBPreferences.isFullFeatured()) {
+            // this is how you call java script from java
+            primaryStage.getWebEngine().executeScript("M.toast({html: 'Displaying critics in browser', classes: 'rounded teal'});");
+        }
         movieGuiService.internetCritics(movie);
     }
 
@@ -103,7 +126,7 @@ public class MyMovieDBJSCommands {
 
     public String searchKeywords(String query){
 
-                    Iterable<Movie> moviesIterable = hibernateMovieDao.searchInternalAll(query);
+                    Iterable<Movie> moviesIterable = hibernateMovieDao.searchInternalAll(query, myMovieDBPreferences.getDbPageSize());
 
                     List<Movie> moviesList = new ArrayList<>();
                     Iterator<Movie> moviesIt = moviesIterable.iterator();
@@ -128,6 +151,10 @@ public class MyMovieDBJSCommands {
     public void playMovie(String id) throws IllegalArgumentException {
 
         Movie movie = hibernateMovieDao.findOne(Long.parseLong(id));
+        if (myMovieDBPreferences.isFullFeatured()) {
+            primaryStage.getWebEngine().executeScript("M.toast( {html: \"Playing movie\\nin external application\", classes: \"rounded teal\"});");
+        }
+
         log.info("Playing movie "+movie.getTitle());
         movieGuiService.playTheMovie(movie);
 
@@ -150,5 +177,17 @@ public class MyMovieDBJSCommands {
         Movie movie = hibernateMovieDao.findOne(Long.parseLong(id));
         log.info("Deleting movie "+movie.getTitle());
         launchServices.deleteMovie(movie,null);
+    }
+
+    // I could get the "version" from java (Spring), but the round trip to JS and back is more fun!
+    public void about(String version) {
+        if (myMovieDBPreferences.isFullFeatured()) {
+            primaryStage.getWebEngine().executeScript("M.toast({" +
+                    "                    html: '<p class=\"center\"> MyMovieDB <br><br>version " + version + "</p>'," +
+                    "                    classes: 'rounded teal'});");
+        } else {
+            aboutWindow.setLocationRelativeTo(null);
+            aboutWindow.setVisible(true);
+        }
     }
 }

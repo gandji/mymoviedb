@@ -7,81 +7,97 @@
 <body>
 
 <div th:fragment="oneMovie">
+    <div class="row">
+    <div class="col s12">
     <div class="card horizontal">
         <div class="card-image">
             <img th:src="${'data:image/jpeg;base64,'+movie.getPosterAsString()}" alt="No poster">
         </div>
         <div class="card-stacked">
-            <div class="card-title html blue-grey-text" th:text="${movie.getTitle()}">
-                Retour vers le futur
-            </div>
-            <p class="card-content">
+            <div class="card-content">
                 <div class="container">
                     <div class="row">
+                        <div class="card-title html blue-grey-text col s12" th:text="${movie.getTitle()}">
+                            Retour vers le futur
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col s8">
-            <p align="left" class="html blue-grey-text mymoviedb-offset">Director: [(${movie.getDirector()})]</p>
-        </div>
-        <div class="col s4">
-            <p align="left" class="html blue-grey-text mymoviedb-offset">Year : [(${movie.getYear()})]</p>
+                            <p align="left" class="html blue-grey-text mymoviedb-offset">Director: [(${movie.getDirector()})]</p>
+                        </div>
+                        <div class="col s4">
+                            <p align="left" class="html blue-grey-text mymoviedb-offset">Year : [(${movie.getYear()})]</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s12">
+                            <p align="left" class="html blue-grey-text mymoviedb-offset">Duree : [(${movie.getDuree()})]</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s12">
+                            <p align="left" class="html blue-grey-text mymoviedb-offset">[(${movie.getSummary()})]</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-action col s12">
+                <div class="row">
+                <div class="col s3">
+                    <div class="waves-effect waves-light btn tooltipped" data-delay=2000 data-position="top"
+                         data-tooltip="Play the movie" th:onclick="|playMovie(${movie.getDbId()})|">
+                        <i class="material-icons center">&#xE037;</i>
+                        <!--Play movie-->
+                    </div>
+                </div>
+                <div class="col s3">
+                    <div class="waves-effect waves-light btn tooltipped" data-delay=2000 data-position="top"
+                         data-tooltip="Go to Movie DB info page" th:onclick="|internetInfoPage(${movie.getDbId()})|">
+                        <i class="material-icons center">&#xE88e;</i>
+                        <!--Info page-->
+                    </div>
+                </div>
+                <div class="col s3">
+                    <div class="waves-effect waves-light btn tooltipped" data-delay=2000 data-position="top"
+                         data-tooltip="See critics on internet" th:onclick="|internetCritics(${movie.getDbId()})|">
+                        <i class="material-icons center">&#xE838;</i>
+                        <!--Internet critics-->
+                    </div>
+                </div>
+                <div class="col s3">
+                    <div class="waves-effect waves-light btn tooltipped" data-delay=2000 data-position="top"
+                         data-tooltip="Edit movie info" th:onclick="|editMovie(${movie.getDbId()})|">
+                        <i class="material-icons center">&#xE3C9;</i>
+                    </div>
+                </div>
+                <!--div class="col s2">
+                    <div class="waves-effect waves-light btn tooltipped" data-delay=2000 data-position="top"
+                         data-tooltip="Delete movie" th:onclick="|deleteMovie(${movie.getDbId()})|">
+                        <i class="material-icons center">&#xE872;</i>
+                    </div>
+                </div-->
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col s12">
-            <p align="left" class="html blue-grey-text mymoviedb-offset">Duree : [(${movie.getDuree()})]</p>
-        </div>
-        <div class="col s12">
-            <p align="left" class="html blue-grey-text mymoviedb-offset">[(${movie.getSummary()})]</p>
-        </div>
     </div>
-</div>
-<div class="card-action">
-    <div class="row">
-        <div class="col s3">
-            <div class="waves-effect waves-light btn tooltipped" data-delay=2000 data-position="top"
-                 data-tooltip="Play the movie" th:onclick="|playMovie(${movie.getDbId()})|">
-                <i class="material-icons center">&#xE037;</i>
-                <!--Play movie-->
-            </div>
-        </div>
-        <div class="col s3">
-            <div class="waves-effect waves-light btn tooltipped" data-delay=2000 data-position="top"
-                 data-tooltip="Go to Movie DB info page" th:onclick="|internetInfoPage(${movie.getDbId()})|">
-                <i class="material-icons center">&#xE88e;</i>
-                <!--Info page-->
-            </div>
-        </div>
-        <div class="col s3">
-            <div class="waves-effect waves-light btn tooltipped" data-delay=2000 data-position="top"
-                 data-tooltip="See critics on internet" th:onclick="|internetCritics(${movie.getDbId()})|">
-                <i class="material-icons center">&#xE838;</i>
-                <!--Internet critics-->
-            </div>
-        </div>
-        <div class="col s3">
-            <div class="waves-effect waves-light btn tooltipped" data-delay=2000 data-position="top"
-                 data-tooltip="Delete movie" th:onclick="|deleteMovie(${movie.getDbId()})|">
-                <i class="material-icons center">&#xE872;</i>
-                <!--Internet critics-->
-            </div>
-        </div>
     </div>
-</div>
-</div>
-</div>
 
 <script th:inline="javascript">
     function playMovie(id) {
         mmdb.playMovie(id);
-        M.toast( {html: "Playing movie\nin external application", classes: "rounded teal"});
     };
 
     function internetInfoPage(id) {
         mmdb.internetInfoPage(id);
-        M.toast( {html: "Opening Movie DB in browser", classes: "rounded teal"});
     };
 
     function internetCritics(id) {
         mmdb.internetCritics(id);
+    };
+
+    function editMovie(id) {
+        mmdb.editMovie(id);
     };
 
     function deleteMovie(id) {

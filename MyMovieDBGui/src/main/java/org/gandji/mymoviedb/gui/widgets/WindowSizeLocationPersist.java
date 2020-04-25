@@ -27,11 +27,6 @@ public class WindowSizeLocationPersist extends ComponentAdapter {
                 e.getComponent().getLocation().y));
         preferences.putInt(e.getComponent().getName()+".width",e.getComponent().getSize().width);
         preferences.putInt(e.getComponent().getName()+".height",e.getComponent().getSize().height);
-        try {
-            preferences.flush();
-        } catch (BackingStoreException ex) {
-            ex.printStackTrace();
-        }
     }
 
     @Override

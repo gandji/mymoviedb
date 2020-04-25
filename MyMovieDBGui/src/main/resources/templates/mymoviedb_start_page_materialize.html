@@ -8,17 +8,21 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- materialize icons cheatsheet for webview at
     https://github.com/google/material-design-icons/blob/master/iconfont/codepoints -->
-    <link rel="stylesheet" href="css/mymoviedb.css">
+    <!--link rel="stylesheet" href="css/mymoviedb.css"-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+    <!--link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+    <script type = "text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script-->
     <script>
         $(document).ready(function(){
-            console.log("initializing carousel");
+            console.log("initializing Materialize framework");
+            $('#movietabs').tabs();
             $('.carousel').carousel({ fullWidth: false, padding: 10, noWrap: true });
-            console.log("initialized carousel [OK]");
             $('.tooltipped').tooltip();
             $('.dropdown-trigger').dropdown({alignment: 'right', constrainWidth: false, coverTrigger: false, hover: true });
+            console.log("initialized Materialize [OK]");
         });
     </script>
     <style>
@@ -29,8 +33,7 @@
     </style>
 </head>
 <body>
-<nav class="teal"> <!-- "deep-purple lighten-2" OK, teal est vert -->
-    <nav class="nav-wrapper teal">
+    <nav class="nav-wrapper teal"><!-- "deep-purple lighten-2" OK, teal est vert-->
         <a href="#" class="brand-logo right" onclick="preferences();">MyMovieDB</a>
         <ul id="nav-mobile" class="hide-on-med-and-down">
             <li>
@@ -65,12 +68,9 @@
                     </div>
                 </form>
             </li>
-            <!--li><a href="sass.html">Statistics</a></li>
-            <li><a href="badges.html">Others</a></li-->
         </ul>
     </nav>
-</nav>
-<div class="container" style="width:80%;">
+<div class="container" style="width:100%;">
     <div class="row">
         <div class="col s12" height="150">
             <div id="moviesCarousel">
@@ -85,9 +85,23 @@
                 </div>
             </div>
         </div>
-        <div class="col s8 offset-s2 center-align">
-            <div id="oneMovieDisplay"></div>
-        </div>
+        <!--div class="col s12 center-align">
+            <ul id="movietabs" class="tabs z-depth-3">
+                <li class="tab col s3"><a href="#testa">Test 1</a></li>
+                <li class="tab col s3"><a class="active" href="#testb">Test 2</a></li>
+                <li class="tab col s3"><a href="#testc">Disabled Tab</a></li>
+                <li class="tab col s3"><a href="#testd">Test 4</a></li>
+            </ul>
+    <div id="tabsCollectionDiv">
+        <div id="testa" class="col s12" style="display: inline; position: relative;"><p>Test 1</p></div>
+        <div id="testb" class="col s12" style="display: inline; position: relative;"><p>Test 2</p></div>
+        <div id="testc" class="col s12" style="display: inline; position: relative;"><p>Test 3</p></div>
+        <div id="testd" class="col s12" style="display: inline; position: relative;"><p>Test 4</p></div>
+    </div>
+        </div-->
+        <div id="oneMovieDisplay"></div>
+    </div>
+</div>
         <script th:inline="javascript">
             function movieClicked(id) {
                 console.log("display movie " + id);
@@ -124,17 +138,11 @@
             };
 
             function about(version) {
-                M.toast({
-                    html: '<p class="center"> MyMovieDB <br><br>version ' + version + '</p>',
-                    classes: 'rounded teal'
-                });
+                mmdb.about(version);
             };
         </script>
-    </div>
     <div id="oneMoviePlayer"></div>
-
     <!-- div class="footer"><a target="_blank" href="https://icons8.com/icons/set/menu">Menu icon</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a></div-->
 
-</div>
 </body>
 </html>

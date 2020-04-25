@@ -71,6 +71,13 @@ public class MovieDataModel extends AbstractTableModel {
         this.movies.add(movie);
     }
 
+    public void clearAllMovies() {
+        if (null==this.movies) {
+            this.movies = new ArrayList<Movie>();
+        }
+        this.movies.clear();
+    }
+
     public enum Role {
         POSTER, TITLE, YEAR, DIRECTOR,RATING,IMDBURL,DUREE, LAST_SEEN,SUMMARY
     }

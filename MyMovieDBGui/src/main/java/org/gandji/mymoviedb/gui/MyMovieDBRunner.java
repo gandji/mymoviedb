@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
+import org.gandji.mymoviedb.MyMovieDBPreferences;
 import org.gandji.mymoviedb.gui.widgets.NewLayout;
 import org.gandji.mymoviedb.data.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,9 @@ public abstract class MyMovieDBRunner implements CommandLineRunner{
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private MyMovieDBPreferences myMovieDBPreferences;
+
     @Override
     public void run(String... strings) throws Exception {
 
@@ -71,7 +75,7 @@ public abstract class MyMovieDBRunner implements CommandLineRunner{
         //additionalLoggingConfiguration();
 
         populateWithDefaultRegexps();
-        movieDataModelPoster.setMovies(hibernateMovieDao.findAllByOrderByCreated(0, 300).getContent());
+        movieDataModelPoster.setMovies(hibernateMovieDao.findAllByOrderByCreated(0, myMovieDBPreferences.getDbPageSize()).getContent());
         movieDataModelPoster.fireTableDataChanged();
 
         /* display the form using the AWT EventQueue */

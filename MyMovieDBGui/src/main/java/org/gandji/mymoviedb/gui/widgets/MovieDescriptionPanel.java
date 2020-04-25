@@ -152,6 +152,24 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
         });
 
         fakePoster();
+        // construct the popup menu for film rows
+        JPopupMenu popupMenu = new JPopupMenu();
+        JMenuItem menuItemAddAFileToMovie = new JMenuItem("Add a file for this movie");
+        JMenuItem menuItemChoosePoster = new JMenuItem("Choose a poster");
+
+        menuItemAddAFileToMovie.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                launchServices.addFileInBackground(movie, false);
+            }
+        });
+
+        popupMenu.add(menuItemAddAFileToMovie);
+        popupMenu.add(menuItemChoosePoster);
+
+        // sets the popup menu for the table
+        posterDisplay.setComponentPopupMenu(popupMenu);
+
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -195,9 +213,9 @@ public class MovieDescriptionPanel extends JPanel implements MovieHolder {
             e.printStackTrace();
         }
         this.movie = movieDaoServices.checkActorsAndSaveMovie(this.movie);
-        for (VideoFile file : this.movie.getFiles()) {
+        /*for (VideoFile file : this.movie.getFiles()) {
             movieDaoServices.addFileToMovie(this.movie, file);
-        }
+        }*/
         log.info("Updated movie in DB: " + movie.getTitle());
     }
 

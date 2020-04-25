@@ -30,6 +30,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.w3c.dom.Document;
 
 import java.io.IOException;
+import java.util.prefs.Preferences;
 
 /**
  * Created by gandji on 12/12/2019.
@@ -39,6 +40,8 @@ import java.io.IOException;
 public class JavaFXPrimaryStage implements ApplicationListener<StageReadyEvent> {
 
     // this is a spring bean so we have @Value available
+
+    private final String SCENE_NAME = "mymoviedbjavafxscene";
 
     @Autowired
     HibernateMovieDao hibernateMovieDao;
@@ -59,6 +62,8 @@ public class JavaFXPrimaryStage implements ApplicationListener<StageReadyEvent> 
 
     private Button maxiMiniButton;
     private ClassPathResource maxiMiniIconResource;
+
+    private Preferences preferences = Preferences.userNodeForPackage(this.getClass());
 
     @Override
     public void onApplicationEvent(StageReadyEvent stageReadyEvent) {
@@ -175,8 +180,19 @@ public class JavaFXPrimaryStage implements ApplicationListener<StageReadyEvent> 
 
         stage.setTitle("MyMovieDB");
         stage.setScene(scene);
-        stage.setWidth(1100);
-        stage.setHeight(800);
+        stage.setWidth(preferences.getDouble(SCENE_NAME+".width",1100.0));
+        stage.setHeight(preferences.getDouble(SCENE_NAME+".height",800.0));
+
+        scene.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+                preferences.putInt(SCENE_NAME+".width",newSceneWidth.intValue());
+            }
+        });
+        scene.heightProperty().addListener(new ChangeListener<Number>() {
+            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+                preferences.putInt(SCENE_NAME+".height",newSceneHeight.intValue());
+            }
+        });
 
         stage.show();
     }

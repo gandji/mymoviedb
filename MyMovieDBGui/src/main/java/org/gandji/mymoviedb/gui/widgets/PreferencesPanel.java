@@ -28,9 +28,14 @@ public class PreferencesPanel extends JPanel {
     private JToolBar toolbar;
     private JPanel internalPanel;
     private JCheckBox keepFileOnUpdateCheckBox;
+    private JCheckBox fullFeaturedCheckBox;
+    private JCheckBox hackersHackCheckBox;
 
     private JLabel fontSizeLabel;
     private JSpinner fontSizeWidget;
+
+    private JLabel dbPageSizeLabel;
+    private JSpinner dbPageSizeWidget;
 
     private JLabel rightColumnWidthLabel;
     private JSpinner rightColumnWidthWidget;
@@ -117,8 +122,11 @@ public class PreferencesPanel extends JPanel {
         */
         guiModeCombo.setSelectedItem(data.getGuiMode());
         keepFileOnUpdateCheckBox.setSelected(data.isKeepDuplicateFilesOnScan());
+        fullFeaturedCheckBox.setSelected(data.isFullFeatured());
+        hackersHackCheckBox.setSelected(data.isHackersHack());
         dateFormatField.setText(data.getDateFormat());
         fontSizeWidget.setValue(data.getFontSize());
+        dbPageSizeWidget.setValue(data.getDbPageSize());
         rightColumnWidthWidget.setValue(data.getRightColumnWidth());
         /*mainHeightWidget.setValue(data.getMainHeight());
         mainWidthWidget.setValue(data.getMainWidth());*/
@@ -132,8 +140,11 @@ public class PreferencesPanel extends JPanel {
         */
         data.setGuiMode((MyMovieDBPreferences.GuiMode)guiModeCombo.getSelectedItem());
         data.setKeepDuplicateFilesOnScan(keepFileOnUpdateCheckBox.isSelected());
+        data.setFullFeatured(fullFeaturedCheckBox.isSelected());
+        data.setHackersHack(hackersHackCheckBox.isSelected());
         data.setDateFormat(dateFormatField.getText());
         data.setFontSize((int)fontSizeWidget.getValue());
+        data.setDbPageSize((int)dbPageSizeWidget.getValue());
         data.setRightColumnWidth((int)rightColumnWidthWidget.getValue());
         /*data.setMainHeight((int)mainHeightWidget.getValue());
         data.setMainWidth((int)mainWidthWidget.getValue());*/
@@ -150,8 +161,11 @@ public class PreferencesPanel extends JPanel {
             */
         if (guiModeCombo.getSelectedItem() != data.getGuiMode()) return true;
         if (keepFileOnUpdateCheckBox.isSelected() != data.isKeepDuplicateFilesOnScan()) return true;
+        if (fullFeaturedCheckBox.isSelected() != data.isFullFeatured()) return true;
+        if (hackersHackCheckBox.isSelected() != data.isHackersHack()) return true;
         if (!dateFormatField.getText().equals(data.getDateFormat())) return true;
         if (!fontSizeWidget.getValue().equals(data.getFontSize())) return true;
+        if (!dbPageSizeWidget.getValue().equals(data.getDbPageSize())) return true;
         if (!rightColumnWidthWidget.getValue().equals(data.getRightColumnWidth())) return true;
         /*if (!mainHeightWidget.getValue().equals(data.getMainHeight())) return true;
         if (!mainWidthWidget.getValue().equals(data.getMainWidth())) return true;*/
@@ -173,11 +187,18 @@ public class PreferencesPanel extends JPanel {
 
         keepFileOnUpdateCheckBox = new JCheckBox("Keep files on update");
 
+        fullFeaturedCheckBox = new JCheckBox("Experimantal features");
+
+        hackersHackCheckBox = new JCheckBox("Use special queries");
+
         dateFormatLabel = new JLabel("Date format");
         dateFormatField = new JTextField();
 
         fontSizeLabel = new JLabel("Font size");
         fontSizeWidget = new JSpinner(new SpinnerNumberModel());
+
+        dbPageSizeLabel = new JLabel("Number of movies displayed");
+        dbPageSizeWidget = new JSpinner(new SpinnerNumberModel());
 
         rightColumnWidthLabel = new JLabel("Right column width");
         rightColumnWidthWidget = new JSpinner(new SpinnerNumberModel());
@@ -212,6 +233,9 @@ public class PreferencesPanel extends JPanel {
         internalPanel.add(fontSizeLabel);
         internalPanel.add(fontSizeWidget);
 
+        internalPanel.add(dbPageSizeLabel);
+        internalPanel.add(dbPageSizeWidget);
+
         /*internalPanel.add(mainHeightLabel);
         internalPanel.add(mainHeightWidget);
 
@@ -226,6 +250,12 @@ public class PreferencesPanel extends JPanel {
 
         internalPanel.add(new JLabel(""));
         internalPanel.add(keepFileOnUpdateCheckBox);
+
+        internalPanel.add(new JLabel(""));
+        internalPanel.add(fullFeaturedCheckBox);
+
+        internalPanel.add(new JLabel(""));
+        internalPanel.add(hackersHackCheckBox);
 
         internalPanel.add(new JLabel("DB for internet info"));
         internetTargetCombo = new JComboBox<>(MovieInfoSearchService.UrlType.values());

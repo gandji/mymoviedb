@@ -18,12 +18,14 @@
 package org.gandji.mymoviedb.data;
 
 import org.gandji.mymoviedb.data.repositories.VideoFileRepository;
+import org.gandji.mymoviedb.filefinder.FileUtils;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.Path;
 import java.util.List;
 
 @Component
@@ -71,4 +73,13 @@ public class HibernateVideoFileDao {
     public List<VideoFile> findByFileName(String fileName) {
         return videoFileRepository.findByFileName(fileName);
     }
+
+    public void populateVideoFile(VideoFile file, Path path) {
+        file.setFileName(path.getFileName().toString());
+        file.setDirectory(path.getParent().toString());
+        file.setDriveLabel(file.computeCurrentDriveLabel());
+        String hashCode = FileUtils.computeHash(path);
+        file.setHashCode(hashCode);
+    }
+
 }
